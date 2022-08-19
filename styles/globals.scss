@@ -1,12 +1,12 @@
 @import "tailwindcss/components";
 @import "tailwindcss/base";
 @import "tailwindcss/utilities";
-$primaryColor:#b32e2e;
-$primaryColor1:#1f2937;
+$primaryColor: #eb0f5b;
+$primaryColor1: #1f2937;
 $primaryFont: Roboto;
 
 *::selection {
-  background: $primaryColor1;
+  background: $primaryColor;
   color: #eaeaea;
 }
 
@@ -14,7 +14,7 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: $primaryFont
+  font-family: $primaryFont;
 }
 
 header {
@@ -40,7 +40,7 @@ a {
     color-scheme: dark;
   }
   body {
-    color: white;
+    color: #eaeaea;
     background: $primaryColor1;
   }
 }

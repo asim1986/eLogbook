@@ -1,9 +1,6 @@
 $navColor: #374151;
-$navColorHover: #f5c321;
-
-.container {
-  padding: 0 0;
-}
+$navColorHover1: #f5c321;
+$navColorHover: #eb0f5b;
 
 .nav {
   background: $navColor;
@@ -12,7 +9,7 @@ $navColorHover: #f5c321;
   right: 0;
   left: 0;
   z-index: 1030;
-  padding: 0.3rem 0.8rem;
+  padding: 0.2rem 2rem;
   @apply flex items-center flex-wrap;
 }
 
@@ -62,6 +59,15 @@ $navColorHover: #f5c321;
   color: $navColorHover;
 }
 
+.active {
+  color: $navColorHover;
+  font-weight: bold;
+}
+
+.active > div {
+  color: $navColorHover;
+}
+
 .hero {
   margin: 0;
   padding: 0;
@@ -74,6 +80,7 @@ $navColorHover: #f5c321;
     ),
     url("../public/images/image4.jpg");
   background-repeat: no-repeat;
+  background-position: center center;
   background-size: cover;
 }
 
@@ -92,19 +99,41 @@ $navColorHover: #f5c321;
 
 .heroContent > p {
   font-size: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
-.heroContent a {
-  background: $navColorHover;
-  color: #eaeaea;
+.heroContent a:first-child {
+  color: $navColorHover;
+  border: 2px solid $navColorHover;
   padding: 0.5rem 1rem;
+  margin-right: 1rem;
   font-size: medium;
   border-radius: 25px;
 }
 
+.heroContent a:last-child {
+  background: $navColorHover;
+  color: #eaeaea;
+  border: 2px solid $navColorHover;
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
+  font-size: medium;
+  border-radius: 25px;
+}
+
+.heroContent a:first-child:hover {
+  background: $navColorHover;
+  color: #eaeaea;
+}
+
+.heroContent a:last-child:hover {
+  background: #eaeaea;
+  color: $navColorHover;
+}
+
 .blog {
   text-align: center;
+  height: 100vh;
 }
 
 .blog > h1 {
@@ -194,19 +223,28 @@ $navColorHover: #f5c321;
 
 .footer {
   display: flex;
-  flex: 1;
-  padding: 1.5rem 0;
+  flex-direction: column;
+  padding: 1.3rem 0;
   margin-top: 1rem;
   border-top: 1px solid #eaeaea;
   justify-content: center;
   align-items: center;
 }
 
-.footer a {
+.socialMedia {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-grow: 1;
+  margin-bottom: .5rem;
+  width: 100%; 
+}
+
+.socialMedia a {
+  margin: 0 .5rem;
+}
+
+.socialMedia a:hover {
+  color: $navColorHover;
 }
 
 @media (max-width: 912px) {
@@ -286,6 +324,10 @@ $navColorHover: #f5c321;
 
 @media (max-width: 600px) {
 
+  .nav {
+    padding: 0.3rem .5rem;
+  }
+
   .heroContent > h1 {
     font-size: 2.1rem;
   }
@@ -326,13 +368,10 @@ $navColorHover: #f5c321;
 }
 
 @media (prefers-color-scheme: dark) {
-  .card,
   .footer {
     border-color: #222;
   }
-  .code {
-    background: #111;
-  }
+
   .logo img {
     filter: invert(1);
   }

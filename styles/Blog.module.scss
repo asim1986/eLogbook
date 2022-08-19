@@ -1,0 +1,55 @@
+$title: #1e429f;
+
+.main {
+  position: absolute;
+  top: 3.1rem;
+  width: 100%;
+}
+
+.blogTitle {
+  font-weight: bold;
+  text-align: center;
+  font-size: 2rem;
+  background: $title;
+  padding: 1rem;
+}
+
+.blogTitle p {
+  font-weight: lighter;
+  font-size: small;
+}
+
+.blogImg {
+  padding: 1rem;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.blogImg img {
+  margin-top: 2rem;
+  width: 100%;
+  border-radius: 5px;
+  box-shadow: -1px 1px 20px rgb(24, 24, 24);
+}
+
+.blogContent {
+  padding: 1rem;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.blogContent p {
+  font-size: large;
+  margin-bottom: .6rem;
+}
+
+@media (max-width: 600px) {
+  .main {
+    top: 3.5rem;
+  }
+
+  .blogTitle {
+    font-size: 1.2rem;
+    padding: 0.8rem;
+  }
+}
