@@ -181,6 +181,7 @@ const Supervisor = () => {
               </form>
             </div>
           </div>
+          <div className={styles.spacer}></div>
         </section>
       </main>
     </>

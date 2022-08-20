@@ -4,16 +4,20 @@ $primaryColor: #1f2937;
 .hero {
   margin: 0;
   padding: 0;
-  height: 100vh;
+  height: 100%;
   width: 100%;
-  background-image: linear-gradient(to bottom, #1f2937b3, #1f2937),
+  background-image: linear-gradient(
+      to bottom,
+      #1f2937b3,
+      #1f2937
+    ),
     url("../public/images/image4.jpg");
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: center center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
-  background-size: cover;
+  background-size: cover; 
 }
 
 .signupContainer {
@@ -25,15 +29,13 @@ $primaryColor: #1f2937;
   right: 0;
   width: 90%;
   padding: 0;
-  @apply bg-white rounded-lg shadow lg:flex lg:max-w-screen-sm xl:p-0 dark:bg-gray-800;
+  @apply justify-center items-center bg-white rounded-lg shadow lg:flex md:mt-0 lg:max-w-screen-sm xl:p-0 dark:bg-gray-800;
 }
 
-.signupContainer::after {
-  position: absolute;
-  content: "";
-  bottom: -10%;
-  height: 5%;
-  width: 1px;
+.spacer {
+  height: 50rem;
+  margin: 0 0 -50px 0;
+  background: transparent;
 }
 
 .signup {
@@ -45,7 +47,7 @@ $primaryColor: #1f2937;
   right: 0;
   width: 60%;
   padding: 0;
-  @apply bg-white rounded-lg shadow lg:flex md:mt-0 lg:max-w-screen-sm xl:p-0 dark:bg-gray-800;
+  @apply justify-center items-center bg-white rounded-lg shadow lg:flex md:mt-0 lg:max-w-screen-sm xl:p-0 dark:bg-gray-800;
 }
 
 .h1 {
@@ -100,7 +102,7 @@ $primaryColor: #1f2937;
   // outline: 1px solid red;
 
   [class$="-control"] {
-    @apply text-white bg-gray-50 border border-gray-300 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-0 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+    @apply bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-0 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
   }
 }
 
@@ -119,7 +121,7 @@ $primaryColor: #1f2937;
 
 .signupBtn {
   border-radius: 15px;
-  @apply text-white font-medium text-base px-7 py-2 w-full sm:w-auto text-center mb-4 bg-blue-700;
+  @apply text-white font-medium text-base px-7 py-2 w-full sm:w-auto text-center mb-6 bg-blue-700;
 }
 
 .forgetPassword {
@@ -127,8 +129,7 @@ $primaryColor: #1f2937;
 }
 
 .uploadAvatarBtn label {
-  padding: 0.2rem;
-  margin: 0;
+  padding: 0.5rem;
   text-align: center;
   font-size: small;
   cursor: pointer;
@@ -138,14 +139,11 @@ $primaryColor: #1f2937;
   border: 2px solid #1d4ed8;
   border-radius: 10px;
   padding: 0.2rem 0.1rem;
-  text-align: center;
   margin: 0;
 }
 
 .uploadAvatarBtn input {
   display: none;
-  margin: 0;
-  padding: 0;
 }
 
 .fileUpload {
@@ -205,38 +203,5 @@ $primaryColor: #1f2937;
 
   .passwordInput button {
     margin-top: 0.6rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .fullName {
-    margin-top: -2rem;
-    gap: .5rem;
-  }
-
-  .names {
-    @apply flex w-full items-end space-y-4 flex-col m-0 p-0;
-  }
-
-  .fullName div:first-child {
-    grid-column: 1 / span 2;
-    grid-row: 2;
-    margin: 0;
-    padding: 0;
-  }
-
-  .fullName div:nth-child(2) {
-    grid-column: 1 / span 2;
-    grid-row: 1;
-    justify-content: center;
-    margin: 0 auto;
-    padding: 0;
-  }
-
-  .fullName div:last-child {
-    grid-column: 1 / span 2;
-    grid-row: 3;
-    margin-top: 0;
-    padding: 0;
   }
 }
