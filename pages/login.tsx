@@ -40,7 +40,6 @@ const Login = () => {
               <h1 className={styles.h1}>Login to your account</h1>
               <form className="mt-8">
                 <div className="mb-6">
-                  <label htmlFor="email" className={styles.label}>Your email</label>
                   <input
                     required
                     type="email"

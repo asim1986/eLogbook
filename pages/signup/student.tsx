@@ -5,33 +5,104 @@ import React, { useState } from "react";
 import { Navbar } from "../../components/NavBar";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import { allInstitutions } from "../../utils/institutions";
-import Select, { ActionMeta, Options } from "react-select";
-import { defaultStyles } from "react-select/dist/declarations/src/styles";
+import Select from "react-select";
+import { BsFileImage } from "react-icons/bs";
 
 const Student = () => {
   const [textInput, setTextInput] = useState({
+    name: { firstName: "", middleName: "", lastName: "" },
     email: "",
     password: "",
     institute: "",
     level: "",
     gender: "",
     address: "",
+    other: "",
+    dept: "",
+    matric: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showInput, setShowInput] = useState(false);
+
   const [selectedFile, setSelectedFile] = useState({
     file: null,
     isUploaded: false,
+    img: null,
   });
 
-  const onChangeHandlerEmail = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeHandlerFirst = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
+      name: {
+        firstName: evt.target.value,
+        middleName: prev.name.middleName,
+        lastName: prev.name.lastName,
+      },
       email: evt.target.value,
       password: prev.password,
       institute: prev.institute,
       level: prev.level,
       gender: prev.gender,
       address: prev.address,
+      other: prev.other,
+      dept: prev.dept,
+      matric: prev.matric,
+    }));
+  };
+
+  const onChangeHandlerMiddle = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: {
+        firstName: prev.name.firstName,
+        middleName: evt.target.value,
+        lastName: prev.name.lastName,
+      },
+      email: evt.target.value,
+      password: prev.password,
+      institute: prev.institute,
+      level: prev.level,
+      gender: prev.gender,
+      address: prev.address,
+      other: prev.other,
+      dept: prev.dept,
+      matric: prev.matric,
+    }));
+  };
+
+  const onChangeHandlerLast = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: {
+        firstName: prev.name.firstName,
+        middleName: prev.name.middleName,
+        lastName: evt.target.value,
+      },
+      email: evt.target.value,
+      password: prev.password,
+      institute: prev.institute,
+      level: prev.level,
+      gender: prev.gender,
+      address: prev.address,
+      other: prev.other,
+      dept: prev.dept,
+      matric: prev.matric,
+    }));
+  };
+
+  const onChangeHandlerEmail = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: {
+        firstName: prev.name.firstName,
+        middleName: prev.name.middleName,
+        lastName: prev.name.lastName,
+      },
+      email: evt.target.value,
+      password: prev.password,
+      institute: prev.institute,
+      level: prev.level,
+      gender: prev.gender,
+      address: prev.address,
+      other: prev.other,
+      dept: prev.dept,
+      matric: prev.matric,
     }));
   };
 
@@ -39,28 +110,107 @@ const Student = () => {
     evt: React.ChangeEvent<HTMLInputElement>
   ) => {
     setTextInput((prev) => ({
+      name: {
+        firstName: prev.name.firstName,
+        middleName: prev.name.middleName,
+        lastName: prev.name.lastName,
+      },
       email: prev.email,
       password: evt.target.value,
       institute: prev.institute,
       level: prev.level,
       gender: prev.gender,
       address: prev.address,
+      other: prev.other,
+      dept: prev.dept,
+      matric: prev.matric,
     }));
   };
 
   const onChangeHandlerAddress = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
+      name: {
+        firstName: prev.name.firstName,
+        middleName: prev.name.middleName,
+        lastName: prev.name.lastName,
+      },
       email: prev.email,
       password: prev.password,
       institute: prev.institute,
       level: prev.level,
       gender: prev.gender,
       address: evt.target.value,
+      other: prev.other,
+      dept: prev.dept,
+      matric: prev.matric,
+    }));
+  };
+
+  const onChangeHandlerOther = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: {
+        firstName: prev.name.firstName,
+        middleName: prev.name.middleName,
+        lastName: prev.name.lastName,
+      },
+      email: prev.email,
+      password: prev.password,
+      institute: prev.institute,
+      level: prev.level,
+      gender: prev.gender,
+      address: prev.address,
+      other: evt.target.value,
+      dept: prev.dept,
+      matric: prev.matric,
+    }));
+  };
+
+  const onChangeHandlerDept = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: {
+        firstName: prev.name.firstName,
+        middleName: prev.name.middleName,
+        lastName: prev.name.lastName,
+      },
+      email: prev.email,
+      password: prev.password,
+      institute: prev.institute,
+      level: prev.level,
+      gender: prev.gender,
+      address: prev.address,
+      other: prev.other,
+      dept: evt.target.value,
+      matric: prev.matric,
+    }));
+  };
+
+  const onChangeHandlerMatric = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: {
+        firstName: prev.name.firstName,
+        middleName: prev.name.middleName,
+        lastName: prev.name.lastName,
+      },
+      email: prev.email,
+      password: prev.password,
+      institute: prev.institute,
+      level: prev.level,
+      gender: prev.gender,
+      address: prev.address,
+      other: prev.other,
+      dept: prev.dept,
+      matric: evt.target.value,
     }));
   };
 
   const onFileUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedFile({ file: evt.target.files[0], isUploaded: true });
+    const mainFile = evt.target.files;
+    console.log(mainFile[0]);
+    setSelectedFile({
+      file: mainFile[0],
+      isUploaded: true,
+      img: URL.createObjectURL(mainFile[0]),
+    });
   };
 
   type OptionType = { label: string; value: string }[];
@@ -81,15 +231,25 @@ const Student = () => {
     { value: "Female", label: "Female" },
   ];
 
+  const optionsPlace: OptionType = [{ value: "Upcoming", label: "Upcoming" }];
+
   const selectInstitution = (option: OptionType | null | any) => {
     if (option) {
       setTextInput((prev) => ({
+        name: {
+          firstName: prev.name.firstName,
+          middleName: prev.name.middleName,
+          lastName: prev.name.lastName,
+        },
         email: prev.email,
         password: prev.password,
         institute: option.value,
         level: prev.level,
         gender: prev.gender,
         address: prev.address,
+        other: prev.other,
+        dept: prev.dept,
+        matric: prev.matric,
       }));
     }
     setShowInput(option.value === "Others" ? true : false);
@@ -98,12 +258,20 @@ const Student = () => {
   const selectLevel = (option: OptionType | null | any) => {
     if (option) {
       setTextInput((prev) => ({
+        name: {
+          firstName: prev.name.firstName,
+          middleName: prev.name.middleName,
+          lastName: prev.name.lastName,
+        },
         email: prev.email,
         password: prev.password,
         institute: prev.institute,
         level: option.value,
         gender: prev.gender,
         address: prev.address,
+        other: prev.other,
+        dept: prev.dept,
+        matric: prev.matric,
       }));
     }
     setShowInput(option.value === "Others" ? true : false);
@@ -112,12 +280,20 @@ const Student = () => {
   const selectGender = (option: OptionType | null | any) => {
     if (option) {
       setTextInput((prev) => ({
+        name: {
+          firstName: prev.name.firstName,
+          middleName: prev.name.middleName,
+          lastName: prev.name.lastName,
+        },
         email: prev.email,
         password: prev.password,
         institute: prev.institute,
         level: prev.level,
         gender: option.value,
         address: prev.address,
+        other: prev.other,
+        dept: prev.dept,
+        matric: prev.matric,
       }));
     }
     setShowInput(option.value === "Others" ? true : false);
@@ -136,8 +312,8 @@ const Student = () => {
     }),
     singleValue: (defaultStyles: any, state: any) => ({
       ...defaultStyles,
-      lineHeight: ".6rem",
-      padding: ".95rem 0",
+      lineHeight: ".5rem",
+      padding: ".90rem 0",
       color: "#eaeaea",
       width: "100%",
     }),
@@ -166,17 +342,19 @@ const Student = () => {
                         name="firstName"
                         type="text"
                         className={styles.signupInput}
-                        value=""
+                        value={textInput.name.firstName}
+                        onChange={onChangeHandlerFirst}
                       />
                     </div>
                     <div className="w-full">
                       <input
                         required
                         placeholder="Other Name"
-                        name="firstName"
+                        name="middleName"
                         type="text"
                         className={styles.signupInput}
-                        value=""
+                        value={textInput.name.middleName}
+                        onChange={onChangeHandlerMiddle}
                       />
                     </div>
                     <div className="w-full">
@@ -186,12 +364,16 @@ const Student = () => {
                         name="lastName"
                         type="text"
                         className={styles.signupInput}
-                        value=""
+                        value={textInput.name.lastName}
+                        onChange={onChangeHandlerLast}
                       />
                     </div>
                   </div>
                   <div className={styles.passport}>
-                    <img src="../images/Passport.jpg" alt="passport" />
+                    <img
+                      src={selectedFile.img ? selectedFile.img : "../images/thumbnail.png"}
+                      alt="passport"
+                    />
                   </div>
                   <div className="w-full">
                     <input
@@ -201,8 +383,21 @@ const Student = () => {
                       id="matno"
                       placeholder="Matriculation Number"
                       className={styles.signupInput}
-                      value={textInput.email}
-                      onChange={onChangeHandlerEmail}
+                      value={textInput.matric}
+                      onChange={onChangeHandlerMatric}
+                    />
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <div className="w-full">
+                    <input
+                      required
+                      placeholder="House Address"
+                      name="address"
+                      type="text"
+                      className={styles.signupInput}
+                      value={textInput.address}
+                      onChange={onChangeHandlerAddress}
                     />
                   </div>
                 </div>
@@ -226,7 +421,8 @@ const Student = () => {
                         name="other"
                         type="text"
                         className={styles.signupInput}
-                        value=""
+                        value={textInput.other}
+                        onChange={onChangeHandlerOther}
                       />
                     </div>
                   </div>
@@ -239,7 +435,8 @@ const Student = () => {
                       name="dept"
                       type="text"
                       className={styles.signupInput}
-                      value=""
+                      value={textInput.dept}
+                      onChange={onChangeHandlerDept}
                     />
                   </div>
                   <div className="w-full flex flex-row justify-between">
@@ -247,7 +444,7 @@ const Student = () => {
                       <Select
                         options={optionsLevel}
                         className={styles.select}
-                        placeholder="Select Level"
+                        placeholder="Level"
                         onChange={selectLevel}
                         styles={customStyles}
                       />
@@ -264,15 +461,12 @@ const Student = () => {
                   </div>
                 </div>
                 <div className="mb-4">
-                  <input
-                    required
-                    type="text"
-                    name="address"
-                    id="address"
-                    placeholder="House Address"
-                    className={styles.signupInput}
-                    value={textInput.address}
-                    onChange={onChangeHandlerAddress}
+                  <Select
+                    options={optionsPlace}
+                    className={styles.select}
+                    placeholder="Select Place of SIWES"
+                    onChange={selectInstitution}
+                    styles={customStyles}
                   />
                 </div>
                 <div className="mb-4">

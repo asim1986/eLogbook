@@ -158,12 +158,15 @@ $primaryColor: #1f2937;
   flex-direction: row;
   justify-content: end;
   width: 80%;
+  padding: 0;
 }
 
 .passport img {
   width: 100px;
+  height: 100px;
   border: 2px solid #1d4ed8;
   border-radius: 15px;
+  padding: 0;
 }
 
 .types {
@@ -187,6 +190,14 @@ $primaryColor: #1f2937;
 .types div:hover {
   color: $navColorHover;
   border-color: $navColorHover;
+}
+
+.terms {
+  @apply ml-1 text-blue-700 dark:text-blue-500 hover:underline
+}
+
+.actionBtn {
+  @apply ml-1 text-blue-700 hover:underline dark:text-blue-500
 }
 
 @media (max-width: 912px) {

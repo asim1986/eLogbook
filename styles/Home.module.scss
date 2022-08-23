@@ -22,8 +22,9 @@ $navColorHover: #eb0f5b;
   float: left;
   border: none;
   outline: none;
+  padding: 0 0.5rem 0 0.6rem;
   margin: 0;
-  @apply lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-white font-bold items-center;
+  @apply lg:inline-flex lg:w-auto w-full rounded text-white font-bold items-center;
 }
 
 .dropdownBtn > div:hover {
@@ -43,12 +44,20 @@ $navColorHover: #eb0f5b;
   z-index: 1;
 }
 
+.displayPic {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  border: 1px solid #eaeaea;
+  background: #cccccc;
+}
+
 .dropdown_content > li {
   padding: 0.2rem 0;
 }
 
 .dropdown_content > li:hover {
-  border-bottom: 1px solid $navColorHover;
+  color: $navColorHover;
 }
 
 .nav_li {
@@ -61,7 +70,6 @@ $navColorHover: #eb0f5b;
 
 .active {
   color: $navColorHover;
-  font-weight: bold;
 }
 
 .active > div {

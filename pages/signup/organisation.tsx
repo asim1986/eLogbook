@@ -155,7 +155,7 @@ const Organisation = () => {
                       >
                         I accept the
                         <a
-                          className="ml-1 text-blue-700 dark:text-blue-500 hover:underline"
+                          className={styles.terms}
                           href="/terms-and-conditions/"
                         >
                           Terms and Conditions
@@ -190,11 +190,10 @@ const Organisation = () => {
                     </span>
                   </button>
                 </div>
-
-                <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <div className={styles.notReg}>
                   Already have an account?
                   <Link href="/login">
-                    <a className="ml-1 text-blue-700 hover:underline dark:text-blue-500">
+                    <a className={styles.actionBtn}>
                       Login here.
                     </a>
                   </Link>

@@ -43,7 +43,7 @@ const Signup = () => {
                     <h1>Supervisor</h1>
                   </div>
                 </Link>
-                <Link href="/signup/student">
+                <Link href="/eligible">
                   <div>
                     <FaUserGraduate size="8rem" />
                     <h1>Student</h1>
