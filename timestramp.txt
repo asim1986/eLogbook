@@ -1,0 +1,15 @@
+Timestamps
+0:00:00 Demo and Intro
+0:03:03 Project setup
+0:08:36 Array of days
+0:20:32 Initial Components
+0:29:21 Displaying the days and months
+0:40:13 Calendar header
+0:47:13 Setting up the context
+1:00:00 Sidebar components
+1:06:00 Small calendar component
+1:36:00 Saving new events
+2:19:30 Displaying events on individual days
+2:26:53 Deleting and updating events
+2:36:30 Filtering events by tag
+2:56:35 Fixing modal bug

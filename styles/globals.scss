@@ -3,11 +3,30 @@
 @import "tailwindcss/utilities";
 $primaryColor: #eb0f5b;
 $primaryColor1: #1f2937;
+$navColor: #374151;
+$primaryColor2: #1e429f;
 $primaryFont: Roboto;
 
 *::selection {
   background: $primaryColor;
   color: #eaeaea;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+ 
+::-webkit-scrollbar-thumb {  
+  background: #233855;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #101a27;
 }
 
 html,

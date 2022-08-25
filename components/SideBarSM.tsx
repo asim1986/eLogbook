@@ -4,9 +4,9 @@ import SmallCalendar from "./SmallCalendar";
 import styles from "../styles/Logbook.module.scss";
 import Labels from "./Labels";
 
-export default function Sidebar() {
+export default function SidebarSM() {
   return (
-    <aside className={styles.eventAside}>
+    <aside className={styles.eventAsideSM}>
       <CreateEventButton />
       <SmallCalendar />
       <Labels />

@@ -1,8 +1,13 @@
-import '../styles/globals.scss'
-import type { AppProps } from 'next/app'
+import "../styles/globals.scss";
+import type { AppProps } from "next/app";
+import ContextWrapper from "../context/ContextWrapper";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
-}
+const MyApp = ({ Component, pageProps }: AppProps) => {
+  return (
+    <ContextWrapper>
+      <Component {...pageProps} />
+    </ContextWrapper>
+  );
+};
 
-export default MyApp
+export default MyApp;

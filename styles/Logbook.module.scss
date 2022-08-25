@@ -1,0 +1,152 @@
+$primaryColor1: #1f2937;
+$navColor: #374151;
+$primaryColor: #eb0f5b;
+
+.Logbook {
+  text-align: center;
+}
+
+.Logbook-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .Logbook-logo {
+    animation: Logbook-logo-spin infinite 20s linear;
+  }
+}
+
+.Logbook-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.Logbook-link {
+  color: #61dafb;
+}
+
+.eventModal {
+  @apply h-screen w-full fixed left-0 top-0 flex justify-center items-center;
+}
+
+.eventBtnWrapper {
+  @apply flex justify-between items-center;
+}
+
+.eventBtnWrapper button:nth-child(2) {
+  @apply hidden;
+}
+
+.eventCreateBtn {
+  @apply border py-2 m-0 px-5 rounded-full flex items-center shadow-md hover:shadow-2xl;
+  @apply hover:bg-blue-500;
+}
+
+.eventModal form {
+  background: $primaryColor1;
+  box-shadow: 1px 1px 5px #000000;
+  @apply rounded-lg shadow-2xl w-1/4;
+}
+
+.eventHeader {
+  background: $navColor;
+  @apply px-4 py-2 flex justify-between items-center;
+}
+
+.showSideBarBtn {
+  display: none;
+  margin-right: 0.8rem;
+}
+
+.eventHeaderH1 {
+  @apply mr-5 text-xl text-gray-500 font-bold;
+}
+
+.resetBtn {
+  @apply border rounded py-2 px-4 mr-2 text-gray-100;
+  @apply hover:bg-blue-500;
+}
+
+.eventArrow {
+  @apply cursor-pointer text-gray-600 mx-2 hover:text-gray-100;
+}
+
+.currentMonth {
+  @apply ml-4 text-xl text-gray-500 font-bold;
+}
+
+.eventInput {
+  background: $navColor;
+  @apply p-1 border-0 text-xl font-semibold pb-2 w-full border-b-2 focus:outline-none focus:ring-0 focus:border-blue-500;
+}
+
+.eventTextArea {
+  background: $navColor;
+  @apply p-1 border-0 pb-2 w-full border-b-2 focus:outline-none focus:ring-0 focus:border-blue-500 placeholder:font-semibold;
+}
+
+.eventTextArea::-webkit-scrollbar {
+  width: 10px;
+}
+
+.eventAside {  
+  @apply p-5 w-64 border-t-2 border-gray-500;
+}
+
+.eventAsideSM {
+  @apply p-5 w-64 border-t-2 border-gray-500 hidden;
+
+}
+
+@media (max-width: 640px) {
+  .eventAside {
+    display: none;
+  }
+
+  .eventAsideSM {
+    display: block;
+    background: $navColor;
+    height: 100vh;
+    position: absolute;
+    top: 3rem;
+    left: 0;
+    transition: width 3s ease-in-out;
+  }
+
+  .eventBtnWrapper button:nth-child(2) {
+    @apply block;
+  }
+
+  .showSideBarBtn {
+    display: block;
+  }
+
+  .eventHeaderH1 {
+    display: none;
+  }
+
+  .currentMonth {
+    font-size: 1rem/* 14px */;
+    line-height: 1.3rem;
+  }
+
+  .eventModal form {
+    width: 85%;
+  }
+}
+
+@keyframes Logbook-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

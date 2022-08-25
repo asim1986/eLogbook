@@ -186,11 +186,11 @@ export const Navbar = () => {
               </>
             ) : (
               <>
-                <Link href="/profile">
+                <Link href="/logbook">
                   <a
                     className={[
                       styles.nav_li,
-                      router.pathname === "/login" ? styles.active : "",
+                      router.pathname === "/logbook" ? styles.active : "",
                     ].join(" ")}
                   >
                     <div className="w-full flex items-center">
@@ -273,7 +273,7 @@ export const Navbar = () => {
                   <a
                     className={[
                       styles.nav_li,
-                      router.pathname === "/login" ? styles.active : "",
+                      router.pathname === "/profile" ? styles.active : "",
                     ].join(" ")}
                   >
                     <div className="w-full flex items-center">
