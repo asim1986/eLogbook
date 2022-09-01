@@ -2,6 +2,17 @@ $primaryColor1: #1f2937;
 $navColor: #374151;
 $primaryColor: #eb0f5b;
 
+.backBlur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  z-index: 1;
+  background: rgba(11, 16, 24, 0.8);
+  backdrop-filter: blur(2px);
+}
+
 .Logbook {
   text-align: center;
 }
@@ -33,7 +44,7 @@ $primaryColor: #eb0f5b;
 }
 
 .eventModal {
-  @apply h-screen w-full fixed left-0 top-0 flex justify-center items-center;
+  @apply h-screen w-full fixed left-0 top-0 flex justify-center items-center z-10;
 }
 
 .eventBtnWrapper {

@@ -18,7 +18,11 @@ const GlobalContext = React.createContext({
   updateLabel: (arg: any) => {},
   filteredEvents: [],
   showSideBar: false,
-  setShowSideBar: (arg: boolean) => {}
+  setShowSideBar: (arg: boolean) => {},
+  showAddModal: false,
+  setShowAddModal: (arg: boolean) => {},
+  showDetail: false, 
+  setShowDetail: (arg: boolean) => {},
 });
 
 export default GlobalContext;

@@ -1,0 +1,170 @@
+$primaryColor: #eb0f5b;
+$primaryColor1: #1f2937;
+$navColor: #374151;
+$primaryColor2: #1e429f;
+$sideBarWidth: 16rem;
+$grayColor: #6b7280;
+
+.profile {
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  top: 5rem;
+  left: $sideBarWidth;
+  width: calc(98% - $sideBarWidth);
+  height: calc(100vh - 6rem);
+  overflow-y: auto;
+}
+
+.manageProfile {
+  width: 20%;
+  height: fit-content;
+  background: $navColor;
+  border-radius: 15px;
+  margin-right: 1rem;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1rem;
+}
+
+.manageProfile h1 {
+  @apply ml-1 mt-1 font-bold;
+}
+
+.userPasswordBtn {
+  @apply flex flex-row items-center px-3 py-2 mt-2 rounded-lg hover:bg-blue-700;
+}
+
+.userPswBtn {
+  background: $primaryColor2;
+}
+
+.manageProfile button span {
+  @apply mr-2;
+}
+
+.userProfile {
+  width: 80%;
+  height: fit-content;
+  background: $navColor;
+  border-radius: 15px;
+  padding: 1rem 1rem;
+}
+
+.userProfile h1 {
+  @apply mt-1 font-bold;
+}
+
+.userImg {
+  @apply mt-2 flex flex-row items-center;
+}
+
+.userImg img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  @apply flex mr-3;
+}
+
+.userImg div > h1 {
+  @apply font-bold text-3xl;
+}
+
+.userImg div > h2 {
+  @apply font-bold text-lg;
+}
+
+.inputStyle {
+  @apply bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg;
+  @apply focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700;
+  @apply dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500;
+  @apply dark:focus:border-blue-500;
+}
+
+.passwordInput {
+  position: relative;
+  @apply mb-4 w-full;
+}
+
+.passwordInput button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-top: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.passwordInputCh {
+  position: relative;
+  @apply mb-4 w-full;
+}
+
+.passwordInputCh input[id="new"] {
+  @apply mr-1;
+}
+
+.passwordInputCh input[id="renew"] {
+  @apply ml-1;
+}
+
+.passwordInputCh label {
+  @apply text-gray-400;
+}
+
+.passwordInputCh button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-top: 2rem;
+  margin-right: 0.5rem;
+}
+
+.uploadAvatarBtn label {
+  padding: 0.2rem;
+  margin: 0;
+  text-align: center;
+  font-size: small;
+  cursor: pointer;
+}
+
+.uploadAvatarBtn {
+  border: 2px solid #1d4ed8;
+  border-radius: 10px;
+  padding: 0.2rem 0.3rem;
+  text-align: center;
+  margin: 0;
+  @apply text-sm;
+}
+
+.uploadAvatarBtn input {
+  display: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fileUpload {
+  border: 2px solid #166534;
+  @apply bg-green-800;
+}
+
+.saveBtn {
+  border-radius: 15px;
+  background: $primaryColor2;
+  @apply text-white font-medium text-base px-7 py-2;
+  @apply w-full sm:w-auto text-center mb-2;
+  @apply hover:bg-blue-700;
+}
+
+.deleteAccount {
+  // background: $primaryColor1;
+  @apply mt-2 border border-gray-500 rounded-lg px-5 py-5;
+}
+.deleteAccount h1 {
+  @apply text-2xl text-red-600;
+}
+
+.deleteAccount button {
+  @apply border border-red-600 px-3 py-1 mt-2 rounded-lg;
+  @apply hover:bg-red-600 hover:text-white;
+}

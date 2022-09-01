@@ -30,6 +30,8 @@ const ContextWrapper = (props: any) => {
   const [daySelected, setDaySelected] = useState(dayjs());
   const [showEventModal, setShowEventModal] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showDetail, setShowDetail]  = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [labels, setLabels] = useState([]);
   const [savedEvents, dispatchCalEvent] = useReducer(
@@ -101,7 +103,11 @@ const ContextWrapper = (props: any) => {
         updateLabel,
         filteredEvents,
         showSideBar,
-        setShowSideBar
+        setShowSideBar,
+        showAddModal,
+        setShowAddModal,
+        showDetail, 
+        setShowDetail
       }}
     >
       {props.children}

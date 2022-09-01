@@ -12,12 +12,16 @@
     "@craco/craco": "^6.4.5",
     "@reduxjs/toolkit": "^1.8.4",
     "@tailwindcss/forms": "^0.5.2",
+    "chart.js": "^2.9.4",
     "dayjs": "^1.11.5",
     "next": "12.2.5",
     "react": "18.2.0",
+    "react-animated-css": "^1.2.1",
     "react-dom": "18.2.0",
     "react-icons": "^4.4.0",
+    "react-phone-number-input": "^3.2.10",
     "react-select": "^5.4.0",
+    "react-transition-group": "^4.4.5",
     "sass": "^1.54.4"
   },
   "devDependencies": {

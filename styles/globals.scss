@@ -29,6 +29,20 @@ $primaryFont: Roboto;
   background: #101a27;
 }
 
+input[type="tel"] {
+  @apply bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg;
+  @apply focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700;
+  @apply dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500;
+  @apply dark:focus:border-blue-500;
+}
+
+select[class="PhoneInputCountrySelect"] {
+  @apply bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg;
+  @apply focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700;
+  @apply dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500;
+  @apply dark:focus:border-blue-500;
+}
+
 html,
 body {
   padding: 0;
