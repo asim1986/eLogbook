@@ -21,7 +21,7 @@ $primaryFont: Roboto;
 }
  
 ::-webkit-scrollbar-thumb {  
-  background: #233855;
+  background: $navColor;
   border-radius: 5px;
 }
 

@@ -8,25 +8,34 @@ $grayColor: #6b7280;
 .chat {
   background: $navColor;
   border-radius: 15px;
-  display: flex;
-  justify-content: space-between;
-  position: absolute;
   top: 5rem;
-  left: $sideBarWidth;
-  width: calc(98% - $sideBarWidth);
   height: calc(100vh - 6rem);
-  overflow-y: auto;
+  @apply absolute flex lg:w-[calc(98%-16rem)] w-11/12 overflow-y-auto;
+  @apply lg:left-60 left-0 justify-between mx-auto right-0;
+}
+
+.chats {
+  background: $navColor;
+  border-radius: 15px;
+  top: 4.5rem;
+  width: 95%;
+  height: calc(100vh - 5rem);
+  margin: 0 auto 12rem auto;
+  overflow-x: auto;
+  @apply flex justify-between absolute left-0 right-0;
+  // @apply lg:flex-col;
 }
 
 .message {
-  width: 40%;
+  // width: 40%;
   padding: 0.5rem 1rem;
+  @apply w-full grow-0 shrink-0 basis-11/12;
+  @apply lg:basis-auto lg:w-2/5 md:basis-8/12;
 }
 
 .messageHeader h1 {
-  font-weight: bold;
-  font-size: larger;
   margin-left: 0.5rem;
+  @apply font-bold text-sm md:text-2xl;
 }
 
 .searchBar {
@@ -43,9 +52,7 @@ $grayColor: #6b7280;
 }
 
 .searchBar > span {
-  position: absolute;
-  left: 2rem;
-  top: 3.6rem;
+  @apply absolute left-7 top-12 md:mt-4;
 }
 
 .chatGroup {
@@ -54,6 +61,10 @@ $grayColor: #6b7280;
 
 .chatList::-webkit-scrollbar {
   width: 8px;
+}
+
+.chatList::-webkit-scrollbar-thumb { 
+  @apply bg-gray-600 hover:bg-gray-400;
 }
 
 .chatList {
@@ -113,8 +124,10 @@ $grayColor: #6b7280;
 }
 
 .chatDetails {
-  width: 60%;
-  @apply border-l-2 border-gray-500;
+  // width: 60%;
+  @apply flex flex-col justify-between;
+  @apply border-gray-500 w-full grow-0 shrink-0 basis-auto;
+  @apply lg:border-l-2 lg:basis-auto lg:w-3/5;
 }
 
 .onlineDot {
@@ -142,16 +155,20 @@ $grayColor: #6b7280;
 }
 
 .chatDetailsFooter {
-  @apply flex justify-center items-start py-3 border-t-2 border-gray-500 relative;
+  @apply flex justify-center items-start py-3 border-t-2 border-gray-500 relative h-auto;
 }
 
 .chatArea::-webkit-scrollbar {
   width: 8px;
 }
 
+.chatArea::-webkit-scrollbar-thumb {  
+  @apply bg-gray-600 hover:bg-gray-400;
+}
+
 .chatArea {
   width: 100%;
-  height: 61vh;
+  height: auto;
   overflow-y: auto;
   display: flex;
   flex-direction: row;

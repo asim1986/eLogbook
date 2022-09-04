@@ -138,7 +138,10 @@ const AddOrganisation = ({ show }: { show: boolean }) => {
           exitActive: animate.fadeExitActive,
         }}
       >
-        <div className={styles.backDrop}></div>
+        <div
+          onClick={() => setShowAddModal(false)}
+          className={styles.backDrop}
+        ></div>
       </CSSTransition>
       <CSSTransition
         mountOnEnter
@@ -156,12 +159,11 @@ const AddOrganisation = ({ show }: { show: boolean }) => {
           <div className="sm:p-5 lg:p-5">
             <MdClose
               onClick={() => setShowAddModal(false)}
-              size={"1.5rem"}
-              className="cursor-pointer p-0 m-0"
+              className="cursor-pointer mt-3 ml-3 md:m-0 md:p-0 text-2xl md:text-3xl"
             />
             <h1>Add an Organisation Account</h1>
             <form className="mt-4">
-              <div className="flex flex-col mb-4 space-y-6 md:flex-row md:space-y-0 md:space-x-6">
+              <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-6">
                 <div className="w-full">
                   <input
                     required
@@ -197,7 +199,7 @@ const AddOrganisation = ({ show }: { show: boolean }) => {
                   onChange={onChangeHandlerAddress}
                 />
               </div>
-              <div className="flex flex-col mb-4 space-y-6 md:flex-row md:space-y-0 md:space-x-6">
+              <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-6">
                 <div className="w-full">
                   <input
                     required

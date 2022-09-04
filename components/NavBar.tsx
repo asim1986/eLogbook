@@ -9,7 +9,7 @@ import {
 } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { RiBook2Fill, RiChat3Fill, RiUserSettingsLine } from "react-icons/ri";
-import { MdSupervisedUserCircle } from "react-icons/md";
+import { TbActivityHeartbeat } from "react-icons/tb";
 
 export const Navbar = () => {
   const [active, setActive] = useState(false);
@@ -60,7 +60,7 @@ export const Navbar = () => {
           } w-full lg:inline-flex lg:flex-grow lg:w-auto`}
         >
           <div className={styles.nav_div}>
-            {router.pathname !== "/dashboard" ? (
+            {router.pathname !== "/logbook" ? (
               <>
                 <Link href="/">
                   <a
@@ -195,81 +195,37 @@ export const Navbar = () => {
                   >
                     <div className="w-full flex items-center">
                       <RiBook2Fill />
-                      <span className="pl-1">LogBook</span>
+                      <span className="pl-1">Logbook</span>
                     </div>
                   </a>
                 </Link>
-                <button
-                  onClick={() =>
-                    setDropDown((prev) => ({
-                      user: prev.user,
-                      profile: prev.profile,
-                      chat: !prev.chat
-                    }))
-                  }
-                  className={styles.dropdownBtn}
-                >
-                  <div className="w-full">
-                    <RiChat3Fill />
-                    <span className="px-1">Chat</span> <FaCaretDown />
-                  </div>
-                  {dropDown.chat && (
-                    <ul className={styles.dropdown_content}>
-                      <li>
-                        <Link href="/user/profile">
-                          <a
-                            className={[
-                              styles.dropdownBtn,
-                              router.pathname.split("/")[2] === "organisation"
-                                ? styles.active
-                                : "",
-                            ].join(" ")}
-                          >
-                            <div className="p-0 m-0">
-                              <FaBuilding />{" "}
-                              <span className="pl-1">Organisation</span>{" "}
-                            </div>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/">
-                          <a
-                            className={[
-                              styles.dropdownBtn,
-                              router.pathname.split("/")[2] === "cordinator"
-                                ? styles.active
-                                : "",
-                            ].join(" ")}
-                          >
-                            <div className="p-0 m-0">
-                              <FaChalkboardTeacher />{" "}
-                              <span className="pl-1">Supervisor</span>{" "}
-                            </div>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/">
-                          <a
-                            className={[
-                              styles.dropdownBtn,
-                              router.pathname.split("/")[2] === "cordinator"
-                                ? styles.active
-                                : "",
-                            ].join(" ")}
-                          >
-                            <div className="p-0 m-0">
-                              <MdSupervisedUserCircle />{" "}
-                              <span className="pl-1">Cordinator</span>{" "}
-                            </div>
-                          </a>
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
-                </button>
-                <Link href="/profile">
+                <Link href="/chats">
+                  <a
+                    className={[
+                      styles.nav_li,
+                      router.pathname === "/chats" ? styles.active : "",
+                    ].join(" ")}
+                  >
+                    <div className="w-full flex items-center">
+                      <RiChat3Fill />
+                      <span className="pl-1">Chat</span>
+                    </div>
+                  </a>
+                </Link>
+                 <Link href="/activities">
+                  <a
+                    className={[
+                      styles.nav_li,
+                      router.pathname === "/activities" ? styles.active : "",
+                    ].join(" ")}
+                  >
+                    <div className="w-full flex items-center">
+                      <TbActivityHeartbeat />
+                      <span className="pl-1">Activities</span>
+                    </div>
+                  </a>
+                </Link>
+                <Link href="/profile/student">
                   <a
                     className={[
                       styles.nav_li,
@@ -302,7 +258,7 @@ export const Navbar = () => {
                   {dropDown.profile && (
                     <ul className={styles.dropdown_content}>
                       <li>
-                        <Link href="/user/profile">
+                        <Link href="/profile/student">
                           <a
                             className={[
                               styles.dropdownBtn,

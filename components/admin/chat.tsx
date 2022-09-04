@@ -3,9 +3,9 @@ import { BiSearchAlt2, BiSend } from "react-icons/bi";
 import { BsDot, BsThreeDots } from "react-icons/bs";
 import { TiAttachment } from "react-icons/ti";
 
-const Chat = () => {
+const Chat = (props: any) => {
   return (
-    <div className={styles.chat}>
+    <div className={props.style}>
       <div className={styles.message}>
         <div className={styles.messageHeader}>
           <h1 className="text-start">Messages</h1>

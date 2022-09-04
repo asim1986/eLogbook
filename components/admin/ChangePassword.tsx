@@ -1,14 +1,14 @@
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
-import { IoPersonRemoveOutline } from "react-icons/io5";
 import styles from "../../styles/Profile.module.scss";
-import { RiUserSettingsLine } from "react-icons/ri";
-import { VscShield } from "react-icons/vsc";
-import { useRouter } from "next/router";
+import ManageProfile from "../ManageProfile";
 import { useState } from "react";
-import Link from "next/link";
 
-const ChangePassword = () => {
-  const router = useRouter();
+interface ChangePasswordType {
+  user: string;
+  style: any;
+}
+
+const ChangePassword = ({ user, style }: ChangePasswordType) => {
   const [textInput, setTextInput] = useState({
     old: "",
     new: "",
@@ -47,53 +47,18 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className={styles.profile}>
-      <div className={styles.manageProfile}>
-        <h1>Manage Profile</h1>
-        <Link href="/admin/profile">
-          <button
-            className={[
-              styles.userPasswordBtn,
-              router.pathname === "/admin/profile" ? styles.userPswBtn : "",
-            ].join(" ")}
-          >
-            <span>
-              <RiUserSettingsLine size={"1.3rem"} />
-            </span>
-            User Profile
-          </button>
-        </Link>
-        <Link href="/admin/change-password">
-          <button
-            className={[
-              styles.userPasswordBtn,
-              router.pathname === "/admin/change-password"
-                ? styles.userPswBtn
-                : "",
-            ].join(" ")}
-          >
-            <span>
-              <VscShield size={"1.3rem"} />
-            </span>
-            Change Password
-          </button>
-        </Link>
-        <Link href="/admin/delete-account">
-          <button
-            className={[
-              styles.userPasswordBtn,
-              router.pathname === "/admin/delete-account"
-                ? styles.userPswBtn
-                : "",
-            ].join(" ")}
-          >
-            <span>
-              <IoPersonRemoveOutline size={"1.3rem"} />
-            </span>
-            Delete Account
-          </button>
-        </Link>
-      </div>
+    <div className={style}>
+      <ManageProfile
+        profile={user === "admin" ? "/admin/profile" : `/profile/${user}`}
+        change={
+          user === "admin"
+            ? "/admin/change-password"
+            : "/profile/change-password"
+        }
+        delete={
+          user === "admin" ? "/admin/delete-account" : "/profile/delete-account"
+        }
+      />
 
       <div className={styles.userProfile}>
         <h1>Change Password</h1>
@@ -131,7 +96,7 @@ const ChangePassword = () => {
             </div>
           </div>
 
-          <div className="flex flex-row justify-between mb-2 w-full">
+          <div className="flex flex-col md:flex-row justify-between mb-2 w-full">
             <div className={styles.passwordInputCh}>
               <label htmlFor="new">Enter New Password</label>
               <input

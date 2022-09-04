@@ -21,7 +21,7 @@ const LogBook = () => {
   return (
     <>
       <Head>
-        <title>LogBook</title>
+        <title>Logbook</title>
       </Head>
       <header><Navbar /></header>
 

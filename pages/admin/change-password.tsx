@@ -1,5 +1,6 @@
 import ChangePassword from "../../components/admin/ChangePassword";
 import DashSideBar from "../../components/DashSideBar";
+import styles from "../../styles/Profile.module.scss"
 import DashHeader from "../../components/DashHeader";
 import Head from "next/head";
 import React from "react";
@@ -13,7 +14,7 @@ const ChangeUserPassword = () => {
       <main>
         <DashHeader title="Account Settings" />
         <DashSideBar />
-        <ChangePassword />
+        <ChangePassword style={styles.profile} user="admin" />
       </main>
     </>
   );

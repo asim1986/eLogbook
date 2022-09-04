@@ -1,11 +1,12 @@
-import styles from "../../styles/Signup.module.scss";
-import { useContext, useState } from "react";
-import { CSSTransition } from "react-transition-group";
 import GlobalContext from "../../context/GlobalContext";
+import { CSSTransition } from "react-transition-group";
 import animate from "../../styles/animate.module.css";
+import styles from "../../styles/Signup.module.scss";
+import { CgTrashEmpty } from "react-icons/cg";
 import { MdClose } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import { CgTrashEmpty } from "react-icons/cg";
+import { useContext } from "react";
+
 
 const ViewStudent = ({ show }: { show: boolean }) => {
   const { setShowDetail, setShowAddModal } = useContext(GlobalContext);

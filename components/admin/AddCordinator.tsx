@@ -230,7 +230,10 @@ const AddCordinator = ({ show }: { show: boolean }) => {
           exitActive: animate.fadeExitActive,
         }}
       >
-        <div className={styles.backDrop}></div>
+        <div
+          onClick={() => setShowAddModal(false)}
+          className={styles.backDrop}
+        ></div>
       </CSSTransition>
       <CSSTransition
         mountOnEnter
@@ -248,12 +251,11 @@ const AddCordinator = ({ show }: { show: boolean }) => {
           <div className="sm:p-5 lg:p-5">
             <MdClose
               onClick={() => setShowAddModal(false)}
-              size={"1.5rem"}
-              className="cursor-pointer p-0 m-0"
+              className="cursor-pointer mt-3 ml-3 md:m-0 md:p-0 text-2xl md:text-3xl"
             />
             <h1>Add a Coordinator Account</h1>
             <form className="mt-2">
-              <div className="flex mb-4 justify-between md:flex-row md:space-y-0">
+              <div className="flex space-y-4 mb-4 justify-between flex-col md:flex-row md:space-y-0">
                 <div className="w-full">
                   <input
                     required
@@ -265,7 +267,7 @@ const AddCordinator = ({ show }: { show: boolean }) => {
                     onChange={onChangeHandlerFirst}
                   />
                 </div>
-                <div className="w-full ml-2">
+                <div className="w-full md:ml-2">
                   <input
                     required
                     placeholder="Last Name"
@@ -277,7 +279,7 @@ const AddCordinator = ({ show }: { show: boolean }) => {
                   />
                 </div>
               </div>
-              <div className="flex justify-between w-full mb-4">
+              <div className="flex space-y-4 mb-4 justify-between flex-col md:flex-row md:space-y-0">
                 <div className="w-full">
                   <input
                     required
@@ -290,7 +292,7 @@ const AddCordinator = ({ show }: { show: boolean }) => {
                     onChange={onChangeHandlerStaff}
                   />
                 </div>
-                <div className="w-full ml-2">
+                <div className="w-full md:ml-2">
                   <PhoneInput
                     international
                     countryCallingCodeEditable={false}

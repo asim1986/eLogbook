@@ -1,18 +1,21 @@
 import GlobalContext from "../../context/GlobalContext";
 import styles from "../../styles/Dashboard.module.scss";
-import { FaEdit, FaPlus } from "react-icons/fa";
 import { AiOutlineEye } from "react-icons/ai";
 import { BiSearchAlt2 } from "react-icons/bi";
 import { CgTrashEmpty } from "react-icons/cg";
-import { useContext, useState } from "react";
+import { FaEdit } from "react-icons/fa";
 import ViewLogbook from "./ViewLogbook";
-import ViewStudent from "./ViewStudent";
-import AddStudent from "./AddStudent";
+import { useContext } from "react";
 import Link from "next/link";
 
-const ListLogbooks = () => {
-  const { showAddModal, setShowAddModal, showDetail, setShowDetail } =
-    useContext(GlobalContext);
+interface ListLogType {
+  style: any;
+  styleHeader: any;
+  user: string;
+}
+
+const ListLogbooks = ({ style, styleHeader, user }: ListLogType) => {
+  const { showDetail } = useContext(GlobalContext);
   const labels = ["Name", "Matric No", "School", "Department"];
   const tableData = [
     ...[1, 2, 3, 4, 5, 5, 7, 8, 8, 9, 0, 0].map(() => {
@@ -26,22 +29,25 @@ const ListLogbooks = () => {
   ];
   return (
     <>
-      <div className={styles.mainHeader}>
-        <div>
+      <div className={styleHeader}>
+        <div className="md:w-4/12">
           <input type="text" placeholder="Search here..." />
           <span>
             <BiSearchAlt2 size={"1.6rem"} />
           </span>
         </div>
+        <div className="font-bold text-2xl mb-2 md:mb-0 text-gray-300 lg:mr-5 md:mr-2">
+          <h1>Logbook Activities</h1>
+        </div>
       </div>
       <ViewLogbook show={showDetail} />
-      <div className={styles.dashTable}>
+      <div className={style}>
         <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
-                {labels.map((lbl) => (
-                  <th scope="col" className="py-3 px-6">
+                {labels.map((lbl, idx) => (
+                  <th id={`${idx}`} scope="col" className="py-3 px-6">
                     <div className="flex items-center">
                       {lbl}
                       <a href="#">
@@ -64,8 +70,8 @@ const ListLogbooks = () => {
               </tr>
             </thead>
             <tbody>
-              {tableData.map((item) => (
-                <tr className={styles.dashTableTR}>
+              {tableData.map((item, idx) => (
+                <tr id={`${idx}`} className={styles.dashTableTR}>
                   <th
                     scope="row"
                     className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -76,7 +82,7 @@ const ListLogbooks = () => {
                   <td className="py-1 px-6">{item.school}</td>
                   <td className="py-1 px-6">{item.department}</td>
                   <td className="py-4 px-6 text-right flex flex-row items-center">
-                    <Link href="/admin/logbook/56">
+                    <Link href={user == "admin" ? "/admin/logbook/56" : "/activities/2344"}>
                       <a className="px-1">
                         <AiOutlineEye
                           size={"1.2rem"}
@@ -84,14 +90,18 @@ const ListLogbooks = () => {
                         />
                       </a>
                     </Link>
-                    <FaEdit
-                      size={"1.2rem"}
-                      className="mr-2 cursor-pointer text-blue-300 hover:text-blue-600"
-                    />
-                    <CgTrashEmpty
-                      size={"1.2rem"}
-                      className="cursor-pointer text-red-300 hover:text-red-600"
-                    />
+                    {user === "admin" && (
+                      <>
+                        <FaEdit
+                          size={"1.2rem"}
+                          className="mr-2 cursor-pointer text-blue-300 hover:text-blue-600"
+                        />
+                        <CgTrashEmpty
+                          size={"1.2rem"}
+                          className="cursor-pointer text-red-300 hover:text-red-600"
+                        />
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

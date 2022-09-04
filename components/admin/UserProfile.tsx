@@ -1,14 +1,11 @@
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
-import { IoPersonRemoveOutline } from "react-icons/io5";
 import styles from "../../styles/Profile.module.scss";
-import { RiUserSettingsLine } from "react-icons/ri";
-import { VscShield } from "react-icons/vsc";
+import ManageProfile from "../ManageProfile";
 import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/router";
 
-const UserProfile = () => {
-  const router = useRouter();
+
+const UserProfile = (props: any) => {
+ 
   const [textInput, setTextInput] = useState({
     name: { firstName: "", lastName: "" },
     email: "",
@@ -86,53 +83,12 @@ const UserProfile = () => {
   };
 
   return (
-    <div className={styles.profile}>
-      <div className={styles.manageProfile}>
-        <h1>Manage Profile</h1>
-        <Link href="/admin/profile">
-          <button
-            className={[
-              styles.userPasswordBtn,
-              router.pathname === "/admin/profile" ? styles.userPswBtn : "",
-            ].join(" ")}
-          >
-            <span>
-              <RiUserSettingsLine size={"1.3rem"} />
-            </span>
-            User Profile
-          </button>
-        </Link>
-        <Link href="/admin/change-password">
-          <button
-            className={[
-              styles.userPasswordBtn,
-              router.pathname === "/admin/change-password"
-                ? styles.userPswBtn
-                : "",
-            ].join(" ")}
-          >
-            <span>
-              <VscShield size={"1.3rem"} />
-            </span>
-            Change Password
-          </button>
-        </Link>
-        <Link href="/admin/delete-account">
-          <button
-            className={[
-              styles.userPasswordBtn,
-              router.pathname === "/admin/delete-account"
-                ? styles.userPswBtn
-                : "",
-            ].join(" ")}
-          >
-            <span>
-              <IoPersonRemoveOutline size={"1.3rem"} />
-            </span>
-            Delete Account
-          </button>
-        </Link>
-      </div>
+    <div className={props.style}>
+      <ManageProfile
+        profile="/admin/profile"
+        change="/admin/change-password"
+        delete="/admin/delete-account"
+      />
 
       <div className={styles.userProfile}>
         <h1>User Profile</h1>
@@ -179,8 +135,9 @@ const UserProfile = () => {
         </div>
 
         <form className="mt-4">
-          <div className="flex flex-row justify-center mb-4 w-full">
-            <div className="w-full mr-1">
+
+          <div className="flex flex-col md:flex-row justify-between mb-3 w-full">
+            <div className="w-full md:mr-1">
               <input
                 required
                 placeholder="First Name"
@@ -191,7 +148,7 @@ const UserProfile = () => {
                 onChange={onChangeHandlerFirst}
               />
             </div>
-            <div className="w-full ml-1">
+            <div className="w-full mt-3 md:mt-0 md:ml-1">
               <input
                 required
                 placeholder="Last Name"
@@ -204,8 +161,8 @@ const UserProfile = () => {
             </div>
           </div>
 
-          <div className="flex flex-row justify-center mb-2 w-full">
-            <div className="w-full mb-4 mr-2">
+          <div className="flex flex-col md:flex-row justify-between mb-2 md:mb-3 w-full">
+            <div className="w-full mb-3 mr-2">
               <input
                 required
                 type="email"

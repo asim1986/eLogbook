@@ -1,15 +1,15 @@
-import { useContext } from "react";
-import { AiOutlineEye } from "react-icons/ai";
-import { BiSearchAlt2 } from "react-icons/bi";
-import { CgTrashEmpty } from "react-icons/cg";
-import { FaEdit, FaPlus } from "react-icons/fa";
 import GlobalContext from "../../context/GlobalContext";
 import styles from "../../styles/Dashboard.module.scss";
-import AddSupervisor from "./AddSupervisor";
 import ViewSupervisor from "./ViewSupervisor";
+import { AiOutlineEye } from "react-icons/ai";
+import { CgTrashEmpty } from "react-icons/cg";
+import AddSupervisor from "./AddSupervisor";
+import { FaEdit } from "react-icons/fa";
+import MainHeader from "./MainHeader";
+import { useContext } from "react";
 
 const ListSupervisor = () => {
-  const { showAddModal, setShowAddModal, showDetail, setShowDetail } = useContext(GlobalContext);
+  const { showAddModal, showDetail, setShowDetail } = useContext(GlobalContext);
   const labels = ["Names", "Staff ID", "Email", "Department", "Gender"];
   const tableData = [
     ...[1, 2, 3, 4, 5, 5, 7, 8, 8, 9].map(() => {
@@ -24,20 +24,7 @@ const ListSupervisor = () => {
   ];
   return (
     <>
-      <div className={styles.mainHeader}>
-        <div>
-          <input type="text" placeholder="Search here..." />
-          <span>
-            <BiSearchAlt2 size={"1.6rem"} />
-          </span>
-        </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className={styles.addStudentBtn}
-        >
-          Add Supervisor <FaPlus className="ml-1" />
-        </button>
-      </div>
+      <MainHeader style={styles.mainHeader} title={"Add Supervisor"} />
       <ViewSupervisor show={showDetail} />
       <AddSupervisor show={showAddModal} />
       <div className={styles.dashTable}>

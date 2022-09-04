@@ -1,7 +1,7 @@
-import Head from "next/head";
 import ListStudents from "../../components/admin/ListStudents";
-import DashHeader from "../../components/DashHeader";
 import DashSideBar from "../../components/DashSideBar";
+import DashHeader from "../../components/DashHeader";
+import Head from "next/head";
 
 const Students = () => {
   return (

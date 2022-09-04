@@ -1,4 +1,5 @@
 import ListLogbooks from "../../../components/admin/ListLogbooks";
+import styles from "../../../styles/Dashboard.module.scss";
 import DashSideBar from "../../../components/DashSideBar";
 import DashHeader from "../../../components/DashHeader";
 import Head from "next/head";
@@ -13,7 +14,11 @@ const LogBook = () => {
       <main>
         <DashHeader title="Logbook" />
         <DashSideBar />
-        <ListLogbooks />
+        <ListLogbooks
+          style={styles.dashTableAdminLog}
+          styleHeader={styles.mainHeaderAdminLog}
+          user="admin"
+        />
       </main>
     </>
   );

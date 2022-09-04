@@ -1,17 +1,15 @@
 import GlobalContext from "../../context/GlobalContext";
 import styles from "../../styles/Dashboard.module.scss";
-import { FaEdit, FaPlus } from "react-icons/fa";
-import { AiOutlineEye } from "react-icons/ai";
-import { BiSearchAlt2 } from "react-icons/bi";
-import { CgTrashEmpty } from "react-icons/cg";
 import ViewCoordinator from "./ViewCoordinator";
+import { AiOutlineEye } from "react-icons/ai";
+import { CgTrashEmpty } from "react-icons/cg";
 import AddCordinator from "./AddCordinator";
+import { FaEdit } from "react-icons/fa";
+import MainHeader from "./MainHeader";
 import { useContext } from "react";
 
-
 const ListCoordinators = () => {
-  const { showAddModal, setShowAddModal, showDetail, setShowDetail } =
-    useContext(GlobalContext);
+  const { showAddModal, showDetail, setShowDetail } = useContext(GlobalContext);
   const labels = ["Names", "Staff ID", "Email", "Department", "Gender"];
   const tableData = [
     ...[1, 2, 3, 4, 5, 5, 7, 8, 8, 9].map(() => {
@@ -26,20 +24,8 @@ const ListCoordinators = () => {
   ];
   return (
     <>
-      <div className={styles.mainHeader}>
-        <div>
-          <input type="text" placeholder="Search here..." />
-          <span>
-            <BiSearchAlt2 size={"1.6rem"} />
-          </span>
-        </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className={styles.addStudentBtn}
-        >
-          Add Coordinator <FaPlus className="ml-1" />
-        </button>
-      </div>
+      <MainHeader style={styles.mainHeader} title={"Add Coordinator"} />
+
       <ViewCoordinator show={showDetail} />
       <AddCordinator show={showAddModal} />
       <div className={styles.dashTable}>

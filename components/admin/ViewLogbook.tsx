@@ -1,12 +1,12 @@
-import styles from "../../styles/Signup.module.scss";
-import { useContext, useState } from "react";
-import { CSSTransition } from "react-transition-group";
 import GlobalContext from "../../context/GlobalContext";
+import { CSSTransition } from "react-transition-group";
 import animate from "../../styles/animate.module.css";
-import { MdClose } from "react-icons/md";
-import { FaEdit } from "react-icons/fa";
+import styles from "../../styles/Signup.module.scss";
 import { CgTrashEmpty } from "react-icons/cg";
 import { RiCheckFill } from "react-icons/ri";
+import { MdClose } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
+import { useContext } from "react";
 
 const ViewLogbook = ({ show }: { show: boolean }) => {
   const { setShowDetail, setShowAddModal } = useContext(GlobalContext);
@@ -50,7 +50,10 @@ const ViewLogbook = ({ show }: { show: boolean }) => {
           exitActive: animate.fadeExitActive,
         }}
       >
-        <div className={styles.backDrop}></div>
+        <div
+          onClick={() => setShowDetail(false)}
+          className={styles.backDrop}
+        ></div>
       </CSSTransition>
       <CSSTransition
         mountOnEnter
@@ -70,11 +73,10 @@ const ViewLogbook = ({ show }: { show: boolean }) => {
               <div className="">
                 <MdClose
                   onClick={() => setShowDetail(false)}
-                  size={"1.5rem"}
-                  className="cursor-pointer p-0 m-0 hover:text-red-500"
+                  className="cursor-pointer mt-2 ml-3 md:m-0 md:p-0 text-2xl md:text-3xl"
                 />
               </div>
-              <div className="flex justify-between mr-2">
+              <div className="flex justify-between mr-2 mt-2 md:mt-0">
                 <FaEdit
                   size={"1.5rem"}
                   onClick={() => {
@@ -91,7 +93,7 @@ const ViewLogbook = ({ show }: { show: boolean }) => {
             </div>
 
             <h1>{activities[0].title}</h1>
-            <div className="flex flex-row flex-wrap w-full mt-2">
+            <div className="flex flex-col md:flex-row items-center md:items-start flex-wrap w-full mt-2">
               <div className={styles.passportSt}>
                 <img src="../../images/image3.jpg" alt="diagram" />
               </div>

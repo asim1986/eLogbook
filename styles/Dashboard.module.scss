@@ -7,7 +7,8 @@ $sideBarWidth: 15rem;
 .aside {
   background: $primaryColor2;
   height: 100vh;
-  width: $sideBarWidth;
+  // width: $sideBarWidth;
+  @apply hidden lg:block lg:w-60;
 }
 
 .aside div {
@@ -43,22 +44,14 @@ $sideBarWidth: 15rem;
 
 // DASHEADER
 .dashHeader {
-  position: fixed;
-  top: 1rem;
-  left: 0;
-  width: calc(100% - $sideBarWidth);
-  display: inline-flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-left: $sideBarWidth;
-  padding: 0 .8rem;
+  // top: 1rem;
+  background: $primaryColor1;
+  @apply fixed left-0 w-full lg:w-[calc(100%-16rem)] left-0 top-0 overflow-y-auto;
+  @apply inline-flex justify-between items-center px-3 py-4 lg:ml-[15rem] z-20 mb-4;
 }
 
 .dashHeader h1 {
-  font-weight: bold;
-  font-size: 1.5rem;
-  padding: .1rem 0.5rem;
-  margin: 0;
+  @apply font-bold md:text-xl text-xs overflow-x-auto lg:text-2xl m-0 px-3;
 }
 
 .dashHeader div {
@@ -107,36 +100,29 @@ $sideBarWidth: 15rem;
 
 // STATISTICS
 .stats {
-  position: absolute;
   top: 3.5rem;
-  left: $sideBarWidth;
-  width: calc(100% - $sideBarWidth);
   max-height: calc(100vh - 4rem);
-  overflow-y: auto;
   padding: 0.5rem 1rem;
+  @apply absolute w-full lg:w-[calc(100%-16rem)] lg:left-60 overflow-y-auto;
 }
 
 .info {
-  display: flex;
   background: $navColor;
-  flex-direction: row;
   border-radius: 15px;
   padding: 1rem 1.5rem;
-  margin: 0.5rem 0;
-  justify-content: space-around;
-  width: 100%;
+  // margin: 0.5rem 0;
+  @apply w-full flex mx-auto mt-2 flex-row justify-between overflow-x-auto;
 }
 
 .info div {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  @apply flex flex-row items-center px-1;
 }
 
 .info div > span {
-  padding: 0.8rem;
+  // padding: 0.8rem;
   background: $primaryColor1;
   border-radius: 9999px;
+  @apply p-2;
 }
 
 .info div > div {
@@ -174,34 +160,126 @@ $sideBarWidth: 15rem;
 
 // LISTSTUDENT
 .mainHeader {
-  width: calc(100% - $sideBarWidth);
-  margin-left: $sideBarWidth;
   z-index: 16;
   top: 4.5rem;
-  @apply flex justify-between fixed px-5 left-0;
+  background: $primaryColor1;
+  @apply ml-0 lg:w-[calc(100%-15rem)] w-full;  
+  @apply flex justify-between left-0 lg:left-60;
+  @apply flex-row text-center md:text-left fixed px-5;
+  @apply right-0 mx-auto mb-4 items-center mt-2 md:mt-0;
+}
+
+// LogBook Activities
+.mainHeaderAdminLog {
+  z-index: 16;
+  top: 4.5rem;
+  background: $primaryColor1;
+  @apply ml-0 lg:w-[calc(100%-15rem)] w-full;  
+  @apply flex justify-center md:justify-between flex-col flex-col-reverse;
+  @apply md:flex-row text-center md:text-left fixed px-5 left-0 lg:left-60;
+  @apply right-0 mx-auto mb-4 md:items-center;
+}
+
+.mainHeaders {
+  z-index: 16;
+  top: 4.5rem;
+  background: $primaryColor1;
+  @apply flex justify-center md:justify-between flex-col flex-col-reverse;
+  @apply md:flex-row text-center md:text-left fixed px-5 left-0;
+  @apply right-0 mx-auto w-11/12 mb-4 md:items-center;
+}
+
+.mainHeaderLog {
+  z-index: 16;
+  top: 4.5rem;
+  @apply flex justify-center md:justify-between flex-col flex-col-reverse;
+  @apply md:flex-row text-center md:text-left fixed px-5 left-0 lg:left-60;
+  @apply right-0 mx-auto mb-4 md:items-center;
+}
+
+.mainHeaderLogs {
+  z-index: 16;
+  top: 4.5rem;
+  @apply flex justify-center md:justify-between flex-col flex-col-reverse;
+  @apply md:flex-row text-center md:text-left fixed px-5 left-0;
+  @apply right-0 mx-auto w-11/12 mb-4 md:items-center;
 }
 
 .mainHeader div > input {
   background: $navColor;
-  position: relative;
   padding: .5rem .8rem .5rem 2.7rem;
   border-radius: 9999px;
-  @apply placeholder:text-sm;
+  @apply relative placeholder:text-sm py-2 w-full py-3;
+}
+
+.mainHeaderAdminLog div > input {
+  background: $navColor;
+  padding: .5rem .8rem .5rem 2.7rem;
+  border-radius: 9999px;
+  @apply relative placeholder:text-sm py-2 w-full md:py-3;
+}
+
+.mainHeaders div > input {
+  background: $navColor;
+  padding: .5rem .8rem .5rem 2.7rem;
+  border-radius: 9999px;
+  @apply relative placeholder:text-sm w-full py-2;
+}
+
+.mainHeaderLog div > input {
+  background: $navColor;
+  padding: .5rem .8rem .5rem 2.7rem;
+  border-radius: 9999px;
+  @apply relative placeholder:text-sm w-full;
+}
+
+.mainHeaderLogs div > input {
+  background: $navColor;
+  padding: .5rem .8rem .5rem 2.7rem;
+  border-radius: 9999px;
+  @apply relative placeholder:text-sm w-full;
 }
 
 .mainHeader div > span {
-  position: absolute;
-  left: 2rem;
-  top: .5rem;
+  @apply absolute left-9 top-3 mb-0;
+  @apply md:left-9 md:top-3 lg:top-3;
+}
+
+.mainHeaderAdminLog div > span {
+  @apply absolute left-9 top-12 md:mt-1;
+  @apply md:left-9 md:top-2;
+}
+
+.mainHeaders div > span {
+  @apply absolute left-9 top-12;
+  @apply md:left-9 md:top-2;
+}
+
+.mainHeaderLog div > span {
+  top: 5.8rem;
+  left: 4.5rem;
+  @apply absolute;
+  @apply md:left-12 md:ml-6 md:top-4;
+}
+
+.mainHeaderLogs div > span {
+  top: 5.8rem;
+  left: 4.5rem;
+  @apply absolute;
+  @apply md:left-12 md:ml-6 md:top-4;
 }
 
 .addStudentBtn {
-  @apply flex flex-row items-center px-2 py-2 text-sm font-medium;
-  @apply hover:bg-blue-600 border border-blue-600 rounded-2xl;
+  @apply flex flex-row items-center px-3 lg:px-2 py-3 lg:py-2 text-sm font-medium;
+  @apply hover:bg-blue-600 border border-blue-600 rounded-full lg:rounded-2xl;
+}
+
+.addStudentBtn span {
+  @apply hidden md:block;
 }
 
 .littleInfo {
-  @apply flex flex-row;
+  @apply flex flex-row justify-center text-left mb-2;
 }
 
 .littleInfo img {
@@ -216,32 +294,66 @@ $sideBarWidth: 15rem;
 }
 
 .dashTable {
-  position: absolute;
   top: calc(3.5rem + 5rem);
-  left: $sideBarWidth;
-  width: calc(100% - $sideBarWidth);
-  max-height: calc(100vh - 9rem);
-  overflow-y: auto;
-  overflow-x: auto;
+  max-height: calc(95vh - 8.5rem);
   padding: 0.5rem 1rem;
-  //   border: 1px solid #1e429f;
+  @apply absolute overflow-auto w-full mt-2 md:mt-0;
+  @apply lg:w-[calc(100%-15rem)] lg:left-60 left-0;
+}
+
+.dashTableAdminLog {
+  top: calc(3.5rem + 5rem);
+  max-height: calc(95vh - 8.5rem);
+  padding: 0.5rem 1rem;
+  @apply absolute overflow-auto w-full mt-5 md:mt-0;
+  @apply lg:w-[calc(100%-15rem)] lg:left-60 left-0;
+}
+
+.dashTables::-webkit-scrollbar {
+  width: 10px;
+}
+
+.dashTables::-webkit-scrollbar-thumb {  
+  @apply bg-gray-600 hover:bg-gray-400;
+}
+
+.dashTables {
+  top: 7rem;
+  max-height: calc(92vh - 7rem);
+  @apply absolute left-0 right-0 overflow-auto;
+  @apply px-2 py-3 mx-auto w-11/12 mt-11 lg:mt-4 md:mt-2;
 }
 
 .dashTableLog {
-  position: absolute;
   top: calc(3rem + 7.2rem);
-  left: $sideBarWidth;
-  width: calc(100% - $sideBarWidth);
+  // left: $sideBarWidth;
+  // width: calc(100% - $sideBarWidth);
   max-height: calc(100vh - 11rem);
-  overflow-y: auto;
-  overflow-x: auto;
-  padding: 0.5rem 1rem;
+  // padding: 0.5rem 1rem;
+  @apply absolute right-0 overflow-auto;
+  @apply left-0 lg:left-60 lg:w-[calc(100%-15rem)];
+  @apply px-2 py-3 mx-auto mt-12 lg:mt-2 md:mt-0;
+}
+
+.dashTableLogs::-webkit-scrollbar {
+  width: 10px;
+}
+
+.dashTableLogs::-webkit-scrollbar-thumb {
+  @apply bg-gray-600 hover:bg-gray-400;
+}
+
+.dashTableLogs {
+  top: calc(3rem + 7.2rem);
+  max-height: calc(95vh - 11rem);
+  @apply absolute left-0 right-0 overflow-auto;
+  @apply px-2 py-3 mx-auto w-11/12 mt-11 lg:mt-2 md:mt-0;
 }
 
 .blog {
   background: $navColor;
   @apply flex justify-between p-4 rounded-2xl cursor-pointer;
-  box-shadow: 1px 1px 1px #000000;
+  // box-shadow: 1px 1px 1px #000000;
 }
 
 .blog div:first-child {
@@ -249,8 +361,7 @@ $sideBarWidth: 15rem;
 }
 
 .blog div > img {
-  width: 100px;
-  height: 100px;
+  @apply lg:w-24 lg:h-24 w-12 h-12 rounded-lg;
 }
 
 .blogContent {
@@ -258,17 +369,14 @@ $sideBarWidth: 15rem;
 }
 
 .blogContent h1 {
-  font-size: 2rem;
-  font-weight: bolder;
+  // font-size: 2rem;
+  @apply font-bold text-lg lg:text-2xl;
 }
 
 .blogContent p {
-  @apply text-gray-400;
+  @apply text-gray-400 text-sm lg:text-lg;
 }
 
 .blogDate {
-  @apply text-gray-400 text-sm mt-5;
-}
-
-@media (max-width: 640px) {
+  @apply text-gray-400 text-xs lg:text-sm mt-5;
 }

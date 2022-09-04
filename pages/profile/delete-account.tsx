@@ -1,7 +1,6 @@
 import DeleteAccount from "../../components/admin/DeleteAccount";
-import DashSideBar from "../../components/DashSideBar";
 import styles from "../../styles/Profile.module.scss";
-import DashHeader from "../../components/DashHeader";
+import { Navbar } from "../../components/NavBar";
 import Head from "next/head";
 import React from "react";
 
@@ -11,10 +10,9 @@ const DeleteUserAccount = () => {
       <Head>
         <title>Delete Account</title>
       </Head>
+      <Navbar />
       <main>
-        <DashHeader title="Account Settings" />
-        <DashSideBar />
-        <DeleteAccount style={styles.profile} user="admin" />
+        <DeleteAccount style={styles.profiles} user="student" />
       </main>
     </>
   );

@@ -1,50 +1,16 @@
 import GlobalContext from "../../context/GlobalContext";
 import styles from "../../styles/Dashboard.module.scss";
-import { FaEdit, FaPlus } from "react-icons/fa";
-import { AiOutlineEye } from "react-icons/ai";
-import { BiSearchAlt2 } from "react-icons/bi";
-import { CgTrashEmpty } from "react-icons/cg";
-import { useContext } from "react";
 import ViewBlogPost from "./ViewBlogPost";
 import AddBlogPost from "./AddBlogPost";
+import MainHeader from "./MainHeader";
+import { useContext } from "react";
 
 const ListBlogPosts = () => {
-  const { showAddModal, setShowAddModal, showDetail, setShowDetail } =
-    useContext(GlobalContext);
-  const labels = [
-    "Matric No",
-    "Level",
-    "Department",
-    "Institution",
-    "Supervisor",
-  ];
-  const tableData = [
-    ...[1, 2, 3, 4, 5, 5, 7, 8, 8, 9, 0].map(() => {
-      return {
-        matric: "SCI17CSC031",
-        level: "400",
-        department: "Computer Science",
-        institution: "Federal University Lokoja",
-        supervisor: "Dr. Kayode Olawunyi",
-      };
-    }),
-  ];
+  const { showAddModal, showDetail, setShowDetail } = useContext(GlobalContext);
   return (
     <>
-      <div className={styles.mainHeader}>
-        <div>
-          <input type="text" placeholder="Search here..." />
-          <span>
-            <BiSearchAlt2 size={"1.6rem"} />
-          </span>
-        </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className={styles.addStudentBtn}
-        >
-          Add Eligible <FaPlus className="ml-1" />
-        </button>
-      </div>
+      <MainHeader style={styles.mainHeader} title={"Add BlogPost"} />
+
       <ViewBlogPost show={showDetail} />
       <AddBlogPost show={showAddModal} />
       <div className={styles.dashTable}>

@@ -1,23 +1,16 @@
-import { useContext, useState } from "react";
-import { AiOutlineEye } from "react-icons/ai";
-import { BiSearchAlt2 } from "react-icons/bi";
-import { CgTrashEmpty } from "react-icons/cg";
-import { FaEdit, FaPlus } from "react-icons/fa";
 import GlobalContext from "../../context/GlobalContext";
 import styles from "../../styles/Dashboard.module.scss";
-import AddStudent from "./AddStudent";
+import { AiOutlineEye } from "react-icons/ai";
+import { CgTrashEmpty } from "react-icons/cg";
+import { FaEdit } from "react-icons/fa";
 import ViewStudent from "./ViewStudent";
+import AddStudent from "./AddStudent";
+import MainHeader from "./MainHeader";
+import { useContext } from "react";
 
 const ListStudents = () => {
-  const { showAddModal, setShowAddModal, showDetail, setShowDetail } = useContext(GlobalContext);
-  const labels = [
-    "Names",
-    "Matric No",
-    "Email",
-    "Department",
-    "Level",
-    "Sex",
-  ];
+  const { showAddModal, showDetail, setShowDetail } = useContext(GlobalContext);
+  const labels = ["Names", "Matric No", "Email", "Department", "Level", "Sex"];
   const tableData = [
     ...[1, 2, 3, 4, 5, 5, 7, 8, 8, 9, 0, 0].map(() => {
       return {
@@ -30,22 +23,10 @@ const ListStudents = () => {
       };
     }),
   ];
+  
   return (
     <>
-      <div className={styles.mainHeader}>
-        <div>
-          <input type="text" placeholder="Search here..." />
-          <span>
-            <BiSearchAlt2 size={"1.6rem"} />
-          </span>
-        </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className={styles.addStudentBtn}
-        >
-          Add Student <FaPlus className="ml-1" />
-        </button>
-      </div>
+      <MainHeader style={styles.mainHeader} title={"Add Student"} />
       <ViewStudent show={showDetail} />
       <AddStudent show={showAddModal} />
       <div className={styles.dashTable}>

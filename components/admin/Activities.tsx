@@ -1,5 +1,6 @@
 import GlobalContext from "../../context/GlobalContext";
 import styles from "../../styles/Dashboard.module.scss";
+import { IoMdArrowRoundBack } from "react-icons/io";
 import { AiOutlineEye } from "react-icons/ai";
 import { BiSearchAlt2 } from "react-icons/bi";
 import { CgTrashEmpty } from "react-icons/cg";
@@ -8,15 +9,21 @@ import { MdClose } from "react-icons/md";
 import ViewLogbook from "./ViewLogbook";
 import { FaEdit } from "react-icons/fa";
 import { useContext } from "react";
+import Link from "next/link";
 
+interface ActivitiesType {
+  style: any;
+  styleHeader: any;
+  user: string;
+}
 
-const Activities = () => {
+const Activities = ({ style, styleHeader, user }: ActivitiesType) => {
   const { showDetail, setShowDetail } = useContext(GlobalContext);
   const labels = ["Title", "Activity ID", "Description", "Day", "Approved"];
   const tableData = [
     ...[1, 2, 3, 4, 5, 5, 7, 8, 8, 9, 0, 0].map(() => {
       return {
-        title: "Destructuring",
+        title: "Array Destructuring",
         id: 1661438735332,
         description: "Learn object and array destructing using...",
         day: new Date("2022-08-25T23:00:00.000Z").toDateString(),
@@ -26,13 +33,24 @@ const Activities = () => {
   ];
   return (
     <>
-      <div className={styles.mainHeader}>
-        <div className="mb-7">
-          <input type="text" placeholder="Search here..." />
-          <span>
-            <BiSearchAlt2 size={"1.6rem"} />
-          </span>
+      <div className={styleHeader}>
+        <div className="flex flex-row mb-7 items-center">
+          <div>
+            <Link href={user === "admin" ? "/admin/logbook" : "/activities"}>
+              <a>
+                <IoMdArrowRoundBack size={"2rem"} className="cursor-pointer" />
+              </a>
+            </Link>
+          </div>
+
+          <div className="ml-2 w-full">
+            <input type="text" placeholder="Search here..." />
+            <span>
+              <BiSearchAlt2 size={"1.6rem"} />
+            </span>
+          </div>
         </div>
+
         <div className={styles.littleInfo}>
           <img src="../../images/Passport.jpg" alt="passport" />
           <div className="flex flex-col text-gray-400">
@@ -44,7 +62,7 @@ const Activities = () => {
         </div>
       </div>
       <ViewLogbook show={showDetail} />
-      <div className={styles.dashTableLog}>
+      <div className={style}>
         <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -107,14 +125,18 @@ const Activities = () => {
                       className="mr-2 cursor-pointer text-green-300 hover:text-green-600"
                       onClick={() => setShowDetail(true)}
                     />
-                    <FaEdit
-                      size={"1.2rem"}
-                      className="mr-2 cursor-pointer text-blue-300 hover:text-blue-600"
-                    />
-                    <CgTrashEmpty
-                      size={"1.2rem"}
-                      className="cursor-pointer text-red-300 hover:text-red-600"
-                    />
+                    {user === "admin" && (
+                      <>
+                        <FaEdit
+                          size={"1.2rem"}
+                          className="mr-2 cursor-pointer text-blue-300 hover:text-blue-600"
+                        />
+                        <CgTrashEmpty
+                          size={"1.2rem"}
+                          className="cursor-pointer text-red-300 hover:text-red-600"
+                        />
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

@@ -369,7 +369,10 @@ const AddStudent = ({ show }: { show: boolean }) => {
           exitActive: animate.fadeExitActive,
         }}
       >
-        <div className={styles.backDrop}></div>
+        <div
+          onClick={() => setShowAddModal(false)}
+          className={styles.backDrop}
+        ></div>
       </CSSTransition>
       <CSSTransition
         mountOnEnter
@@ -387,86 +390,79 @@ const AddStudent = ({ show }: { show: boolean }) => {
           <div className="sm:p-5 lg:p-5">
             <MdClose
               onClick={() => setShowAddModal(false)}
-              size={"1.5rem"}
-              className="cursor-pointer p-0 m-0"
+              // size={"1.5rem"}
+              className="cursor-pointer mt-2 ml-3 md:m-0 md:p-0 text-2xl md:text-3xl"
             />
             <h1>Create a Student Account</h1>
             <form className="mt-4">
-              <div className={styles.fullName}>
-                <div className={styles.names}>
-                  <div className="w-full">
-                    <input
-                      required
-                      placeholder="First Name"
-                      name="firstName"
-                      type="text"
-                      className={styles.signupInput}
-                      value={textInput.name.firstName}
-                      onChange={onChangeHandlerFirst}
-                    />
+              <div className="flex flex-col flex-col-reverse md:flex-row justify-between">
+                <div className="w-full">
+                  <div className="flex flex-col md:flex-row mb-4">
+                    <div className="w-full mb-4 md:mb-0 md:mr-1">
+                      <input
+                        required
+                        placeholder="First Name"
+                        name="firstName"
+                        type="text"
+                        className={styles.signupInput}
+                        value={textInput.name.firstName}
+                        onChange={onChangeHandlerFirst}
+                      />
+                    </div>
+                    <div className="w-full md:ml-1">
+                      <input
+                        required
+                        placeholder="Last Name"
+                        name="lastName"
+                        type="text"
+                        className={styles.signupInput}
+                        value={textInput.name.lastName}
+                        onChange={onChangeHandlerLast}
+                      />
+                    </div>
                   </div>
-                  <div className="w-full">
-                    <input
-                      required
-                      placeholder="Other Name"
-                      name="middleName"
-                      type="text"
-                      className={styles.signupInput}
-                      value={textInput.name.middleName}
-                      onChange={onChangeHandlerMiddle}
-                    />
-                  </div>
-                  <div className="w-full">
-                    <input
-                      required
-                      placeholder="Last Name"
-                      name="lastName"
-                      type="text"
-                      className={styles.signupInput}
-                      value={textInput.name.lastName}
-                      onChange={onChangeHandlerLast}
-                    />
+                  <div className="flex flex-col md:flex-row">
+                    <div className="w-full mb-4">
+                      <input
+                        required
+                        type="text"
+                        name="matno"
+                        id="matno"
+                        placeholder="Matriculation Number"
+                        className={styles.signupInput}
+                        value={textInput.matric}
+                        onChange={onChangeHandlerMatric}
+                      />
+                    </div>
+                    <div className="w-full mb-4 md:mb-0 md:ml-2">
+                      <PhoneInput
+                        international
+                        countryCallingCodeEditable={false}
+                        placeholder="Phone Number"
+                        className={styles.phoneInput}
+                        defaultCountry="NG"
+                        value={textInput.phone}
+                        onChange={onChangeHandlerPhone}
+                        error={
+                          textInput.phone
+                            ? isValidPhoneNumber(textInput.phone)
+                              ? undefined
+                              : "Invalid phone number"
+                            : "Phone number required"
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className={styles.passport}>
-                  <img
-                    src={
-                      selectedFile.img
-                        ? selectedFile.img
-                        : "../images/thumbnail.png"
-                    }
-                    alt="passport"
-                  />
-                </div>
-                <div className="flex justify-between">
-                  <div className="w-full">
-                    <input
-                      required
-                      type="text"
-                      name="matno"
-                      id="matno"
-                      placeholder="Matriculation Number"
-                      className={styles.signupInput}
-                      value={textInput.matric}
-                      onChange={onChangeHandlerMatric}
-                    />
-                  </div>
-                  <div className="w-full ml-2">
-                    <PhoneInput
-                      international
-                      countryCallingCodeEditable={false}
-                      placeholder="Phone Number"
-                      className={styles.phoneInput}
-                      defaultCountry="NG"
-                      value={textInput.phone}
-                      onChange={onChangeHandlerPhone}
-                      error={
-                        textInput.phone
-                          ? isValidPhoneNumber(textInput.phone)
-                            ? undefined
-                            : "Invalid phone number"
-                          : "Phone number required"
+                <div>
+                  <div className={styles.passport}>
+                    <img
+                      src={
+                        selectedFile.img
+                          ? selectedFile.img
+                          : "../images/thumbnail.png"
                       }
+                      alt="passport"
                     />
                   </div>
                 </div>
@@ -607,7 +603,7 @@ const AddStudent = ({ show }: { show: boolean }) => {
                   </label>
                 </div>
               </div>
-              <div className="flex justify-center p-0 m-0">
+              <div className="flex justify-center p-0 m-0 mb-5 md:mb-0">
                 <button className={styles.signupBtnSt} type="submit">
                   <span className="flex justify-center items-center">Add</span>
                 </button>

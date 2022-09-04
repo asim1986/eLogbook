@@ -8,7 +8,6 @@ import "react-phone-number-input/style.css";
 import { MdClose } from "react-icons/md";
 import Select from "react-select";
 
-
 const AddEligible = ({ show }: { show: boolean }) => {
   const [textInput, setTextInput] = useState({
     supervisor: "",
@@ -143,7 +142,10 @@ const AddEligible = ({ show }: { show: boolean }) => {
           exitActive: animate.fadeExitActive,
         }}
       >
-        <div className={styles.backDrop}></div>
+        <div
+          onClick={() => setShowAddModal(false)}
+          className={styles.backDrop}
+        ></div>
       </CSSTransition>
       <CSSTransition
         mountOnEnter
@@ -161,8 +163,7 @@ const AddEligible = ({ show }: { show: boolean }) => {
           <div className="sm:p-5 lg:p-5">
             <MdClose
               onClick={() => setShowAddModal(false)}
-              size={"1.5rem"}
-              className="cursor-pointer p-0 m-0"
+              className="cursor-pointer mt-3 ml-3 md:m-0 md:p-0 text-2xl md:text-3xl"
             />
             <h1>Add Eligible Student</h1>
             <form className="mt-2">
@@ -242,7 +243,7 @@ const AddEligible = ({ show }: { show: boolean }) => {
                   onChange={onChangeHandlerMatric}
                 ></textarea>
               </div>
-              <div className="flex justify-center p-0 m-0">
+              <div className="flex justify-center p-0 m-0 mb-4 md:mb-0">
                 <button className={styles.signupBtnSt} type="submit">
                   <span className="flex justify-center items-center">Add</span>
                 </button>

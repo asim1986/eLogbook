@@ -1,16 +1,19 @@
-import Head from "next/head";
-import styles from "../../styles/Signup.module.scss";
-import Link from "next/link";
-import React, { useState } from "react";
-import { Navbar } from "../../components/NavBar";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import { allInstitutions } from "../../utils/institutions";
+import styles from "../../styles/Signup.module.scss";
+import { Navbar } from "../../components/NavBar";
+import "react-phone-number-input/style.css";
+import React, { useState } from "react";
 import Select from "react-select";
+import Link from "next/link";
+import Head from "next/head";
 
 const Student = () => {
   const [textInput, setTextInput] = useState({
-    name: { firstName: "", middleName: "", lastName: "" },
+    name: { firstName: "", lastName: "" },
     email: "",
+    phone: "",
     password: "",
     institute: "",
     level: "",
@@ -33,29 +36,10 @@ const Student = () => {
     setTextInput((prev) => ({
       name: {
         firstName: evt.target.value,
-        middleName: prev.name.middleName,
         lastName: prev.name.lastName,
       },
       email: evt.target.value,
-      password: prev.password,
-      institute: prev.institute,
-      level: prev.level,
-      gender: prev.gender,
-      address: prev.address,
-      other: prev.other,
-      dept: prev.dept,
-      matric: prev.matric,
-    }));
-  };
-
-  const onChangeHandlerMiddle = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setTextInput((prev) => ({
-      name: {
-        firstName: prev.name.firstName,
-        middleName: evt.target.value,
-        lastName: prev.name.lastName,
-      },
-      email: evt.target.value,
+      phone: prev.phone,
       password: prev.password,
       institute: prev.institute,
       level: prev.level,
@@ -70,11 +54,11 @@ const Student = () => {
   const onChangeHandlerLast = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,
-        middleName: prev.name.middleName,
+        firstName: prev.name.firstName,        
         lastName: evt.target.value,
       },
       email: evt.target.value,
+      phone: prev.phone,
       password: prev.password,
       institute: prev.institute,
       level: prev.level,
@@ -89,11 +73,30 @@ const Student = () => {
   const onChangeHandlerEmail = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,
-        middleName: prev.name.middleName,
+        firstName: prev.name.firstName,        
         lastName: prev.name.lastName,
       },
       email: evt.target.value,
+      phone: prev.phone,
+      password: prev.password,
+      institute: prev.institute,
+      level: prev.level,
+      gender: prev.gender,
+      address: prev.address,
+      other: prev.other,
+      dept: prev.dept,
+      matric: prev.matric,
+    }));
+  };
+
+  const onChangeHandlerPhone = (value: string | undefined) => {
+    setTextInput((prev) => ({
+      name: {
+        firstName: prev.name.firstName,        
+        lastName: prev.name.lastName,
+      },
+      email: prev.email,
+      phone: value,
       password: prev.password,
       institute: prev.institute,
       level: prev.level,
@@ -110,11 +113,11 @@ const Student = () => {
   ) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,
-        middleName: prev.name.middleName,
+        firstName: prev.name.firstName,        
         lastName: prev.name.lastName,
       },
       email: prev.email,
+      phone: prev.phone,
       password: evt.target.value,
       institute: prev.institute,
       level: prev.level,
@@ -129,11 +132,11 @@ const Student = () => {
   const onChangeHandlerAddress = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,
-        middleName: prev.name.middleName,
+        firstName: prev.name.firstName,        
         lastName: prev.name.lastName,
       },
       email: prev.email,
+      phone: prev.phone,
       password: prev.password,
       institute: prev.institute,
       level: prev.level,
@@ -148,11 +151,11 @@ const Student = () => {
   const onChangeHandlerOther = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,
-        middleName: prev.name.middleName,
+        firstName: prev.name.firstName,        
         lastName: prev.name.lastName,
       },
       email: prev.email,
+      phone: prev.phone,
       password: prev.password,
       institute: prev.institute,
       level: prev.level,
@@ -167,11 +170,11 @@ const Student = () => {
   const onChangeHandlerDept = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,
-        middleName: prev.name.middleName,
+        firstName: prev.name.firstName,        
         lastName: prev.name.lastName,
       },
       email: prev.email,
+      phone: prev.phone,
       password: prev.password,
       institute: prev.institute,
       level: prev.level,
@@ -186,11 +189,11 @@ const Student = () => {
   const onChangeHandlerMatric = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,
-        middleName: prev.name.middleName,
+        firstName: prev.name.firstName,        
         lastName: prev.name.lastName,
       },
       email: prev.email,
+      phone: prev.phone,
       password: prev.password,
       institute: prev.institute,
       level: prev.level,
@@ -237,10 +240,11 @@ const Student = () => {
       setTextInput((prev) => ({
         name: {
           firstName: prev.name.firstName,
-          middleName: prev.name.middleName,
+          
           lastName: prev.name.lastName,
         },
         email: prev.email,
+        phone: prev.phone,
         password: prev.password,
         institute: option.value,
         level: prev.level,
@@ -259,10 +263,11 @@ const Student = () => {
       setTextInput((prev) => ({
         name: {
           firstName: prev.name.firstName,
-          middleName: prev.name.middleName,
+          
           lastName: prev.name.lastName,
         },
         email: prev.email,
+        phone: prev.phone,
         password: prev.password,
         institute: prev.institute,
         level: option.value,
@@ -281,10 +286,11 @@ const Student = () => {
       setTextInput((prev) => ({
         name: {
           firstName: prev.name.firstName,
-          middleName: prev.name.middleName,
+          
           lastName: prev.name.lastName,
         },
         email: prev.email,
+        phone: prev.phone,
         password: prev.password,
         institute: prev.institute,
         level: prev.level,
@@ -332,59 +338,76 @@ const Student = () => {
             <div className="p-2 w-full sm:p-8 lg:p-10">
               <h1 className={styles.h1}>Create a Student Account</h1>
               <form className="mt-4">
-                <div className={styles.fullName}>
-                  <div className={styles.names}>
-                    <div className="w-full">
-                      <input
-                        required
-                        placeholder="First Name"
-                        name="firstName"
-                        type="text"
-                        className={styles.signupInput}
-                        value={textInput.name.firstName}
-                        onChange={onChangeHandlerFirst}
-                      />
-                    </div>
-                    <div className="w-full">
-                      <input
-                        required
-                        placeholder="Other Name"
-                        name="middleName"
-                        type="text"
-                        className={styles.signupInput}
-                        value={textInput.name.middleName}
-                        onChange={onChangeHandlerMiddle}
-                      />
-                    </div>
-                    <div className="w-full">
-                      <input
-                        required
-                        placeholder="Last Name"
-                        name="lastName"
-                        type="text"
-                        className={styles.signupInput}
-                        value={textInput.name.lastName}
-                        onChange={onChangeHandlerLast}
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.passport}>
-                    <img
-                      src={selectedFile.img ? selectedFile.img : "../images/thumbnail.png"}
-                      alt="passport"
-                    />
-                  </div>
+                <div className="flex flex-col flex-col-reverse md:flex-row justify-between">
                   <div className="w-full">
-                    <input
-                      required
-                      type="text"
-                      name="matno"
-                      id="matno"
-                      placeholder="Matriculation Number"
-                      className={styles.signupInput}
-                      value={textInput.matric}
-                      onChange={onChangeHandlerMatric}
-                    />
+                    <div className="flex flex-col md:flex-row mb-4">
+                      <div className="w-full mb-4 md:mb-0 md:mr-1">
+                        <input
+                          required
+                          placeholder="First Name"
+                          name="firstName"
+                          type="text"
+                          className={styles.signupInput}
+                          value={textInput.name.firstName}
+                          onChange={onChangeHandlerFirst}
+                        />
+                      </div>
+                      <div className="w-full md:ml-1">
+                        <input
+                          required
+                          placeholder="Last Name"
+                          name="lastName"
+                          type="text"
+                          className={styles.signupInput}
+                          value={textInput.name.lastName}
+                          onChange={onChangeHandlerLast}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-col md:flex-row">
+                      <div className="w-full mb-4">
+                        <input
+                          required
+                          type="text"
+                          name="matno"
+                          id="matno"
+                          placeholder="Matriculation Number"
+                          className={styles.signupInput}
+                          value={textInput.matric}
+                          onChange={onChangeHandlerMatric}
+                        />
+                      </div>
+                      <div className="w-full mb-4 md:mb-0 md:ml-2">
+                        <PhoneInput
+                          international
+                          countryCallingCodeEditable={false}
+                          placeholder="Phone Number"
+                          className={styles.phoneInput}
+                          defaultCountry="NG"
+                          value={textInput.phone}
+                          onChange={onChangeHandlerPhone}
+                          error={
+                            textInput.phone
+                              ? isValidPhoneNumber(textInput.phone)
+                                ? undefined
+                                : "Invalid phone number"
+                              : "Phone number required"
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className={styles.passport}>
+                      <img
+                        src={
+                          selectedFile.img
+                            ? selectedFile.img
+                            : "../images/thumbnail.png"
+                        }
+                        alt="passport"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="mb-4">

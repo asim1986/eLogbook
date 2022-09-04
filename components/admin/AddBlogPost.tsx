@@ -57,7 +57,10 @@ const AddBlogPost = ({ show }: { show: boolean }) => {
           exitActive: animate.fadeExitActive,
         }}
       >
-        <div className={styles.backDrop}></div>
+        <div
+          onClick={() => setShowAddModal(false)}
+          className={styles.backDrop}
+        ></div>
       </CSSTransition>
       <CSSTransition
         mountOnEnter
@@ -75,8 +78,7 @@ const AddBlogPost = ({ show }: { show: boolean }) => {
           <div className="sm:p-5 lg:p-5">
             <MdClose
               onClick={() => setShowAddModal(false)}
-              size={"1.5rem"}
-              className="cursor-pointer p-0 m-0"
+              className="cursor-pointer mt-3 ml-3 md:m-0 md:p-0 text-2xl md:text-3xl"
             />
             <h1>Add New Blog</h1>
             <form className="mt-2">
@@ -136,7 +138,7 @@ const AddBlogPost = ({ show }: { show: boolean }) => {
                   onChange={onChangeHandlerContent}
                 ></textarea>
               </div>
-              <div className="flex justify-center p-0 m-0">
+              <div className="flex justify-center p-0 m-0 mb-4 md:mb-0">
                 <button className={styles.signupBtnSt} type="submit">
                   <span className="flex justify-center items-center">Add</span>
                 </button>
