@@ -27,7 +27,7 @@ const CalendarHeader = () => {
   };
 
   return (
-    <header className="mt-12 px-4 py-0 flex items-center w-full flex-wrap">
+    <header className="mt-16 px-4 py-0 flex items-center w-full flex-wrap">
       <span className={styles.showSideBarBtn} onClick={() => setShowSideBar(true)}>
         <MdViewSidebar size={"2rem"} />
       </span>

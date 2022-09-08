@@ -4,23 +4,37 @@ $navColor: #374151;
 $primaryColor2: #1e429f;
 $sideBarWidth: 15rem;
 
-.aside {
-  background: $primaryColor2;
-  height: 100vh;
-  // width: $sideBarWidth;
-  @apply hidden lg:block lg:w-60;
+.aside::-webkit-scrollbar {
+  width: 10px;
 }
 
-.aside div {
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  // margin-left: 1rem;
+.aside::-webkit-scrollbar-thumb {
+  @apply bg-gray-600 hover:bg-gray-400;
+}
+
+.aside::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.aside {
+  @apply lg:hidden lg:w-60 fixed z-20 w-8/12;
+  @apply md:w-5/12 h-screen bg-blue-800 landscape:overflow-y-auto;
+}
+
+.showAside {
+  @apply lg:hidden fixed top-1/2 landscape:top-[40%];
+  @apply py-1 z-20 text-5xl cursor-pointer;
+  @apply rounded-full left-0;
+}
+
+.showAsideBtn {
+  @apply lg:hidden absolute top-1/2 md:right-[-4.35rem] right-[-3rem];
+  @apply md:px-3 py-1 z-0 text-5xl cursor-pointer;
+  @apply rounded-full landscape:hidden;
 }
 
 .sideBarBtnWrapper {
-  @apply mt-5 ml-9;
-  overflow-y: auto;
+  @apply mt-5 ml-9 overflow-y-auto;
 }
 
 .sideBarBtnWrapper a > span {
@@ -46,12 +60,12 @@ $sideBarWidth: 15rem;
 .dashHeader {
   // top: 1rem;
   background: $primaryColor1;
-  @apply fixed left-0 w-full lg:w-[calc(100%-16rem)] left-0 top-0 overflow-y-auto;
+  @apply fixed left-0 w-full lg:w-[calc(100%-16rem)] top-0 overflow-y-auto;
   @apply inline-flex justify-between items-center px-3 py-4 lg:ml-[15rem] z-20 mb-4;
 }
 
 .dashHeader h1 {
-  @apply font-bold md:text-xl text-xs overflow-x-auto lg:text-2xl m-0 px-3;
+  @apply font-bold md:text-xl text-sm overflow-x-auto lg:text-2xl m-0 px-3;
 }
 
 .dashHeader div {
@@ -165,7 +179,7 @@ $sideBarWidth: 15rem;
   background: $primaryColor1;
   @apply ml-0 lg:w-[calc(100%-15rem)] w-full;  
   @apply flex justify-between left-0 lg:left-60;
-  @apply flex-row text-center md:text-left fixed px-5;
+  @apply flex-row text-center md:text-left fixed px-5 space-x-2;
   @apply right-0 mx-auto mb-4 items-center mt-2 md:mt-0;
 }
 
@@ -175,7 +189,7 @@ $sideBarWidth: 15rem;
   top: 4.5rem;
   background: $primaryColor1;
   @apply ml-0 lg:w-[calc(100%-15rem)] w-full;  
-  @apply flex justify-center md:justify-between flex-col flex-col-reverse;
+  @apply flex justify-center md:justify-between flex-col-reverse;
   @apply md:flex-row text-center md:text-left fixed px-5 left-0 lg:left-60;
   @apply right-0 mx-auto mb-4 md:items-center;
 }
@@ -184,7 +198,7 @@ $sideBarWidth: 15rem;
   z-index: 16;
   top: 4.5rem;
   background: $primaryColor1;
-  @apply flex justify-center md:justify-between flex-col flex-col-reverse;
+  @apply flex justify-center md:justify-between flex-col-reverse;
   @apply md:flex-row text-center md:text-left fixed px-5 left-0;
   @apply right-0 mx-auto w-11/12 mb-4 md:items-center;
 }
@@ -192,7 +206,7 @@ $sideBarWidth: 15rem;
 .mainHeaderLog {
   z-index: 16;
   top: 4.5rem;
-  @apply flex justify-center md:justify-between flex-col flex-col-reverse;
+  @apply flex justify-center md:justify-between flex-col-reverse;
   @apply md:flex-row text-center md:text-left fixed px-5 left-0 lg:left-60;
   @apply right-0 mx-auto mb-4 md:items-center;
 }
@@ -200,7 +214,7 @@ $sideBarWidth: 15rem;
 .mainHeaderLogs {
   z-index: 16;
   top: 4.5rem;
-  @apply flex justify-center md:justify-between flex-col flex-col-reverse;
+  @apply flex justify-center md:justify-between flex-col-reverse;
   @apply md:flex-row text-center md:text-left fixed px-5 left-0;
   @apply right-0 mx-auto w-11/12 mb-4 md:items-center;
 }
@@ -209,7 +223,7 @@ $sideBarWidth: 15rem;
   background: $navColor;
   padding: .5rem .8rem .5rem 2.7rem;
   border-radius: 9999px;
-  @apply relative placeholder:text-sm py-2 w-full py-3;
+  @apply relative placeholder:text-sm w-full py-3;
 }
 
 .mainHeaderAdminLog div > input {
@@ -270,8 +284,9 @@ $sideBarWidth: 15rem;
 }
 
 .addStudentBtn {
-  @apply flex flex-row items-center px-3 lg:px-2 py-3 lg:py-2 text-sm font-medium;
-  @apply hover:bg-blue-600 border border-blue-600 rounded-full lg:rounded-2xl;
+  border-radius: 50%;
+  @apply flex flex-row items-center md:space-x-2 justify-center px-1 md:px-3 py-3 md:py-1 text-sm font-medium;
+  @apply hover:bg-blue-600 border border-blue-600 w-12 h-12 md:w-fit md:h-12 md:rounded-2xl;
 }
 
 .addStudentBtn span {

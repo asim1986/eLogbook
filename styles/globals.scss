@@ -19,8 +19,8 @@ $primaryFont: Roboto;
 ::-webkit-scrollbar-track {
   background: transparent;
 }
- 
-::-webkit-scrollbar-thumb {  
+
+::-webkit-scrollbar-thumb {
   background: $navColor;
   border-radius: 5px;
 }
@@ -36,11 +36,21 @@ input[type="tel"] {
   @apply dark:focus:border-blue-500;
 }
 
+input[type="tel"]:active,
+input[type="tel"]:focus {
+  border: 1px solid #5395ff;
+  outline: 1px solid #5395ff;
+}
+
 select[class="PhoneInputCountrySelect"] {
   @apply bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg;
   @apply focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700;
   @apply dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500;
   @apply dark:focus:border-blue-500;
+}
+
+div[class="css-1s2u09g-control"] {
+  border-color: #eb0f5b;
 }
 
 html,
@@ -49,7 +59,6 @@ body {
   margin: 0;
   font-family: $primaryFont;
 }
-
 
 header {
   width: 100%;

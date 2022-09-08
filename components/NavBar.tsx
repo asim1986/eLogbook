@@ -1,304 +1,83 @@
-import Link from "next/link";
-import { useState } from "react";
+import { CSSTransition, SwitchTransition } from "react-transition-group";
+import { HiOutlineMenuAlt3 } from "react-icons/hi";
+import animate from "../styles/animate.module.css";
 import styles from "../styles/Home.module.scss";
-import {
-  FaBuilding,
-  FaCaretDown,
-  FaChalkboardTeacher,
-  FaPowerOff,
-} from "react-icons/fa";
-import { useRouter } from "next/router";
-import { RiBook2Fill, RiChat3Fill, RiUserSettingsLine } from "react-icons/ri";
-import { TbActivityHeartbeat } from "react-icons/tb";
+import { MdClose } from "react-icons/md";
+import { useRef, useState } from "react";
+import Link from "next/link";
+import Links from "./Links";
 
 export const Navbar = () => {
   const [active, setActive] = useState(false);
-  const [dropDown, setDropDown] = useState({ user: false, profile: false, chat: false });
-  const router = useRouter();
-
-  const handleClick = () => {
-    setActive(!active);
-  };
+  const nodeRef = useRef<any>(null);
+  const nodeRefBtn = useRef(null);
 
   return (
     <>
       <nav className={styles.nav}>
         <Link href="/">
-          <a className="inline-flex items-center p-2 mr-4">
+          <a className="inline-flex items-center mr-4 ml-5">
             <img
               src="../e-logbook logo.png"
-              className="mr-3 h-6 sm:h-9"
+              className="mr-2 h-6 sm:h-9 md:h-11 landscape:h-6"
               alt="Logo"
             />
-            <span className="text-xl text-white font-bold tracking-wide">
+            <span className="text-xl landscape:text-xl md:text-2xl text-white font-bold tracking-wide">
               E-LogBook
             </span>
           </a>
         </Link>
-        <button
-          className="inline-flex p-3 rounded lg:hidden text-white ml-auto hover:text-white outline-none"
-          onClick={handleClick}
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+
+        <SwitchTransition mode={"out-in"}>
+          <CSSTransition
+            key={active ? "close" : "open"}
+            timeout={400}
+            nodeRef={nodeRefBtn}
+            addEndListener={(done: () => void) => {
+              nodeRefBtn.current?.addEventListener(
+                "transitionend",
+                done,
+                false
+              );
+            }}
+            classNames={animate.menubtn}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
-        <div
-          className={`${
-            active ? "" : "hidden"
-          } w-full lg:inline-flex lg:flex-grow lg:w-auto`}
-        >
-          <div className={styles.nav_div}>
-            {router.pathname !== "/logbook" ? (
-              <>
-                <Link href="/">
-                  <a
-                    className={[
-                      styles.nav_li,
-                      router.pathname === "/" ? styles.active : "",
-                    ].join(" ")}
-                  >
-                    Home
-                  </a>
-                </Link>
-                <Link href="/blog/blog-post">
-                  <a
-                    className={[
-                      styles.nav_li,
-                      router.pathname.split("/")[1] === "blog"
-                        ? styles.active
-                        : "",
-                    ].join(" ")}
-                  >
-                    Blog
-                  </a>
-                </Link>
-                <Link href="/login">
-                  <a
-                    className={[
-                      styles.nav_li,
-                      router.pathname === "/login" ? styles.active : "",
-                    ].join(" ")}
-                  >
-                    Login
-                  </a>
-                </Link>
-                <button
-                  onClick={() =>
-                    setDropDown((prev) => ({
-                      user: !prev.user,
-                      profile: prev.profile,
-                      chat: prev.profile
-                    }))
-                  }
-                  className={[
-                    styles.dropdownBtn,
-                    router.pathname.split("/")[1] === "signup"
-                      ? styles.active
-                      : "",
-                  ].join(" ")}
-                >
-                  <div>
-                    Signup <FaCaretDown />
-                  </div>
-                  {dropDown.user && (
-                    <ul className={styles.dropdown_content}>
-                      <li>
-                        <Link href="/signup/organisation">
-                          <a
-                            className={[
-                              styles.dropdownBtn,
-                              router.pathname.split("/")[2] === "organisation"
-                                ? styles.active
-                                : "",
-                            ].join(" ")}
-                          >
-                            <div className="m-0 p-0">Organisation</div>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/signup/cordinator">
-                          <a
-                            className={[
-                              styles.dropdownBtn,
-                              router.pathname.split("/")[2] === "cordinator"
-                                ? styles.active
-                                : "",
-                            ].join(" ")}
-                          >
-                            <div className="m-0 p-0">Cordinator</div>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/signup/supervisor">
-                          <a
-                            className={[
-                              styles.dropdownBtn,
-                              router.pathname.split("/")[2] === "supervisor"
-                                ? styles.active
-                                : "",
-                            ].join(" ")}
-                          >
-                            <div className="m-0 p-0">Supervisor</div>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/eligible">
-                          <a
-                            className={[
-                              styles.dropdownBtn,
-                              router.pathname.split("/")[2] === "student"
-                                ? styles.active
-                                : "",
-                            ].join(" ")}
-                          >
-                            <div className="m-0 p-0">Student</div>
-                          </a>
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
-                </button>
-                <Link href="/about">
-                  <a
-                    className={[
-                      styles.nav_li,
-                      router.pathname === "/about" ? styles.active : "",
-                    ].join(" ")}
-                  >
-                    About
-                  </a>
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link href="/logbook">
-                  <a
-                    className={[
-                      styles.nav_li,
-                      router.pathname === "/logbook" ? styles.active : "",
-                    ].join(" ")}
-                  >
-                    <div className="w-full flex items-center">
-                      <RiBook2Fill />
-                      <span className="pl-1">Logbook</span>
-                    </div>
-                  </a>
-                </Link>
-                <Link href="/chats">
-                  <a
-                    className={[
-                      styles.nav_li,
-                      router.pathname === "/chats" ? styles.active : "",
-                    ].join(" ")}
-                  >
-                    <div className="w-full flex items-center">
-                      <RiChat3Fill />
-                      <span className="pl-1">Chat</span>
-                    </div>
-                  </a>
-                </Link>
-                 <Link href="/activities">
-                  <a
-                    className={[
-                      styles.nav_li,
-                      router.pathname === "/activities" ? styles.active : "",
-                    ].join(" ")}
-                  >
-                    <div className="w-full flex items-center">
-                      <TbActivityHeartbeat />
-                      <span className="pl-1">Activities</span>
-                    </div>
-                  </a>
-                </Link>
-                <Link href="/profile/student">
-                  <a
-                    className={[
-                      styles.nav_li,
-                      router.pathname === "/profile" ? styles.active : "",
-                    ].join(" ")}
-                  >
-                    <div className="w-full flex items-center">
-                      <RiUserSettingsLine />
-                      <span className="pl-1">Profile</span>
-                    </div>
-                  </a>
-                </Link>
-                <button
-                  onClick={() =>
-                    setDropDown((prev) => ({
-                      user: prev.user,
-                      profile: !prev.profile,
-                      chat: prev.chat
-                    }))
-                  }
-                  className={styles.dropdownBtn}
-                >
-                  <div className="w-full">
-                    <img
-                      src="../images/thumbnail.png"
-                      className={styles.displayPic}
-                    />
-                    <span className="pl-2">Vicolas</span> <FaCaretDown />
-                  </div>
-                  {dropDown.profile && (
-                    <ul className={styles.dropdown_content}>
-                      <li>
-                        <Link href="/profile/student">
-                          <a
-                            className={[
-                              styles.dropdownBtn,
-                              router.pathname.split("/")[2] === "organisation"
-                                ? styles.active
-                                : "",
-                            ].join(" ")}
-                          >
-                            <div className="p-0 m-0">
-                              <RiUserSettingsLine />{" "}
-                              <span className="pl-1">Profile</span>{" "}
-                            </div>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/">
-                          <a
-                            className={[
-                              styles.dropdownBtn,
-                              router.pathname.split("/")[2] === "cordinator"
-                                ? styles.active
-                                : "",
-                            ].join(" ")}
-                          >
-                            <div className="p-0 m-0">
-                              <FaPowerOff />{" "}
-                              <span className="pl-1">Logout</span>{" "}
-                            </div>
-                          </a>
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
-                </button>
-              </>
-            )}
-          </div>
+            <button
+              ref={nodeRefBtn}
+              className="inline-flex p-3 rounded lg:hidden text-white ml-auto hover:text-white outline-none overflow-y-auto"
+              onClick={() => setActive((prev) => !prev)}
+            >
+              {active ? (
+                <MdClose className="w-8 h-8 md:h-10 p-0" />
+              ) : (
+                <HiOutlineMenuAlt3 className="w-8 h-8 md:h-10 p-0" />
+              )}
+            </button>
+          </CSSTransition>
+        </SwitchTransition>
+        <div className="hidden w-full lg:inline-flex lg:flex-grow lg:w-auto">
+          <Links />
         </div>
       </nav>
+      <CSSTransition
+        nodeRef={nodeRef}
+        in={active}
+        mountOnEnter
+        unmountOnExit
+        timeout={400}
+        classNames={{
+          enterActive: animate.navBarEnterActive,
+          exitActive: animate.navBarExitActive,
+        }}
+      >
+        <div
+          id="lit"
+          ref={nodeRef}
+          className={`${active ? "" : "block"} ${styles.mobileLink}`}
+        >
+          <Links />
+        </div>
+      </CSSTransition>
     </>
   );
 };

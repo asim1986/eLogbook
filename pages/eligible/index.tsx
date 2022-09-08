@@ -1,9 +1,7 @@
-import Head from "next/head";
-import styles from "../styles/Login.module.scss";
-import Link from "next/link";
+import styles from "../../styles/Login.module.scss";
+import { Navbar } from "../../components/NavBar";
 import React, { useState } from "react";
-import { Navbar } from "../components/NavBar";
-import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
+import Head from "next/head";
 
 const Eligible = () => {
   const [textInput, setTextInput] = useState("");

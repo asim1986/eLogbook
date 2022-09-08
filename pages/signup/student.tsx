@@ -3,6 +3,7 @@ import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import { allInstitutions } from "../../utils/institutions";
 import styles from "../../styles/Signup.module.scss";
 import { Navbar } from "../../components/NavBar";
+import { customStyles } from "../../utils/util";
 import "react-phone-number-input/style.css";
 import React, { useState } from "react";
 import Select from "react-select";
@@ -25,7 +26,6 @@ const Student = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showInput, setShowInput] = useState(false);
-
   const [selectedFile, setSelectedFile] = useState({
     file: null,
     isUploaded: false,
@@ -54,7 +54,7 @@ const Student = () => {
   const onChangeHandlerLast = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,        
+        firstName: prev.name.firstName,
         lastName: evt.target.value,
       },
       email: evt.target.value,
@@ -73,7 +73,7 @@ const Student = () => {
   const onChangeHandlerEmail = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,        
+        firstName: prev.name.firstName,
         lastName: prev.name.lastName,
       },
       email: evt.target.value,
@@ -92,7 +92,7 @@ const Student = () => {
   const onChangeHandlerPhone = (value: string | undefined) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,        
+        firstName: prev.name.firstName,
         lastName: prev.name.lastName,
       },
       email: prev.email,
@@ -113,7 +113,7 @@ const Student = () => {
   ) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,        
+        firstName: prev.name.firstName,
         lastName: prev.name.lastName,
       },
       email: prev.email,
@@ -132,7 +132,7 @@ const Student = () => {
   const onChangeHandlerAddress = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,        
+        firstName: prev.name.firstName,
         lastName: prev.name.lastName,
       },
       email: prev.email,
@@ -151,7 +151,7 @@ const Student = () => {
   const onChangeHandlerOther = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,        
+        firstName: prev.name.firstName,
         lastName: prev.name.lastName,
       },
       email: prev.email,
@@ -170,7 +170,7 @@ const Student = () => {
   const onChangeHandlerDept = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,        
+        firstName: prev.name.firstName,
         lastName: prev.name.lastName,
       },
       email: prev.email,
@@ -189,7 +189,7 @@ const Student = () => {
   const onChangeHandlerMatric = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: {
-        firstName: prev.name.firstName,        
+        firstName: prev.name.firstName,
         lastName: prev.name.lastName,
       },
       email: prev.email,
@@ -207,7 +207,7 @@ const Student = () => {
 
   const onFileUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const mainFile = evt.target.files;
-    console.log(mainFile[0]);
+    // console.log(mainFile[0]);
     setSelectedFile({
       file: mainFile[0],
       isUploaded: true,
@@ -240,7 +240,7 @@ const Student = () => {
       setTextInput((prev) => ({
         name: {
           firstName: prev.name.firstName,
-          
+
           lastName: prev.name.lastName,
         },
         email: prev.email,
@@ -263,7 +263,7 @@ const Student = () => {
       setTextInput((prev) => ({
         name: {
           firstName: prev.name.firstName,
-          
+
           lastName: prev.name.lastName,
         },
         email: prev.email,
@@ -286,7 +286,7 @@ const Student = () => {
       setTextInput((prev) => ({
         name: {
           firstName: prev.name.firstName,
-          
+
           lastName: prev.name.lastName,
         },
         email: prev.email,
@@ -304,26 +304,6 @@ const Student = () => {
     setShowInput(option.value === "Others" ? true : false);
   };
 
-  const customStyles = {
-    option: (defaultStyles: any, state: any) => ({
-      ...defaultStyles,
-      backgroundColor: "#1f2937",
-      cursor: "pointer",
-      ":hover": { backgroundColor: "#1d4ed8" },
-      ":active": {
-        ...defaultStyles[":active"],
-        backgroundColor: state.isSelected ? "red" : "blue",
-      },
-    }),
-    singleValue: (defaultStyles: any, state: any) => ({
-      ...defaultStyles,
-      lineHeight: ".5rem",
-      padding: ".90rem 0",
-      color: "#eaeaea",
-      width: "100%",
-    }),
-  };
-
   return (
     <>
       <Head>
@@ -335,10 +315,10 @@ const Student = () => {
       <main>
         <section className={styles.hero}>
           <div className={styles.signupContainer}>
-            <div className="p-2 w-full sm:p-8 lg:p-10">
+            <div className="p-3 sm:p-5 lg:p-6 w-full">
               <h1 className={styles.h1}>Create a Student Account</h1>
               <form className="mt-4">
-                <div className="flex flex-col flex-col-reverse md:flex-row justify-between">
+                <div className="flex flex-col-reverse md:flex-row justify-between">
                   <div className="w-full">
                     <div className="flex flex-col md:flex-row mb-4">
                       <div className="w-full mb-4 md:mb-0 md:mr-1">

@@ -21,17 +21,16 @@ $sideBarWidth: 15rem;
 .backDrop {
   background: rgba(11, 16, 24, 0.8);
   backdrop-filter: blur(3px);
-  z-index: 20;
   @apply fixed left-0 top-0 h-screen lg:w-[calc(100%-15rem)];
-  @apply w-full lg:ml-[15rem];
+  @apply w-full lg:ml-[15rem] z-20;
 }
 
 .addStudent {
-  z-index: 20;
   border-radius: 15px;
   background: $primaryColor;
-  @apply fixed top-0 right-0 left-0 mx-auto w-10/12 mt-20 md:mt-40;
-  @apply lg:mt-[15vh] lg:mr-[13rem] md:w-10/12 lg:w-6/12;
+  @apply absolute md:fixed top-0 inset-x-0 mx-auto w-10/12 mt-20 landscape:mt-5 md:mt-40;
+  @apply lg:mt-[15vh] md:w-10/12 lg:w-6/12 z-20 overflow-y-auto;
+  @apply lg:ml-[calc((15rem+50%)*0.5)]
 }
 
 .addStudent div > form::-webkit-scrollbar {
@@ -44,23 +43,16 @@ $sideBarWidth: 15rem;
 
 .addStudent div > form {
   max-height: 60vh;
-  overflow-y: auto;
   padding: 0 0.5rem;
+  @apply overflow-y-auto ;
 }
 
 .addEligible {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  margin: 15vh 18rem 0 auto;
-  width: 40%;
-  max-height: 70vh;
   background: $primaryColor;
-  z-index: 20;
-  overflow-y: auto;
   border-radius: 15px;
-  // box-shadow: 1px 1px 5px #000;
+  @apply absolute inset-x-0 top-0 lg:w-[40%] w-11/12 md:w-9/12 z-20 overflow-y-auto lg:p-0;
+  @apply lg:ml-[calc(15rem+19%)] mt-[15vh] mx-auto p-3 max-h-[80vh] lg:max-h-[70vh];
+  @apply xl:ml-[calc(15rem+21%)];
 }
 
 .addStudent::-webkit-scrollbar {
@@ -72,13 +64,15 @@ $sideBarWidth: 15rem;
 }
 
 .addStudent h1 {
-  @apply font-bold text-center ml-9 mt-[-1.6rem] mb-2;
+  @apply font-bold text-center ml-0 md:ml-9 mt-1 md:mt-[-1.6rem] lit:mt-[-2.1rem] mb-2;
   @apply md:mt-[-1.8rem] text-lg md:text-xl lg:text-2xl py-2 md:py-0;
+  @apply lit:ml-5;
 }
 
 .signupBtnSt {
   border-radius: 15px;
-  @apply text-white font-medium text-base px-7 py-2 mx-1 w-full sm:w-auto text-center bg-blue-700;
+  @apply text-white font-medium text-base px-7 py-2 mx-1;
+  @apply w-full sm:w-auto text-center bg-blue-700 hover:bg-blue-800;
 }
 
 .blogTitle {
@@ -86,31 +80,29 @@ $sideBarWidth: 15rem;
 }
 
 .passportSt {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 20%;
+  @apply flex flex-row justify-center w-full md:mr-2 md:w-[100%]
 }
 
 .passportSt img {
-  // width: 100px;
-  // height: 100px;
   border-radius: 15px;
   @apply md:w-24 md:h-24 w-[90px] h-[80px] p-0;
 }
 
-.infoSection::-webkit-scrollbar {
+.infoSectionMain::-webkit-scrollbar {
   width: 8px;
 }
 
-.infoSection::-webkit-scrollbar-thumb {  
+.infoSectionMain::-webkit-scrollbar-thumb {  
   @apply bg-gray-600 hover:bg-gray-400;
 }
 
+.infoSectionMain {
+  @apply flex flex-row flex-wrap w-full mt-2 p-2 max-h-[50vh] overflow-auto;
+}
+
 .infoSection {
-  max-height: 45vh;
-  padding-right: 1rem;
-  @apply w-[90%] md:w-[80%] overflow-y-auto;
+  // max-height: 40vh;
+  @apply w-full md:w-[100%];
 }
 
 .infoSection div {
@@ -139,7 +131,7 @@ $sideBarWidth: 15rem;
   margin: 0 auto;
   position: absolute;
   place-items: center;
-  top: 100px;
+  top: 90px;
   left: 0;
   right: 0;
   width: 90%;
@@ -176,10 +168,14 @@ $sideBarWidth: 15rem;
 }
 
 .signupInput {
-  @apply bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg;
-  @apply focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700;
-  @apply dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500;
-  @apply dark:focus:border-blue-500;
+  @apply bg-gray-50 border border-gray-300 outline-gray-300 text-gray-900;
+  @apply block w-full p-2.5 dark:bg-gray-700 placeholder-gray-400 rounded-lg;
+  @apply dark:border-gray-600 dark:outline-gray-600 dark:text-white sm:text-sm;
+}
+
+.signupInput:focus {
+  border: 1px solid #5395ff;
+  outline: 1px solid #5395ff;
 }
 
 .phoneInput {
@@ -188,7 +184,8 @@ $sideBarWidth: 15rem;
 }
 
 .checkBox {
-  @apply w-4 h-4 bg-gray-50 rounded border-gray-300 focus:ring-blue-300 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600;
+  @apply w-4 h-4 bg-gray-50 rounded border-gray-300 focus:ring-blue-300 dark:focus:ring-blue-600;
+  @apply dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600;
 }
 
 .btnWrapper {
@@ -226,8 +223,8 @@ $sideBarWidth: 15rem;
 .select {
   [class$="-control"] {
     @apply text-white bg-gray-50 border border-gray-300 sm:text-sm rounded-lg;
-    @apply focus:ring-blue-100 focus:border-gray-100 w-full p-0 dark:bg-gray-700;
-    @apply dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-100 dark:focus:border-blue-100;
+    @apply focus:ring-gray-100 focus:border-gray-100 w-full p-0 dark:bg-gray-700 outline-none;
+    @apply dark:border-gray-600 placeholder-gray-400 text-white focus:ring-gray-100 focus:border-gray-500;
   }
 }
 
@@ -245,8 +242,9 @@ $sideBarWidth: 15rem;
 }
 
 .signupBtn {
-  border-radius: 15px;
-  @apply text-white font-medium text-base px-7 py-2 w-full sm:w-auto text-center mb-2 bg-blue-700;
+  @apply text-white font-medium text-base px-7 py-2 w-full;
+  @apply sm:w-auto text-center mb-2 bg-blue-800;
+  @apply hover:bg-blue-700 rounded-3xl;
 }
 
 .forgetPassword {
@@ -254,19 +252,14 @@ $sideBarWidth: 15rem;
 }
 
 .uploadAvatarBtn label {
-  padding: 0.2rem;
-  margin: 0;
-  text-align: center;
-  font-size: small;
-  cursor: pointer;
+  @apply p-1 m-0 text-center text-sm cursor-pointer;
 }
 
 .uploadAvatarBtn {
   border: 2px solid #1d4ed8;
   border-radius: 10px;
   padding: 0.2rem 0.1rem;
-  text-align: center;
-  margin: 0;
+  @apply m-0 text-center hover:bg-blue-700;
 }
 
 .uploadAvatarBtn input {
@@ -277,7 +270,8 @@ $sideBarWidth: 15rem;
 
 .fileUpload {
   border: 2px solid #166534;
-  @apply bg-green-800;
+  @apply bg-green-800 hover:bg-green-900;
+  @apply hover:border-green-900;
 }
 
 .passport {

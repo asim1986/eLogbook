@@ -1,11 +1,12 @@
 import styles from "../../styles/Signup.module.scss";
-import { useContext, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import GlobalContext from "../../context/GlobalContext";
 import animate from "../../styles/animate.module.css";
 import { MdClose } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { CgTrashEmpty } from "react-icons/cg";
+import BackBlurDrop from "../BackBlurDrop";
+import { useContext } from "react";
 
 const ViewBlogPost = ({ show }: { show: boolean }) => {
   const { setShowDetail, setShowAddModal } = useContext(GlobalContext);
@@ -19,29 +20,14 @@ const ViewBlogPost = ({ show }: { show: boolean }) => {
 
   return (
     <>
+      <BackBlurDrop show={show} />
       <CSSTransition
         mountOnEnter
         unmountOnExit
         in={show}
         timeout={{ enter: 400, exit: 1000 }}
         classNames={{
-          enter: "",
-          enterActive: animate.fadeEnterActive,
-          exit: "",
-          exitActive: animate.fadeExitActive,
-        }}
-      >
-        <div className={styles.backDrop}></div>
-      </CSSTransition>
-      <CSSTransition
-        mountOnEnter
-        unmountOnExit
-        in={show}
-        timeout={{ enter: 400, exit: 1000 }}
-        classNames={{
-          enter: "",
           enterActive: animate.animateEnterActive,
-          exit: "",
           exitActive: animate.animateExitActive,
         }}
       >

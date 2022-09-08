@@ -3,28 +3,22 @@ $navColorHover1: #f5c321;
 $navColorHover: #eb0f5b;
 
 .nav {
+
   background: $navColor;
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 1030;
-  padding: 0.2rem 2rem;
-  @apply flex items-center flex-wrap;
+  @apply flex items-center flex-wrap z-[1030] px-2 py-1 shadow-lg;
+  @apply fixed inset-x-0 top-0 md:landscape:px-7 md:px-5 lit:py-0;
 }
 
 .nav_div {
-  @apply lg:inline-flex lg:flex-row lg:ml-auto lg:w-auto w-full lg:items-center items-start flex flex-col lg:h-auto;
+  @apply lg:inline-flex flex flex-col lg:flex-row lg:ml-auto lg:w-auto w-full;
+  @apply lg:items-center items-start lg:h-auto px-2 overflow-y-auto;
+  @apply md:landscape:px-7 md:px-5 md:text-2xl landscape:text-xl lg:mb-0 mb-2;
 }
 
 .dropdownBtn > div {
-  display: inline-flex;
-  float: left;
-  border: none;
-  outline: none;
-  padding: 0 0.5rem 0 0.6rem;
-  margin: 0;
-  @apply lg:inline-flex lg:w-auto w-full rounded text-white font-bold items-center;
+  // padding: 0 0.5rem 0 0.6rem;
+  @apply inline-flex float-left lg:inline-flex lg:w-auto w-full rounded;
+  @apply border-none outline-none text-white font-bold items-center;
 }
 
 .dropdownBtn > div:hover {
@@ -54,6 +48,7 @@ $navColorHover: #eb0f5b;
 
 .dropdown_content > li {
   padding: 0.2rem 0;
+  @apply md:py-2;
 }
 
 .dropdown_content > li:hover {
@@ -61,7 +56,9 @@ $navColorHover: #eb0f5b;
 }
 
 .nav_li {
-  @apply lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-white font-bold items-center justify-center;
+  @apply lg:inline-flex lg:w-auto w-full px-3 py-2 rounded;
+  @apply text-white font-bold items-center justify-center;
+  @apply md:py-3 landscape:py-3 lg:text-lg;
 }
 
 .nav_li:hover {
@@ -76,11 +73,12 @@ $navColorHover: #eb0f5b;
   color: $navColorHover;
 }
 
+.mobileLink {
+  @apply w-full lg:hidden lg:flex-grow lg:w-auto fixed shadow-lg;
+  @apply top-16 md:top-[4.5rem] bg-gray-700 z-[1029] lit:top-12;
+}
+
 .hero {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  width: 100%;
   background-image: linear-gradient(
       to bottom,
       rgba(31, 41, 55, 0.5),
@@ -90,43 +88,52 @@ $navColorHover: #eb0f5b;
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
+  @apply h-screen p-0 m-0 w-full overflow-y-auto;
 }
 
 .heroContent {
-  position: absolute;
-  width: 50%;
-  top: 30vh;
-  left: 5rem;
+  width: 70%;
+  @apply landscape:w-screen ml-9 md:ml-10 left-0 top-[30vh];
+  @apply absolute landscape:top-[25vh] w-10/12 landscape:lit:w-[90%];
+  @apply lit:top-[15vh] overflow-auto md:top-[25vh];
+  @apply lg:w-7/12;
 }
 
 .heroContent > h1 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: $navColorHover;
+  @apply text-4xl md:text-6xl font-bold text-[#eb0f5b];
+  @apply lit:landscape:text-xs landscape:text-3xl;
+  @apply landscape:lg:text-5xl;
 }
 
 .heroContent > p {
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
+  @apply text-2xl md:text-5xl md:leading-tight landscape:text-3xl;
+  @apply lit:landscape:text-[.5rem] landscape:lit:text-red-500;
+  @apply landscape:text-2xl landscape:lg:text-4xl;
+}
+
+.heroContent div {
+  @apply mt-5 flex flex-wrap;
+}
+
+// LOGIN AND SIGNUP BUTTON >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+.heroContent a {
+  border-radius: 25px;
+  @apply py-2 px-6 text-lg;
+  @apply md:text-3xl md:px-9 md:py-4 md:mr-9 md:mt-5;
+  @apply landscape:text-lg landscape:px-5 landscape:py-1;
 }
 
 .heroContent a:first-child {
   color: $navColorHover;
   border: 2px solid $navColorHover;
-  padding: 0.5rem 1rem;
-  margin-right: 1rem;
-  font-size: medium;
-  border-radius: 25px;
+  @apply mr-5 md:mr-9 landscape:mr-5;
 }
 
 .heroContent a:last-child {
   background: $navColorHover;
   color: #eaeaea;
   border: 2px solid $navColorHover;
-  padding: 0.5rem 1rem;
-  margin-right: 1rem;
-  font-size: medium;
-  border-radius: 25px;
 }
 
 .heroContent a:first-child:hover {
@@ -139,116 +146,67 @@ $navColorHover: #eb0f5b;
   color: $navColorHover;
 }
 
-.blog {
-  text-align: center;
-  height: 100vh;
+// BLOGPOST >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+.table {
+  @apply flex p-5 flex-col space-x-0 space-y-3 landscape:flex-row;
+  @apply landscape:space-x-3 landscape:space-y-0;
+  @apply mx-auto h-fit;
 }
 
-.blog > h1 {
-  font-size: 2rem;
-  font-weight: bold;
-  color: $navColorHover;
+.row {
+  @apply flex-1;
 }
 
-.blogImg {
-  display: grid;
-  gap: 1rem;
-  margin: 0.5rem auto;
-  width: 90%;
+.row:nth-child(2) {
+  @apply flex-wrap space-y-3 ;
 }
 
-.blogImg > div {
-  position: relative;
-  cursor: pointer;
+.row .rowspan2 {
+  // flex: 1 1 100%;
+  @apply grow shrink basis-full;
 }
 
-.blogImg > div:first-child {
-  grid-column: 1 / span 2;
-  grid-row: 1 / span 2;
-  font-size: 1.5rem;
+.cell {
+  @apply relative;
 }
 
-.blogImg > div:first-child > div h1 {
-  grid-column: 1 / span 2;
-  grid-row: 1 / span 2;
-  font-size: 2rem;
+.cell img {
+  @apply w-full h-full object-cover align-middle rounded-xl;
 }
 
-.blogImg > div:nth-child(2) {
-  grid-column: 3;
-  grid-row: 1;
-  font-size: smaller;
+.cell > div {
+  @apply absolute top-0 left-0 w-full h-full bg-gray-900/70 rounded-lg;
 }
 
-.blogImg > div:nth-child(3) {
-  grid-column: 4;
-  grid-row: 1;
-  font-size: smaller;
+.cell div > div::-webkit-scrollbar {
+  width: 10px;
 }
 
-.blogImg > div:last-child {
-  grid-column: 3 / span 2;
-  grid-row: 2;
-  font-size: 1.3rem;
+.cell > div::-webkit-scrollbar-thumb {
+  @apply bg-gray-600 hover:bg-gray-700;
 }
 
-.blogImg > div:last-child > div h1 {
-  grid-column: 1 / span 2;
-  grid-row: 1 / span 2;
-  font-size: 1.8rem;
+.cell div > div {
+  @apply absolute bottom-0 leading-none md:leading-normal px-2 pb-2 landscape:px-2;
+  @apply landscape:pb-2 md:px-5 md:pb-4 overflow-y-auto max-h-full;
 }
 
-.blogImg > div img {
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
-  vertical-align: middle;
-  border-radius: 5px;
-}
-
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: rgba(31, 41, 55, 0.7);
-  width: 100%;
-  height: 100%;
-}
-
-.overlay > div {
-  text-align: start;
-  width: 80%;
-  padding: .5rem 0 .2rem .5rem;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-}
-
-.overlay > div h1 {
-  font-weight: bolder;
-  font-size: 1.2rem;
-}
+// FOOTER >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 .footer {
-  display: flex;
-  flex-direction: column;
-  padding: 1.3rem 0;
-  margin-top: 1rem;
-  border-top: 1px solid #eaeaea;
-  justify-content: center;
-  align-items: center;
+  // border-top: 1px solid ;
+  border-top: 1.5px solid;
+  @apply py-3 px-0 mt-2 border-gray-600;
+  @apply flex flex-col justify-center items-center text-center;
 }
 
 .socialMedia {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: .5rem;
-  width: 100%; 
+  @apply flex justify-center flex-wrap w-full mb-2 items-center;
 }
 
 .socialMedia a {
-  margin: 0 .5rem;
+  margin: 0 0.5rem;
 }
 
 .socialMedia a:hover {
@@ -276,102 +234,6 @@ $navColorHover: #eb0f5b;
     box-shadow: none;
     width: 100%;
     top: 0;
-  }
-
-  .heroContent {
-    width: 70%;
-    left: 2rem;
-  }
-
-  .heroContent > h1 {
-    font-size: 3rem;
-  }
-
-  .heroContent > p {
-    font-size: 2rem;
-  }
-
-  .heroContent a {
-    padding: 1rem 1.5rem;
-    font-size: 1.5rem;
-    border-radius: 50px;
-  }
-
-  .overlay div h1 {
-    font-size: larger;
-  }
-
-  .overlay div {
-    padding-left: 1rem;
-  }
-
-  .blogImg > div:first-child {
-    grid-column: 1 / span 2;
-    grid-row: 1 / span 2;
-    font-size: 2rem;
-  }
-  
-  .blogImg > div:nth-child(2) {
-    grid-column: 1;
-    grid-row: 3;
-    font-size: 1rem;
-  }
-  
-  .blogImg > div:nth-child(3) {
-    grid-column: 2;
-    grid-row: 3;
-    font-size: 1rem;
-  }
-  
-  .blogImg > div:last-child {
-    grid-column: 1 / span 2;
-    grid-row: 4;
-    font-size: 2rem;
-  }
-}
-
-@media (max-width: 600px) {
-
-  .nav {
-    padding: 0.3rem .5rem;
-  }
-
-  .heroContent > h1 {
-    font-size: 2.1rem;
-  }
-
-  .heroContent > p {
-    font-size: 1.2rem;
-  }
-
-  .heroContent a {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    border-radius: 50px;
-  }
-
-  .blogImg > div:first-child {
-    grid-column: 1 / span 2;
-    grid-row: 1 / span 2;
-    font-size: 1rem;
-  }
-  
-  .blogImg > div:nth-child(2) {
-    grid-column: 1;
-    grid-row: 3;
-    font-size: .5rem;
-  }
-  
-  .blogImg > div:nth-child(3) {
-    grid-column: 2;
-    grid-row: 3;
-    font-size: .5rem;
-  }
-  
-  .blogImg > div:last-child {
-    grid-column: 1 / span 2;
-    grid-row: 4;
-    font-size: 1rem;
   }
 }
 

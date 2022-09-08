@@ -2,11 +2,13 @@ import GlobalContext from "../../context/GlobalContext";
 import { CSSTransition } from "react-transition-group";
 import animate from "../../styles/animate.module.css";
 import styles from "../../styles/Signup.module.scss";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import "react-phone-number-input/style.css";
+import BackBlurDrop from "../BackBlurDrop";
 import { MdClose } from "react-icons/md";
 
 const AddBlogPost = ({ show }: { show: boolean }) => {
+  const nodeRef = useRef(null);
   const [textInput, setTextInput] = useState({
     title: "",
     content: "",
@@ -45,24 +47,9 @@ const AddBlogPost = ({ show }: { show: boolean }) => {
 
   return (
     <>
+      <BackBlurDrop show={show} />
       <CSSTransition
-        mountOnEnter
-        unmountOnExit
-        in={show}
-        timeout={{ enter: 400, exit: 1000 }}
-        classNames={{
-          enter: "",
-          enterActive: animate.fadeEnterActive,
-          exit: "",
-          exitActive: animate.fadeExitActive,
-        }}
-      >
-        <div
-          onClick={() => setShowAddModal(false)}
-          className={styles.backDrop}
-        ></div>
-      </CSSTransition>
-      <CSSTransition
+        nodeRef={nodeRef}
         mountOnEnter
         unmountOnExit
         in={show}
@@ -74,7 +61,7 @@ const AddBlogPost = ({ show }: { show: boolean }) => {
           exitActive: animate.animateExitActive,
         }}
       >
-        <div className={styles.addStudent}>
+        <div ref={nodeRef} className={styles.addStudent}>
           <div className="sm:p-5 lg:p-5">
             <MdClose
               onClick={() => setShowAddModal(false)}

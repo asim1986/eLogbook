@@ -2,240 +2,232 @@ import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import { allInstitutions } from "../../utils/institutions";
 import GlobalContext from "../../context/GlobalContext";
-import styles from "../../styles/Signup.module.scss";
 import { CSSTransition } from "react-transition-group";
 import animate from "../../styles/animate.module.css";
-import { useContext, useState } from "react";
+import { useContext, useState, useRef } from "react";
+import styles from "../../styles/Signup.module.scss";
+import { customStyles } from "../../utils/util";
 import "react-phone-number-input/style.css";
 import { MdClose } from "react-icons/md";
 import Select from "react-select";
+import BackBlurDrop from "../BackBlurDrop";
 
 const AddCordinator = ({ show }: { show: boolean }) => {
+  const nodeRef = useRef(null);
   const [textInput, setTextInput] = useState({
     name: { firstName: "", lastName: "" },
-    email: "",
+    staffId: "",
     phone: "",
-    password: "",
-    institute: "",
-    gender: "",
-    staff: "",
     dept: "",
+    gender: "",
+    institute: "",
+    other: "",
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const { setShowAddModal } = useContext(GlobalContext);
+  const [showInput, setShowInput] = useState(false);
   const [selectedFile, setSelectedFile] = useState({
     file: null,
     isUploaded: false,
-    img: null,
   });
-
-  const onChangeHandlerFirst = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setTextInput((prev) => ({
-      name: {
-        firstName: evt.target.value,
-        lastName: prev.name.lastName,
-      },
-      email: evt.target.value,
-      phone: prev.phone,
-      password: prev.password,
-      institute: prev.institute,
-      gender: prev.gender,
-      staff: prev.staff,
-      dept: prev.dept,
-    }));
-  };
-
-  const onChangeHandlerLast = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setTextInput((prev) => ({
-      name: {
-        firstName: prev.name.firstName,
-        lastName: evt.target.value,
-      },
-      email: evt.target.value,
-      phone: prev.phone,
-      password: prev.password,
-      institute: prev.institute,
-      gender: prev.gender,
-      staff: prev.staff,
-      dept: prev.dept,
-    }));
-  };
-
-  const onChangeHandlerEmail = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setTextInput((prev) => ({
-      name: {
-        firstName: prev.name.firstName,
-        lastName: prev.name.lastName,
-      },
-      email: evt.target.value,
-      phone: prev.phone,
-      password: prev.password,
-      institute: prev.institute,
-      gender: prev.gender,
-      staff: prev.staff,
-      dept: prev.dept,
-    }));
-  };
-
-  const onChangeHandlerPhone = (value: string | undefined) => {
-    setTextInput((prev) => ({
-      name: {
-        firstName: prev.name.firstName,
-        lastName: prev.name.lastName,
-      },
-      email: prev.email,
-      phone: value,
-      password: prev.password,
-      institute: prev.institute,
-      gender: prev.gender,
-      staff: prev.staff,
-      dept: prev.dept,
-    }));
-  };
-
-  const onChangeHandlerPassword = (
-    evt: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setTextInput((prev) => ({
-      name: {
-        firstName: prev.name.firstName,
-        lastName: prev.name.lastName,
-      },
-      email: prev.email,
-      phone: prev.phone,
-      password: evt.target.value,
-      institute: prev.institute,
-      gender: prev.gender,
-      staff: prev.staff,
-      dept: prev.dept,
-    }));
-  };
-
-  const onChangeHandlerDept = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setTextInput((prev) => ({
-      name: {
-        firstName: prev.name.firstName,
-        lastName: prev.name.lastName,
-      },
-      email: prev.email,
-      phone: prev.phone,
-      password: prev.password,
-      institute: prev.institute,
-      gender: prev.gender,
-      staff: prev.staff,
-      dept: evt.target.value,
-    }));
-  };
-
-  const onChangeHandlerStaff = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setTextInput((prev) => ({
-      name: {
-        firstName: prev.name.firstName,
-        lastName: prev.name.lastName,
-      },
-      email: prev.email,
-      phone: prev.phone,
-      password: prev.password,
-      institute: prev.institute,
-      gender: prev.gender,
-      staff: evt.target.value,
-      dept: prev.dept,
-    }));
-  };
-
-  const onFileUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    const mainFile = evt.target.files;
-    console.log(mainFile[0]);
-    setSelectedFile({
-      file: mainFile[0],
-      isUploaded: true,
-      img: URL.createObjectURL(mainFile[0]),
-    });
-  };
 
   type OptionType = { label: string; value: string }[];
-
-  const options: OptionType = allInstitutions.map((inst) => {
-    return { value: inst, label: inst };
-  });
 
   const optionsGender: OptionType = [
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
   ];
 
-  const selectInstitution = (option: OptionType | null | any) => {
+  const options: OptionType = allInstitutions.map((inst) => {
+    return { value: inst, label: inst };
+  });
+
+  const onChangeFirstName = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: {
+        firstName: evt.target.value,
+        lastName: prev.name.lastName,
+      },
+      staffId: prev.staffId,
+      phone: prev.phone,
+      dept: prev.dept,
+      gender: prev.gender,
+      institute: prev.institute,
+      other: prev.other,
+      email: prev.email,
+      password: prev.password,
+    }));
+  };
+
+  const onChangeLastName = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: {
+        firstName: prev.name.firstName,
+        lastName: evt.target.value,
+      },
+      staffId: prev.staffId,
+      phone: prev.phone,
+      dept: prev.dept,
+      gender: prev.gender,
+      institute: prev.institute,
+      other: prev.other,
+      email: prev.email,
+      password: prev.password,
+    }));
+  };
+
+  const onChangeStaffId = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: {
         firstName: prev.name.firstName,
         lastName: prev.name.lastName,
       },
-      email: prev.email,
+      staffId: evt.target.value,
       phone: prev.phone,
-      password: prev.password,
-      institute: option.value,
-      gender: prev.gender,
-      staff: prev.staff,
       dept: prev.dept,
+      gender: prev.gender,
+      institute: prev.institute,
+      other: prev.other,
+      email: prev.email,
+      password: prev.password,
+    }));
+  };
+
+  const onChangePhone = (value: string | undefined) => {
+    setTextInput((prev) => ({
+      name: {
+        firstName: prev.name.firstName,
+        lastName: prev.name.lastName,
+      },
+      staffId: prev.staffId,
+      phone: value,
+      dept: prev.dept,
+      gender: prev.gender,
+      institute: prev.institute,
+      other: prev.other,
+      email: prev.email,
+      password: prev.password,
+    }));
+  };
+
+  const onChangeDept = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: {
+        firstName: prev.name.firstName,
+        lastName: prev.name.lastName,
+      },
+      staffId: prev.staffId,
+      phone: prev.phone,
+      dept: evt.target.value,
+      gender: prev.gender,
+      institute: prev.institute,
+      other: prev.other,
+      email: prev.email,
+      password: prev.password,
     }));
   };
 
   const selectGender = (option: OptionType | null | any) => {
+    if (option) {
+      setTextInput((prev) => ({
+        name: {
+          firstName: prev.name.firstName,
+          lastName: prev.name.lastName,
+        },
+        staffId: prev.staffId,
+        phone: prev.phone,
+        dept: prev.dept,
+        gender: option.value,
+        institute: prev.institute,
+        other: prev.other,
+        email: prev.email,
+        password: prev.password,
+      }));
+    }
+  };
+
+  const selectInstitution = (option: OptionType | null | any) => {
+    if (option) {
+      setTextInput((prev) => ({
+        name: {
+          firstName: prev.name.firstName,
+          lastName: prev.name.lastName,
+        },
+        staffId: prev.staffId,
+        phone: prev.phone,
+        dept: prev.dept,
+        gender: prev.gender,
+        institute: option.value,
+        other: prev.other,
+        email: prev.email,
+        password: prev.password,
+      }));
+    }
+    setShowInput(option?.value === "Others" ? true : false);
+  };
+
+  const onChangeOther = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: {
         firstName: prev.name.firstName,
         lastName: prev.name.lastName,
       },
-      email: prev.email,
+      staffId: prev.staffId,
       phone: prev.phone,
-      password: prev.password,
-      institute: prev.institute,
-      gender: option.value,
-      staff: prev.staff,
       dept: prev.dept,
+      gender: prev.gender,
+      institute: prev.institute,
+      other: evt.target.value,
+      email: prev.email,
+      password: prev.password,
     }));
   };
 
-  const customStyles = {
-    option: (defaultStyles: any, state: any) => ({
-      ...defaultStyles,
-      backgroundColor: "#1f2937",
-      cursor: "pointer",
-      ":hover": { backgroundColor: "#1d4ed8" },
-      ":active": {
-        ...defaultStyles[":active"],
-        backgroundColor: state.isSelected ? "red" : "blue",
+  const onChangeEmail = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: {
+        firstName: prev.name.firstName,
+        lastName: prev.name.lastName,
       },
-    }),
-    singleValue: (defaultStyles: any, state: any) => ({
-      ...defaultStyles,
-      lineHeight: ".5rem",
-      padding: ".90rem 0",
-      color: "#eaeaea",
-      width: "100%",
-    }),
+      staffId: prev.staffId,
+      phone: prev.phone,
+      dept: prev.dept,
+      gender: prev.gender,
+      institute: prev.institute,
+      other: evt.target.value,
+      email: prev.email,
+      password: prev.password,
+    }));
+  };
+
+  const onChangePassword = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: {
+        firstName: prev.name.firstName,
+        lastName: prev.name.lastName,
+      },
+      staffId: prev.staffId,
+      phone: prev.phone,
+      dept: prev.dept,
+      gender: prev.gender,
+      institute: prev.institute,
+      other: prev.other,
+      email: prev.email,
+      password: evt.target.value,
+    }));
+  };
+
+  const onFileUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedFile({ file: evt.target.files[0], isUploaded: true });
   };
 
   return (
-    <>
+    <>      
+      <BackBlurDrop show={show} />
       <CSSTransition
-        mountOnEnter
-        unmountOnExit
-        in={show}
-        timeout={{ enter: 400, exit: 1000 }}
-        classNames={{
-          enter: "",
-          enterActive: animate.fadeEnterActive,
-          exit: "",
-          exitActive: animate.fadeExitActive,
-        }}
-      >
-        <div
-          onClick={() => setShowAddModal(false)}
-          className={styles.backDrop}
-        ></div>
-      </CSSTransition>
-      <CSSTransition
+      nodeRef={nodeRef}
         mountOnEnter
         unmountOnExit
         in={show}
@@ -247,7 +239,7 @@ const AddCordinator = ({ show }: { show: boolean }) => {
           exitActive: animate.animateExitActive,
         }}
       >
-        <div className={styles.addStudent}>
+        <div ref={nodeRef} className={styles.addStudent}>
           <div className="sm:p-5 lg:p-5">
             <MdClose
               onClick={() => setShowAddModal(false)}
@@ -255,6 +247,7 @@ const AddCordinator = ({ show }: { show: boolean }) => {
             />
             <h1>Add a Coordinator Account</h1>
             <form className="mt-2">
+
               <div className="flex space-y-4 mb-4 justify-between flex-col md:flex-row md:space-y-0">
                 <div className="w-full">
                   <input
@@ -264,7 +257,7 @@ const AddCordinator = ({ show }: { show: boolean }) => {
                     type="text"
                     className={styles.signupInput}
                     value={textInput.name.firstName}
-                    onChange={onChangeHandlerFirst}
+                    onChange={onChangeFirstName}
                   />
                 </div>
                 <div className="w-full md:ml-2">
@@ -275,10 +268,11 @@ const AddCordinator = ({ show }: { show: boolean }) => {
                     type="text"
                     className={styles.signupInput}
                     value={textInput.name.lastName}
-                    onChange={onChangeHandlerLast}
+                    onChange={onChangeLastName}
                   />
                 </div>
               </div>
+
               <div className="flex space-y-4 mb-4 justify-between flex-col md:flex-row md:space-y-0">
                 <div className="w-full">
                   <input
@@ -288,8 +282,8 @@ const AddCordinator = ({ show }: { show: boolean }) => {
                     id="staffID"
                     placeholder="Staff ID"
                     className={styles.signupInput}
-                    value={textInput.staff}
-                    onChange={onChangeHandlerStaff}
+                    value={textInput.staffId}
+                    onChange={onChangeStaffId}
                   />
                 </div>
                 <div className="w-full md:ml-2">
@@ -300,7 +294,7 @@ const AddCordinator = ({ show }: { show: boolean }) => {
                     className={styles.phoneInput}
                     defaultCountry="NG"
                     value={textInput.phone}
-                    onChange={onChangeHandlerPhone}
+                    onChange={onChangePhone}
                     error={
                       textInput.phone
                         ? isValidPhoneNumber(textInput.phone)
@@ -311,6 +305,7 @@ const AddCordinator = ({ show }: { show: boolean }) => {
                   />
                 </div>
               </div>
+
               <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-2">
                 <div className="w-full">
                   <input
@@ -320,7 +315,7 @@ const AddCordinator = ({ show }: { show: boolean }) => {
                     type="text"
                     className={styles.signupInput}
                     value={textInput.dept}
-                    onChange={onChangeHandlerDept}
+                    onChange={onChangeDept}
                   />
                 </div>
                 <div className="w-full">
@@ -344,6 +339,23 @@ const AddCordinator = ({ show }: { show: boolean }) => {
                   />
                 </div>
               </div>
+
+              {showInput && (
+                  <div className="mb-4">
+                    <div className="w-full">
+                      <input
+                        required
+                        placeholder="Institution Name"
+                        name="other"
+                        type="text"
+                        className={styles.signupInput}
+                        value={textInput.other}
+                        onChange={onChangeOther}
+                      />
+                    </div>
+                  </div>
+                )}
+
               <div className="mb-4">
                 <input
                   required
@@ -353,7 +365,7 @@ const AddCordinator = ({ show }: { show: boolean }) => {
                   placeholder="Email"
                   className={styles.signupInput}
                   value={textInput.email}
-                  onChange={onChangeHandlerEmail}
+                  onChange={onChangeEmail}
                 />
               </div>
               <div className={styles.passwordInput}>
@@ -365,17 +377,23 @@ const AddCordinator = ({ show }: { show: boolean }) => {
                   placeholder="Password"
                   className={styles.signupInput}
                   value={textInput.password}
-                  onChange={onChangeHandlerPassword}
+                  onChange={onChangePassword}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
                 >
                   {showPassword ? (
-                    <AiFillEyeInvisible size="1.5rem" />
-                  ) : (
-                    <AiFillEye size="1.5rem" />
-                  )}
+                      <AiFillEyeInvisible
+                        size="1.5rem"
+                        className="text-gray-300 hover:text-gray-100"
+                      />
+                    ) : (
+                      <AiFillEye
+                        size="1.5rem"
+                        className="text-gray-300 hover:text-gray-100"
+                      />
+                    )}
                 </button>
               </div>
               <div className="flex items-start justify-between mb-3">
@@ -401,7 +419,7 @@ const AddCordinator = ({ show }: { show: boolean }) => {
               </div>
               <div className={styles.btnWrapper}>
                 <button className={styles.signupBtn} type="submit">
-                  <span className="flex justify-center items-center">add</span>
+                  <span className="flex justify-center items-center">Add</span>
                 </button>
               </div>
             </form>

@@ -19,12 +19,13 @@ $grayColor: #6b7280;
   border-radius: 15px;
   top: 4.5rem;
   width: 95%;
-  height: calc(100vh - 5rem);
+  height: calc(99vh - 5rem);
   margin: 0 auto 12rem auto;
   overflow-x: auto;
   @apply flex justify-between absolute left-0 right-0;
-  // @apply lg:flex-col;
 }
+
+
 
 .message {
   // width: 40%;
@@ -63,13 +64,12 @@ $grayColor: #6b7280;
   width: 8px;
 }
 
-.chatList::-webkit-scrollbar-thumb { 
+.chatList::-webkit-scrollbar-thumb {
   @apply bg-gray-600 hover:bg-gray-400;
 }
 
 .chatList {
-  overflow-y: auto;
-  height: 65vh;
+  @apply overflow-y-auto h-[calc(100vh-14rem)] lg:h-[100vh-12rem] md:h-[calc(100vh-15rem)];
 }
 
 .chatMain {
@@ -78,9 +78,7 @@ $grayColor: #6b7280;
 }
 
 .chatUser {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
+  @apply flex flex-row w-full items-center;
 }
 
 .chatUser div:first-child {
@@ -94,17 +92,20 @@ $grayColor: #6b7280;
 .chatGroupName {
   font-weight: bold;
   font-size: larger;
+  @apply lit:text-xs lg:text-lg xl:text-xl;
 }
 
 .chatMsg {
   font-weight: lighter;
   font-size: small;
   color: #d1d5db;
+  @apply lit:text-xs md:text-sm xl:text-base;
 }
 
 .chatTime > h2 {
   font-size: small;
   color: #9ca3af;
+  @apply lit:text-[9px];
 }
 
 .chatTime div {
@@ -117,10 +118,12 @@ $grayColor: #6b7280;
   display: flex;
   justify-content: center;
   align-items: center;
+  @apply p-0;
 }
 
 .chatTime div > h3 {
   font-size: smaller;
+  @apply lit:text-[9px];
 }
 
 .chatDetails {
@@ -155,14 +158,15 @@ $grayColor: #6b7280;
 }
 
 .chatDetailsFooter {
-  @apply flex justify-center items-start py-3 border-t-2 border-gray-500 relative h-auto;
+  @apply flex justify-center items-start pt-3 pb-0 border-t-2;
+  @apply lit:pb-0 border-gray-500 relative h-auto;
 }
 
 .chatArea::-webkit-scrollbar {
   width: 8px;
 }
 
-.chatArea::-webkit-scrollbar-thumb {  
+.chatArea::-webkit-scrollbar-thumb {
   @apply bg-gray-600 hover:bg-gray-400;
 }
 
@@ -220,24 +224,39 @@ $grayColor: #6b7280;
   border-radius: 9999px;
   width: 95%;
   @apply placeholder:text-sm border border-gray-500 focus:border-gray-300;
+  @apply lit:placeholder:text-[10px]
 }
 
 .attachmentBtn {
-  position: absolute;
-  right: 7.5rem;
-  top: 1.2rem;
-  cursor: pointer;
-  @apply text-gray-500 hover:text-gray-200;
+  @apply absolute text-gray-500 hover:text-gray-200;
+  @apply cursor-pointer right-[7.5rem] top-[1.2rem];
+  @apply right-[5rem] top-[1.2rem]
 }
 
 .chatSendBtn {
-  position: absolute;
   right: 2rem;
   top: 1.2rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   background: #1e429f;
   padding: 0.4rem 1rem;
   border-radius: 9999px;
+  @apply absolute lit:text-sm flex items-center flex-row lit:px-3 lit:py-2;
+  @apply lit:right-3 lit:top-5;
+}
+
+@media (max-height: 414px) and (orientation: landscape) {
+  .chat {
+    @apply h-fit;
+  }
+
+  .chats {
+    @apply h-fit;
+  }
+
+  .chatList {
+    @apply h-fit;
+  }
+
+  .message {
+    @apply h-fit
+  }
 }

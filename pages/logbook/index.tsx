@@ -9,10 +9,9 @@ import { getMonth } from "../../utils/util";
 import Month from "../../components/Month";
 import Head from "next/head";
 
-
 const LogBook = () => {
   const [currenMonth, setCurrentMonth] = useState(getMonth());
-  const { monthIndex, showEventModal, showSideBar, showDetail } = useContext(GlobalContext);
+  const { monthIndex, showEventModal, showSideBar } = useContext(GlobalContext);
 
   useEffect(() => {
     setCurrentMonth(getMonth(monthIndex));
@@ -23,10 +22,10 @@ const LogBook = () => {
       <Head>
         <title>Logbook</title>
       </Head>
-      <header><Navbar /></header>
+      <Navbar />
 
+      <EventModal show={showEventModal} />
       <div className="h-screen flex flex-col">
-        <EventModal show={showEventModal} />
         <CalendarHeader />
         <div className="flex flex-1">
           <Sidebar />

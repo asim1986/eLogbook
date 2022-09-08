@@ -49,7 +49,7 @@ $grayColor: #6b7280;
   width: 8px;
 }
 
-.userProfile::-webkit-scrollbar-thumb {  
+.userProfile::-webkit-scrollbar-thumb {
   @apply bg-gray-600 hover:bg-gray-400;
 }
 
@@ -57,7 +57,8 @@ $grayColor: #6b7280;
   max-height: calc(95vh - 5rem);
   background: $navColor;
   border-radius: 15px;
-  @apply px-3 py-3 md:w-4/5 w-full overflow-y-auto md:overflow-y-hidden mb-4;
+  @apply px-3 py-3 md:w-4/5 w-full md:overflow-y-hidden mb-4;
+  @apply landscape:overflow-y-auto overflow-y-auto;
 }
 
 .userProfile h1 {
@@ -69,13 +70,13 @@ $grayColor: #6b7280;
   width: 8px;
 }
 
-.userProfile form::-webkit-scrollbar-thumb {  
+.userProfile form::-webkit-scrollbar-thumb {
   @apply bg-gray-600 hover:bg-gray-400;
 }
 
 .userProfile form {
-  max-height: 50vh;
-  @apply px-3 md:overflow-y-auto;
+  // max-height: 50vh;
+  @apply px-3 md:overflow-y-auto landscape:h-fit;
 }
 
 .userImg {
@@ -100,7 +101,12 @@ $grayColor: #6b7280;
   @apply focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700;
   @apply dark:border-gray-400 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500;
   @apply dark:focus:border-blue-500 read-only:bg-gray-600 read-only:text-gray-300;
-  @apply read-only:dark:border-none;
+}
+
+.inputStyle:focus,
+.inputStyle:active {
+  border: 1px solid #5395ff;
+  outline: 1px solid #5395ff;
 }
 
 .passwordInput {

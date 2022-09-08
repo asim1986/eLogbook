@@ -5,7 +5,8 @@ import GlobalContext from "../../context/GlobalContext";
 import { CSSTransition } from "react-transition-group";
 import animate from "../../styles/animate.module.css";
 import styles from "../../styles/Signup.module.scss";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
+import BackBlurDrop from "../BackBlurDrop";
 import "react-phone-number-input/style.css";
 import { MdClose } from "react-icons/md";
 import Select from "react-select";
@@ -24,6 +25,7 @@ const AddStudent = ({ show }: { show: boolean }) => {
     dept: "",
     matric: "",
   });
+  const nodeRef = useRef<any>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showInput, setShowInput] = useState(false);
   const { setShowAddModal } = useContext(GlobalContext);
@@ -39,26 +41,6 @@ const AddStudent = ({ show }: { show: boolean }) => {
       name: {
         firstName: evt.target.value,
         middleName: prev.name.middleName,
-        lastName: prev.name.lastName,
-      },
-      email: evt.target.value,
-      phone: prev.phone,
-      password: prev.password,
-      institute: prev.institute,
-      level: prev.level,
-      gender: prev.gender,
-      address: prev.address,
-      other: prev.other,
-      dept: prev.dept,
-      matric: prev.matric,
-    }));
-  };
-
-  const onChangeHandlerMiddle = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setTextInput((prev) => ({
-      name: {
-        firstName: prev.name.firstName,
-        middleName: evt.target.value,
         lastName: prev.name.lastName,
       },
       email: evt.target.value,
@@ -357,45 +339,28 @@ const AddStudent = ({ show }: { show: boolean }) => {
 
   return (
     <>
+      <BackBlurDrop show={show} />
+
       <CSSTransition
+        nodeRef={nodeRef}
         mountOnEnter
         unmountOnExit
         in={show}
         timeout={{ enter: 400, exit: 1000 }}
         classNames={{
-          enter: "",
-          enterActive: animate.fadeEnterActive,
-          exit: "",
-          exitActive: animate.fadeExitActive,
-        }}
-      >
-        <div
-          onClick={() => setShowAddModal(false)}
-          className={styles.backDrop}
-        ></div>
-      </CSSTransition>
-      <CSSTransition
-        mountOnEnter
-        unmountOnExit
-        in={show}
-        timeout={{ enter: 400, exit: 1000 }}
-        classNames={{
-          enter: "",
           enterActive: animate.animateEnterActive,
-          exit: "",
           exitActive: animate.animateExitActive,
         }}
       >
-        <div className={styles.addStudent}>
+        <div ref={nodeRef} className={styles.addStudent}>
           <div className="sm:p-5 lg:p-5">
             <MdClose
               onClick={() => setShowAddModal(false)}
-              // size={"1.5rem"}
               className="cursor-pointer mt-2 ml-3 md:m-0 md:p-0 text-2xl md:text-3xl"
             />
             <h1>Create a Student Account</h1>
             <form className="mt-4">
-              <div className="flex flex-col flex-col-reverse md:flex-row justify-between">
+              <div className="flex flex-col-reverse md:flex-row justify-between">
                 <div className="w-full">
                   <div className="flex flex-col md:flex-row mb-4">
                     <div className="w-full mb-4 md:mb-0 md:mr-1">

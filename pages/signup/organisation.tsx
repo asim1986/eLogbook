@@ -1,29 +1,109 @@
-import Head from "next/head";
-import styles from "../../styles/Signup.module.scss";
-import Link from "next/link";
-import React, { useState } from "react";
-import { Navbar } from "../../components/NavBar";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
+import styles from "../../styles/Signup.module.scss";
+import { Navbar } from "../../components/NavBar";
+import "react-phone-number-input/style.css";
+import React, { useState } from "react";
+import Link from "next/link";
+import Head from "next/head";
 
 const Organisation = () => {
-  const [textInput, setTextInput] = useState({ email: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
+  const [textInput, setTextInput] = useState({
+    name: "",
+    type: "",
+    address: "",
+    people: "",
+    phone: "",
+    email: "",
+    password: "",
+  });
+
   const [selectedFile, setSelectedFile] = useState({
     file: null,
     isUploaded: false,
   });
 
-  const onChangeHandlerEmail = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const onChangeName = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
-      email: evt.target.value,
+      name: evt.target.value,
+      type: prev.type,
+      address: prev.address,
+      people: prev.people,
+      phone: prev.phone,
+      email: prev.email,
       password: prev.password,
     }));
   };
 
-  const onChangeHandlerPassword = (
-    evt: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const onChangeType = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
+      name: prev.name,
+      type: evt.target.value,
+      address: prev.address,
+      people: prev.people,
+      phone: prev.phone,
+      email: prev.email,
+      password: prev.password,
+    }));
+  };
+
+  const onChangeAddress = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: prev.name,
+      type: prev.type,
+      address: evt.target.value,
+      people: prev.people,
+      phone: prev.phone,
+      email: prev.email,
+      password: prev.password,
+    }));
+  };
+
+  const onChangePeople = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: prev.name,
+      type: prev.type,
+      address: prev.address,
+      people: evt.target.value,
+      phone: prev.phone,
+      email: prev.email,
+      password: prev.password,
+    }));
+  };
+
+  const onChangePhone = (value: string | undefined) => {
+    setTextInput((prev) => ({
+      name: prev.name,
+      type: prev.type,
+      address: prev.address,
+      people: prev.people,
+      phone: value,
+      email: prev.email,
+      password: prev.password,
+    }));
+  };
+
+  const onChangeEmail = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: prev.name,
+      type: prev.type,
+      address: prev.address,
+      people: prev.people,
+      phone: prev.phone,
+      email: prev.email,
+      password: prev.password,
+    }));
+  };
+
+  const onChangePassword = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setTextInput((prev) => ({
+      name: prev.name,
+      type: prev.type,
+      address: prev.address,
+      people: prev.people,
+      phone: prev.phone,
       email: prev.email,
       password: evt.target.value,
     }));
@@ -32,6 +112,7 @@ const Organisation = () => {
   const onFileUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedFile({ file: evt.target.files[0], isUploaded: true });
   };
+
   return (
     <>
       <Head>
@@ -43,10 +124,10 @@ const Organisation = () => {
       <main>
         <section className={styles.hero}>
           <div className={styles.signupContainer}>
-            <div className="p-3 w-full sm:p-8 lg:p-10">
+            <div className="p-3 sm:p-5 lg:p-6 w-full">
               <h1 className={styles.h1}>Create an Organisational Account</h1>
               <form className="mt-4">
-                <div className="flex flex-col mb-4 space-y-6 md:flex-row md:space-y-0 md:space-x-6">
+                <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-2">
                   <div className="w-full">
                     <input
                       required
@@ -54,17 +135,19 @@ const Organisation = () => {
                       name="name"
                       type="text"
                       className={styles.signupInput}
-                      value=""
+                      value={textInput.name}
+                      onChange={onChangeName}
                     />
                   </div>
                   <div className="w-full">
                     <input
                       required
                       placeholder="Business Type Undertaken"
-                      name="lastName"
-                      type="business type"
+                      name="type"
+                      type="text"
                       className={styles.signupInput}
-                      value=""
+                      value={textInput.type}
+                      onChange={onChangeType}
                     />
                   </div>
                 </div>
@@ -76,29 +159,38 @@ const Organisation = () => {
                     id="address"
                     placeholder="Organisation Address"
                     className={styles.signupInput}
-                    value={textInput.email}
-                    onChange={onChangeHandlerEmail}
+                    value={textInput.address}
+                    onChange={onChangeAddress}
                   />
                 </div>
-                <div className="flex flex-col mb-4 space-y-6 md:flex-row md:space-y-0 md:space-x-6">
+                <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-2">
                   <div className="w-full">
                     <input
                       required
                       placeholder="No of People Employed"
-                      name="name"
+                      name="people"
                       type="number"
                       className={styles.signupInput}
-                      value=""
+                      value={textInput.people}
+                      onChange={onChangePeople}
                     />
                   </div>
                   <div className="w-full">
-                    <input
-                      required
+                    <PhoneInput
+                      international
+                      countryCallingCodeEditable={false}
                       placeholder="Phone Number"
-                      name="phone"
-                      type="tel"
-                      className={styles.signupInput}
-                      value=""
+                      className={styles.phoneInput}
+                      defaultCountry="NG"
+                      value={textInput.phone}
+                      onChange={onChangePhone}
+                      error={
+                        textInput.phone
+                          ? isValidPhoneNumber(textInput.phone)
+                            ? undefined
+                            : "Invalid phone number"
+                          : "Phone number required"
+                      }
                     />
                   </div>
                 </div>
@@ -111,7 +203,7 @@ const Organisation = () => {
                     placeholder="Email"
                     className={styles.signupInput}
                     value={textInput.email}
-                    onChange={onChangeHandlerEmail}
+                    onChange={onChangeEmail}
                   />
                 </div>
                 <div className={styles.passwordInput}>
@@ -123,7 +215,7 @@ const Organisation = () => {
                     placeholder="Password"
                     className={styles.signupInput}
                     value={textInput.password}
-                    onChange={onChangeHandlerPassword}
+                    onChange={onChangePassword}
                   />
                   <button
                     type="button"
@@ -193,9 +285,7 @@ const Organisation = () => {
                 <div className={styles.notReg}>
                   Already have an account?
                   <Link href="/login">
-                    <a className={styles.actionBtn}>
-                      Login here.
-                    </a>
+                    <a className={styles.actionBtn}>Login here.</a>
                   </Link>
                 </div>
               </form>

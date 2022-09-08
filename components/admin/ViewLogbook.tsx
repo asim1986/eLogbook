@@ -4,11 +4,13 @@ import animate from "../../styles/animate.module.css";
 import styles from "../../styles/Signup.module.scss";
 import { CgTrashEmpty } from "react-icons/cg";
 import { RiCheckFill } from "react-icons/ri";
+import { useContext, useRef } from "react";
 import { MdClose } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import { useContext } from "react";
+import BackBlurDrop from "../BackBlurDrop";
 
 const ViewLogbook = ({ show }: { show: boolean }) => {
+  const nodeRef = useRef<any>(null);
   const { setShowDetail, setShowAddModal } = useContext(GlobalContext);
   const labels = [
     { title: "ID", value: 1661438735332 },
@@ -38,36 +40,19 @@ const ViewLogbook = ({ show }: { show: boolean }) => {
 
   return (
     <>
+      <BackBlurDrop show={show} />
       <CSSTransition
+        nodeRef={nodeRef}
         mountOnEnter
         unmountOnExit
         in={show}
         timeout={{ enter: 400, exit: 1000 }}
         classNames={{
-          enter: "",
-          enterActive: animate.fadeEnterActive,
-          exit: "",
-          exitActive: animate.fadeExitActive,
-        }}
-      >
-        <div
-          onClick={() => setShowDetail(false)}
-          className={styles.backDrop}
-        ></div>
-      </CSSTransition>
-      <CSSTransition
-        mountOnEnter
-        unmountOnExit
-        in={show}
-        timeout={{ enter: 400, exit: 1000 }}
-        classNames={{
-          enter: "",
           enterActive: animate.animateEnterActive,
-          exit: "",
           exitActive: animate.animateExitActive,
         }}
       >
-        <div className={styles.addStudent}>
+        <div ref={nodeRef} className={styles.addStudent}>
           <div className="sm:p-5 lg:p-5">
             <div className="flex justify-between w-full">
               <div className="">
@@ -93,13 +78,13 @@ const ViewLogbook = ({ show }: { show: boolean }) => {
             </div>
 
             <h1>{activities[0].title}</h1>
-            <div className="flex flex-col md:flex-row items-center md:items-start flex-wrap w-full mt-2">
+            <div className="flex flex-col md:flex-row items-center md:items-start flex-wrap w-full mt-2 p-3 md:p-1">
               <div className={styles.passportSt}>
                 <img src="../../images/image3.jpg" alt="diagram" />
               </div>
               <div className={styles.infoSection}>
-                {labels.map((lbl, idx) => (
-                  <div key={idx}>
+                {labels.map((lbl, i) => (
+                  <div key={i.toString()}>
                     <span className="text-gray-500 w-1/4 uppercase">
                       {lbl.title}
                     </span>

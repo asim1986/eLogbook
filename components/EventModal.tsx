@@ -1,7 +1,7 @@
 import { MdClose, MdDragHandle, MdOutlineSchedule } from "react-icons/md";
 import { CSSTransition } from "react-transition-group";
 import GlobalContext from "../context/GlobalContext";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "../styles/Logbook.module.scss";
 import animate from "../styles/animate.module.css";
 import { AiOutlineDelete } from "react-icons/ai";
@@ -20,8 +20,13 @@ const labelsClasses: string[] = [
 const EventModal = ({ show }: { show: boolean }) => {
   const { setShowEventModal, daySelected, dispatchCalEvent, selectedEvent } =
     useContext(GlobalContext);
-
+  const [selectFile, setSelectFile] = useState({
+    file: null,
+    isUploaded: false,
+  });
   const [title, setTitle] = useState(selectedEvent ? selectedEvent.title : "");
+  const nodeRefModal = useRef<any>(null);
+  const nodeRefBackDrop = useRef<any>(null);
   const [description, setDescription] = useState(
     selectedEvent ? selectedEvent.description : ""
   );
@@ -30,6 +35,18 @@ const EventModal = ({ show }: { show: boolean }) => {
       ? labelsClasses.find((lbl) => lbl === selectedEvent.label)
       : labelsClasses[0]
   );
+
+  const onFileUploaded = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectFile({ file: evt.target.files[0], isUploaded: true });
+  };
+
+  const resetFileUpload = () => {
+    setSelectFile({ file: null, isUploaded: false });
+  };
+
+  useEffect(() => {
+    console.log(selectFile);
+  }, [selectFile]);
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -52,32 +69,34 @@ const EventModal = ({ show }: { show: boolean }) => {
   return (
     <>
       <CSSTransition
+        nodeRef={nodeRefBackDrop}
         mountOnEnter
         unmountOnExit
         in={show}
         timeout={{ enter: 400, exit: 1000 }}
         classNames={{
-          enter: "",
           enterActive: animate.fadeEnterActive,
-          exit: "",
           exitActive: animate.fadeExitActive,
         }}
       >
-        <div className={styles.backBlur}></div>
+        <div
+          ref={nodeRefBackDrop}
+          onClick={() => setShowEventModal(false)}
+          className={styles.backBlur}
+        ></div>
       </CSSTransition>
       <CSSTransition
+        nodeRef={nodeRefModal}
         mountOnEnter
         unmountOnExit
         in={show}
         timeout={{ enter: 400, exit: 1000 }}
         classNames={{
-          enter: "",
           enterActive: animate.animateEnterActive,
-          exit: "",
           exitActive: animate.animateExitActive,
         }}
       >
-        <div className={styles.eventModal}>
+        <div ref={nodeRefModal} className={styles.eventModal}>
           <form>
             <header className={styles.eventHeader}>
               <span>
@@ -132,27 +151,58 @@ const EventModal = ({ show }: { show: boolean }) => {
                   className={styles.eventTextArea}
                   onChange={(e) => setDescription(e.target.value)}
                 ></textarea>
-                <div className="mt-2">
-                  <label htmlFor="diagram">Upload Diagram</label>
-                  <input id="diagram" type="file" accept="image/*" />
-                </div>
-                <div className="flex gap-x-2 mt-3 items-center">
-                  <span className="mr-2">
-                    <FaRegBookmark />
-                  </span>
-                  {labelsClasses.map((lblClass, i) => (
-                    <span
-                      key={i}
-                      onClick={() => setSelectedLabel(lblClass)}
-                      className={`bg-${lblClass}-500 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer`}
+                <div className="flex flex-wrap justify-between">
+                  <div className="flex flex-wrap items-center w-full space-x-2">
+                    {/* Uploaded Button */}
+                    <div
+                      className={`${
+                        selectFile.isUploaded
+                          ? styles.fileUploadedBtn
+                          : styles.uploadDiagramBtn
+                      }`}
                     >
-                      {selectedLabel === lblClass && (
-                        <span>
-                          <RiCheckFill />
-                        </span>
-                      )}
+                      <label htmlFor="diagram">
+                        {selectFile.isUploaded
+                          ? "File Uploaded"
+                          : "Upload Diagram"}
+                      </label>
+                      <input
+                        id="diagram"
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={onFileUploaded}
+                      />
+                    </div>
+                    {/* RESET BUTTON */}
+                    {selectFile.isUploaded && (
+                      <div
+                        className={styles.resetFileBtn}
+                        onClick={resetFileUpload}
+                      >
+                        Reset
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex gap-x-2 mt-3 items-center">
+                    <span className="mr-2">
+                      <FaRegBookmark />
                     </span>
-                  ))}
+                    {labelsClasses.map((lblClass, i) => (
+                      <span
+                        key={i}
+                        onClick={() => setSelectedLabel(lblClass)}
+                        className={`bg-${lblClass}-500 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer`}
+                      >
+                        {selectedLabel === lblClass && (
+                          <span>
+                            <RiCheckFill />
+                          </span>
+                        )}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

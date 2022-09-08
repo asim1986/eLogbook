@@ -50,22 +50,24 @@ const Chat = (props: any) => {
                 </div>
               </span>
             </div>
-            
-            <div className={styles.chatMain}>
-              <span className={styles.chatUser}>
-                <div className="bg-red-500"></div>
-                <div>
-                  <h1 className={styles.chatGroupName}>Purity Matthew</h1>
-                  <p className={styles.chatMsg}>Lorem ipsum dolor...</p>
-                </div>
-              </span>
-              <span className={styles.chatTime}>
-                <h2>01:05AM</h2>
-                <div>
-                  <h3>2</h3>
-                </div>
-              </span>
-            </div>
+
+            {[0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map(() => (
+              <div className={styles.chatMain}>
+                <span className={styles.chatUser}>
+                  <div className="bg-red-500"></div>
+                  <div>
+                    <h1 className={styles.chatGroupName}>Purity Matthew</h1>
+                    <p className={styles.chatMsg}>Lorem ipsum dolor...</p>
+                  </div>
+                </span>
+                <span className={styles.chatTime}>
+                  <h2>01:05AM</h2>
+                  <div>
+                    <h3>2</h3>
+                  </div>
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

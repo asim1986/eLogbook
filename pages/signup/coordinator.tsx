@@ -7,10 +7,10 @@ import { customStyles } from "../../utils/util";
 import "react-phone-number-input/style.css";
 import React, { useState } from "react";
 import Select from "react-select";
-import Link from "next/link";
 import Head from "next/head";
+import Link from "next/link";
 
-const Supervisor = () => {
+const Coordinator = () => {
   const [textInput, setTextInput] = useState({
     name: { firstName: "", lastName: "" },
     staffId: "",
@@ -53,7 +53,7 @@ const Supervisor = () => {
       institute: prev.institute,
       other: prev.other,
       email: prev.email,
-      password: prev.password
+      password: prev.password,
     }));
   };
 
@@ -70,7 +70,7 @@ const Supervisor = () => {
       institute: prev.institute,
       other: prev.other,
       email: prev.email,
-      password: prev.password
+      password: prev.password,
     }));
   };
 
@@ -87,7 +87,7 @@ const Supervisor = () => {
       institute: prev.institute,
       other: prev.other,
       email: prev.email,
-      password: prev.password
+      password: prev.password,
     }));
   };
 
@@ -104,7 +104,7 @@ const Supervisor = () => {
       institute: prev.institute,
       other: prev.other,
       email: prev.email,
-      password: prev.password
+      password: prev.password,
     }));
   };
 
@@ -121,7 +121,7 @@ const Supervisor = () => {
       institute: prev.institute,
       other: prev.other,
       email: prev.email,
-      password: prev.password
+      password: prev.password,
     }));
   };
 
@@ -139,7 +139,7 @@ const Supervisor = () => {
         institute: prev.institute,
         other: prev.other,
         email: prev.email,
-        password: prev.password
+        password: prev.password,
       }));
     }
   };
@@ -158,7 +158,7 @@ const Supervisor = () => {
         institute: option.value,
         other: prev.other,
         email: prev.email,
-        password: prev.password
+        password: prev.password,
       }));
     }
     setShowInput(option?.value === "Others" ? true : false);
@@ -177,7 +177,7 @@ const Supervisor = () => {
       institute: prev.institute,
       other: evt.target.value,
       email: prev.email,
-      password: prev.password
+      password: prev.password,
     }));
   };
 
@@ -194,7 +194,7 @@ const Supervisor = () => {
       institute: prev.institute,
       other: evt.target.value,
       email: prev.email,
-      password: prev.password
+      password: prev.password,
     }));
   };
 
@@ -211,7 +211,7 @@ const Supervisor = () => {
       institute: prev.institute,
       other: prev.other,
       email: prev.email,
-      password: evt.target.value
+      password: evt.target.value,
     }));
   };
 
@@ -222,7 +222,7 @@ const Supervisor = () => {
   return (
     <>
       <Head>
-        <title>Signup | Supervisor</title>
+        <title>Signup | Cordinator</title>
       </Head>
       <header>
         <Navbar />
@@ -231,7 +231,7 @@ const Supervisor = () => {
         <section className={styles.hero}>
           <div className={styles.signupContainer}>
             <div className="p-3 sm:p-5 lg:p-6 w-full">
-              <h1 className={styles.h1}>Create a Supervisor Account</h1>
+              <h1 className={styles.h1}>Create a Cordinator Account</h1>
               <form className="mt-4">
                 <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-2">
                   <div className="w-full">
@@ -449,11 +449,10 @@ const Supervisor = () => {
               </form>
             </div>
           </div>
-          <div className={styles.spacer}></div>
         </section>
       </main>
     </>
   );
 };
 
-export default Supervisor;
+export default Coordinator;
