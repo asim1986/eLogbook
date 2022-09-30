@@ -283,13 +283,13 @@ $sideBarWidth: 15rem;
   @apply md:left-12 md:ml-6 md:top-4;
 }
 
-.addStudentBtn {
+.addBtn {
   border-radius: 50%;
-  @apply flex flex-row items-center md:space-x-2 justify-center px-1 md:px-3 py-3 md:py-1 text-sm font-medium;
-  @apply hover:bg-blue-600 border border-blue-600 w-12 h-12 md:w-fit md:h-12 md:rounded-2xl;
+  @apply flex flex-row items-center md:space-x-2 justify-center px-1 md:px-2 py-2 md:py-1 text-sm font-medium;
+  @apply hover:bg-blue-600 border border-blue-600 w-12 h-12 md:w-fit md:rounded-2xl;
 }
 
-.addStudentBtn span {
+.addBtn span {
   @apply hidden md:block;
 }
 

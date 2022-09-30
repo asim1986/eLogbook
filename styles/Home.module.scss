@@ -3,7 +3,6 @@ $navColorHover1: #f5c321;
 $navColorHover: #eb0f5b;
 
 .nav {
-
   background: $navColor;
   @apply flex items-center flex-wrap z-[1030] px-2 py-1 shadow-lg;
   @apply fixed inset-x-0 top-0 md:landscape:px-7 md:px-5 lit:py-0;
@@ -93,10 +92,10 @@ $navColorHover: #eb0f5b;
 
 .heroContent {
   width: 70%;
-  @apply landscape:w-screen ml-9 md:ml-10 left-0 top-[30vh];
+  @apply landscape:w-screen ml-9 md:ml-10 inset-x-0 top-[30vh];
   @apply absolute landscape:top-[25vh] w-10/12 landscape:lit:w-[90%];
-  @apply lit:top-[15vh] overflow-auto md:top-[25vh];
-  @apply lg:w-7/12;
+  @apply lit:top-[15vh] overflow-auto md:top-[25vh] lg:mx-auto;
+  @apply lg:w-7/12 lg:text-center lg:flex lg:flex-col lg:items-center;
 }
 
 .heroContent > h1 {
@@ -112,7 +111,7 @@ $navColorHover: #eb0f5b;
 }
 
 .heroContent div {
-  @apply mt-5 flex flex-wrap;
+  @apply mt-5 flex flex-wrap lg:justify-center text-center;
 }
 
 // LOGIN AND SIGNUP BUTTON >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -120,14 +119,14 @@ $navColorHover: #eb0f5b;
 .heroContent a {
   border-radius: 25px;
   @apply py-2 px-6 text-lg;
-  @apply md:text-3xl md:px-9 md:py-4 md:mr-9 md:mt-5;
+  @apply md:text-3xl md:px-9 md:py-4 md:mr-9 lg:mr-0 md:mt-5;
   @apply landscape:text-lg landscape:px-5 landscape:py-1;
 }
 
 .heroContent a:first-child {
   color: $navColorHover;
   border: 2px solid $navColorHover;
-  @apply mr-5 md:mr-9 landscape:mr-5;
+  @apply mr-5 md:mr-9 lg:mr-0 landscape:mr-5;
 }
 
 .heroContent a:last-child {

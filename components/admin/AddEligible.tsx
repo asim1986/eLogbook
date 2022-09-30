@@ -4,14 +4,16 @@ import { CSSTransition } from "react-transition-group";
 import animate from "../../styles/animate.module.css";
 import styles from "../../styles/Signup.module.scss";
 import { useContext, useState, useRef } from "react";
+import { customStyles } from "../../utils/util";
 import "react-phone-number-input/style.css";
 import BackBlurDrop from "../BackBlurDrop";
+import { level } from "../../utils/levels";
 import { MdClose } from "react-icons/md";
 import Select from "react-select";
 
 const AddEligible = ({ show }: { show: boolean }) => {
   const nodeRef = useRef<any>(null);
-  const nodeRefBack = useRef<any>(null);
+
   const [textInput, setTextInput] = useState({
     supervisor: "",
     institute: "",
@@ -23,7 +25,7 @@ const AddEligible = ({ show }: { show: boolean }) => {
   const [showInput, setShowInput] = useState(false);
   const { setShowAddModal } = useContext(GlobalContext);
 
-  const onChangeHandlerMatric = (
+  const onChangeMatric = (
     evt: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     setTextInput((prev) => ({
@@ -36,7 +38,7 @@ const AddEligible = ({ show }: { show: boolean }) => {
     }));
   };
 
-  const onChangeHandlerSupervisor = (
+  const onChangeSupervisor = (
     evt: React.ChangeEvent<HTMLInputElement>
   ) => {
     setTextInput((prev) => ({
@@ -49,7 +51,7 @@ const AddEligible = ({ show }: { show: boolean }) => {
     }));
   };
 
-  const onChangeHandlerOther = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeOther = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       supervisor: prev.supervisor,
       institute: prev.institute,
@@ -60,7 +62,7 @@ const AddEligible = ({ show }: { show: boolean }) => {
     }));
   };
 
-  const onChangeHandlerDept = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeDept = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       supervisor: prev.supervisor,
       institute: prev.institute,
@@ -77,12 +79,7 @@ const AddEligible = ({ show }: { show: boolean }) => {
     return { value: inst, label: inst };
   });
 
-  const optionsLevel: OptionType = [
-    { value: "ND1", label: "ND1" },
-    { value: "NC2", label: "NC2" },
-    { value: "300", label: "300" },
-    { value: "400", label: "400" },
-  ];
+  const optionsLevel: OptionType = level;
 
   const selectInstitution = (option: OptionType | null | any) => {
     if (option) {
@@ -109,26 +106,6 @@ const AddEligible = ({ show }: { show: boolean }) => {
         matric: prev.matric,
       }));
     }
-  };
-
-  const customStyles = {
-    option: (defaultStyles: any, state: any) => ({
-      ...defaultStyles,
-      backgroundColor: "#1f2937",
-      cursor: "pointer",
-      ":hover": { backgroundColor: "#1d4ed8" },
-      ":active": {
-        ...defaultStyles[":active"],
-        backgroundColor: state.isSelected ? "red" : "blue",
-      },
-    }),
-    singleValue: (defaultStyles: any, state: any) => ({
-      ...defaultStyles,
-      lineHeight: ".5rem",
-      padding: ".90rem 0",
-      color: "#eaeaea",
-      width: "100%",
-    }),
   };
 
   return (
@@ -162,7 +139,7 @@ const AddEligible = ({ show }: { show: boolean }) => {
                     type="text"
                     className={styles.signupInput}
                     value={textInput.supervisor}
-                    onChange={onChangeHandlerSupervisor}
+                    onChange={onChangeSupervisor}
                   />
                 </div>
               </div>
@@ -187,7 +164,7 @@ const AddEligible = ({ show }: { show: boolean }) => {
                       type="text"
                       className={styles.signupInput}
                       value={textInput.other}
-                      onChange={onChangeHandlerOther}
+                      onChange={onChangeOther}
                     />
                   </div>
                 </div>
@@ -201,7 +178,7 @@ const AddEligible = ({ show }: { show: boolean }) => {
                     type="text"
                     className={styles.signupInput}
                     value={textInput.dept}
-                    onChange={onChangeHandlerDept}
+                    onChange={onChangeDept}
                   />
                 </div>
                 <div className="w-full mr-1">
@@ -226,7 +203,7 @@ const AddEligible = ({ show }: { show: boolean }) => {
                   placeholder="Matric Number(s)"
                   className={styles.signupInput}
                   value={textInput.matric}
-                  onChange={onChangeHandlerMatric}
+                  onChange={onChangeMatric}
                 ></textarea>
               </div>
               <div className="flex justify-center p-0 m-0 mb-4 md:mb-0">

@@ -1,12 +1,16 @@
-import "../styles/globals.scss";
-import type { AppProps } from "next/app";
 import ContextWrapper from "../context/ContextWrapper";
+import { ApolloProvider } from "@apollo/client";
+import type { AppProps } from "next/app";
+import client from "../apollo-client";
+import "../styles/globals.scss";
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
-    <ContextWrapper>
-      <Component {...pageProps} />
-    </ContextWrapper>
+    <ApolloProvider client={client}>
+      <ContextWrapper>
+        <Component {...pageProps} />
+      </ContextWrapper>
+    </ApolloProvider>
   );
 };
 

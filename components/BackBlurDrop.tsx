@@ -2,12 +2,11 @@ import { CSSTransition } from "react-transition-group";
 import GlobalContext from "../context/GlobalContext";
 import animate from "../styles/animate.module.css";
 import styles from "../styles/Signup.module.scss";
-
 import { useContext, useRef } from "react";
 
 const BackBlurDrop = ({ show }: { show: boolean }) => {
   const nodeRef = useRef<any>(null);
-  const { setShowDetail } = useContext(GlobalContext);
+  const { setShowDetail, setShowAddModal } = useContext(GlobalContext);
   return (
     <CSSTransition
       nodeRef={nodeRef}
@@ -23,7 +22,10 @@ const BackBlurDrop = ({ show }: { show: boolean }) => {
       }}
     >
       <div
-        onClick={() => setShowDetail(false)}
+        onClick={() => {
+          setShowDetail(false);
+          setShowAddModal(false);
+        }}
         ref={nodeRef}
         className={styles.backDrop}
       ></div>

@@ -19,7 +19,7 @@ const AddBlogPost = ({ show }: { show: boolean }) => {
     isUploaded: false,
     img: null,
   });
-  const onChangeHandlerContent = (
+  const onChangeContent = (
     evt: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     setTextInput((prev) => ({
@@ -28,7 +28,7 @@ const AddBlogPost = ({ show }: { show: boolean }) => {
     }));
   };
 
-  const onChangeHandlerTitle = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeTitle = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       title: evt.target.value,
       content: prev.content,
@@ -109,7 +109,7 @@ const AddBlogPost = ({ show }: { show: boolean }) => {
                     type="text"
                     className={styles.signupInput}
                     value={textInput.title}
-                    onChange={onChangeHandlerTitle}
+                    onChange={onChangeTitle}
                   />
                 </div>
               </div>
@@ -122,7 +122,7 @@ const AddBlogPost = ({ show }: { show: boolean }) => {
                   placeholder="Post content here..."
                   className={styles.signupInput}
                   value={textInput.content}
-                  onChange={onChangeHandlerContent}
+                  onChange={onChangeContent}
                 ></textarea>
               </div>
               <div className="flex justify-center p-0 m-0 mb-4 md:mb-0">

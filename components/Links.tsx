@@ -98,11 +98,11 @@ const Links = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/signup/cordinator">
+                    <Link href="/signup/coordinator">
                       <a
                         className={[
                           styles.dropdownBtn,
-                          router.pathname.split("/")[2] === "cordinator"
+                          router.pathname.split("/")[2] === "coordinator"
                             ? styles.active
                             : "",
                         ].join(" ")}

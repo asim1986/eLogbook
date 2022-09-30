@@ -23,7 +23,7 @@ const MainHeader = ({ style, title }: MainHeaderType) => {
       <div className="lg:mr-5 md:mr-2">
         <button
           onClick={() => setShowAddModal(true)}
-          className={styles.addStudentBtn}
+          className={styles.addBtn}
         >
           <span className="md:text-lg">{title}</span> <FaPlus className="text-xl md:mr-2 md:text-lg" />
         </button>
