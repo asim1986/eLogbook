@@ -21,7 +21,7 @@ const Loader = ({ show }: { show: boolean }) => {
       >
         <div ref={nodeRef} className={styles.backBlur}></div>
       </CSSTransition>
-      <div className="absolute z-50 mx-auto mt-[20vh] inset-x-0 flex justify-center">
+      <div className="absolute z-50 mx-auto mt-[30vh] inset-x-0 flex justify-center">
         <Rings
           height="100"
           width="100"

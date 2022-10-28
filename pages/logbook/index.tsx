@@ -3,13 +3,33 @@ import CalendarHeader from "../../components/CalendarHeader";
 import GlobalContext from "../../context/GlobalContext";
 import EventModal from "../../components/EventModal";
 import SidebarSM from "../../components/SideBarSM";
+import { GetServerSideProps, NextPage } from "next";
 import { Navbar } from "../../components/NavBar";
 import Sidebar from "../../components/Sidebar";
 import { getMonth } from "../../utils/util";
 import Month from "../../components/Month";
+import store from "../../store/store";
 import Head from "next/head";
 
-const LogBook = () => {
+export const getServerSideProps = (context: any) => {
+  const isAuth = store.getState().auth.isAuth;
+  const role = store.getState().auth.userData.user;
+
+  if ((!isAuth && role !== "Student" && role !== "Admin") || !role) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
+
+const LogBook: NextPage = () => {
   const [currenMonth, setCurrentMonth] = useState(getMonth());
   const { monthIndex, showEventModal, showSideBar } = useContext(GlobalContext);
 

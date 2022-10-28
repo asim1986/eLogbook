@@ -1,5 +1,4 @@
-import React, { useContext } from "react";
-import GlobalContext from "../context/GlobalContext";
+import React from "react";
 import Day from "./Day";
 
 export default function Month({ month }: any) {

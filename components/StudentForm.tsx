@@ -1,12 +1,13 @@
+import React, { Fragment, useContext, useEffect, useRef, useState } from "react";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import { REGISTER_STUDENT } from "../graphql/mutations/student";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
-import React, { Fragment, useContext, useState } from "react";
 import { allInstitutions } from "../utils/institutions";
+import { useMutation, useQuery } from "@apollo/client";
 import { IFormInput } from "../interfaces/formInput";
 import GlobalContext from "../context/GlobalContext";
 import UPDATE_AVATAR from "../schema/updateAvatar";
 import styles from "../styles/Signup.module.scss";
-import { useMutation } from "@apollo/client";
 import { customStyles } from "../utils/util";
 import "react-phone-number-input/style.css";
 import { ErrorModal } from "./ErrorModal";
@@ -16,38 +17,83 @@ import Select from "react-select";
 import Loader from "./Loader";
 import Link from "next/link";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
+import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
+import { IFileInputType, IUploadFile } from "../interfaces/upload.interface";
 
 const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
   const { showEventModal, setShowEventModal } = useContext(GlobalContext);
+  // const [avatar, setAvatar] = useState<string | null>(null);
+  const avatar = useRef<string|null>();
   const [textInput, setTextInput] = useState({
     name: { firstName: "", lastName: "" },
     email: "",
     phone: "",
     password: "",
     institute: "",
-    level: "",
+    level: 'userData.level',
     gender: "",
     address: "",
     other: "",
-    dept: "",
+    dept: 'userData.department',
     matric: "",
   });
-  const [addStudent, { data, loading, error, reset }] = useMutation(
-    UPDATE_AVATAR,
-    {
-      onError: ({ graphQLErrors, networkError }) => {
-        // alert(error?.message);
-        setShowEventModal(true);
-        if (graphQLErrors)
-          graphQLErrors.forEach(({ message, locations, path }) =>
-            console.log(
-              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-            )
-          );
-        if (networkError) console.log(`[Network error]: ${networkError}`);
+
+  // const [createAvatar, { data }] = useMutation(UPDATE_AVATAR, {
+  //   onError: ({ graphQLErrors, networkError }) => {
+  //     // alert(error?.message);
+  //     setShowEventModal(true);
+  //     if (graphQLErrors)
+  //       graphQLErrors.forEach(({ message, locations, path }) => {
+  //         console.log(
+  //           `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+  //         );
+  //         toast.error(`${message}`, errorToastStyle);
+  //       });
+  //     if (networkError) {
+  //       toast.error(`${networkError}`, errorToastStyle);
+  //       console.log(`[Network error]: ${networkError}`);
+  //     }
+  //   },
+  // });
+
+  const [addStudent, { loading, data, reset }] = useMutation(REGISTER_STUDENT, {
+    variables: {
+      registeredInput: {
+        firstName: textInput.name.firstName,
+        lastName: textInput.name.lastName,
+        email: textInput.email,
+        password: textInput.password,
+        matricNo: textInput.matric,
+        phone: textInput.phone,
+        institute: textInput.institute,
+        department: textInput.dept,
+        place: "nhubfoundation@nhub.org",
+        level: textInput.level,
+        gender: textInput.gender,
+        address: textInput.address,
+        avatar: avatar.current && avatar.current,
       },
-    }
-  );
+    },
+    onCompleted: () => {
+      toast.success("Registered successfully!", successToastStyle);
+    },
+    onError: ({ graphQLErrors, networkError }) => {
+      // alert(error?.message);
+      // setShowEventModal(true);
+      if (graphQLErrors)
+        graphQLErrors.forEach(({ message, locations, path }) => {
+          console.log(
+            `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+          );
+          toast.error(`${message}`, errorToastStyle);
+        });
+      if (networkError) {
+        toast.error(`${networkError}`, errorToastStyle);
+        console.log(`[Network error]: ${networkError}`);
+      }
+    },
+  });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showInput, setShowInput] = useState(false);
@@ -321,28 +367,21 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
   };
 
   // if (error) ErrorToast(error.message);
-
   const onSubmitHandler = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    // addStudent({
-    //   variables: {
-    //     testInput: {
-    //       file: selectedFile.file,
-    //       id: "8eccc4a7-e697-427c-833a-1afd941e3432",
-    //     },
-    //   },
-    // });
-    // console.log("DATA***", data);
     const formData = new FormData();
-    const query = `mutation($updateInput: AvatarInput!) { updateAvatar(updateInput: $updateInput) { message imageUrl status } }`;
+    const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
 
-    type UpdateInputType = { id: string; file: null };
-    const updateInput: UpdateInputType = {
-      id: "6d8c1b26-34d4-4551-ad91-1e2b4c94dafa",
+    const fileInput: IFileInputType = {
       file: null,
+      type: "avatar",
     };
-    const map = { "0": ["variables.updateInput.file"] };
-    const operations = JSON.stringify({ query, variables: { updateInput } });
+
+    const map = { "0": ["variables.input.file"] };
+    const operations = JSON.stringify({
+      query,
+      variables: { input: fileInput },
+    });
     formData.append("operations", operations);
     formData.append("map", JSON.stringify(map));
     formData.append("0", selectedFile.file);
@@ -352,18 +391,33 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
           "apollo-require-preflight": true,
         },
       })
-      .then((response) => console.log("RESPONSE****", response))
-      .catch((error) => console.log(error));
+      .then((response) => {
+        // console.log("RESPONSE****", response);
+        const status = response.status;
+        const { data } = response.data;
+        const { imageUrl } = data.uploadFile as IUploadFile;
+        // const { imageUrl } = data;
+        // const { imageUrl }  = data;
+        if (status === 200) {   
+          avatar.current = imageUrl
+          if (avatar.current) addStudent();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("An error occurred while uploading image", errorToastStyle);
+      });
   };
 
   return (
     <Fragment>
+      <Toaster position="top-center" reverseOrder={false} />
       {loading && <Loader show={true} />}
-      <ErrorModal
-        message={error?.message}
+      {/* <ErrorModal
+        // message={error?.message}
         show={showEventModal}
         reset={reset}
-      />
+      /> */}
       <form className="mt-4" onSubmit={onSubmitHandler}>
         <div className="flex flex-col-reverse md:flex-row justify-between">
           <div className="w-full">
