@@ -2,6 +2,7 @@ import { RiBook2Fill, RiChat3Fill, RiUserSettingsLine } from "react-icons/ri";
 import { FaCaretDown, FaPowerOff } from "react-icons/fa";
 import { CSSTransition } from "react-transition-group";
 import { TbActivityHeartbeat } from "react-icons/tb";
+import { useAppSelector } from "../hooks/store.hook";
 import animate from "../styles/animate.module.css";
 import styles from "../styles/Home.module.scss";
 import { BiCheckShield } from "react-icons/bi";
@@ -9,11 +10,12 @@ import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import Link from "next/link";
 
-
 const Links = () => {
   const router = useRouter();
   const nodeRef = useRef<any>(null);
   const nodeRefLogout = useRef<any>(null);
+  const isAuth = useAppSelector((state) => state.auth.isAuth);
+  const token  = useAppSelector((state) => state.auth.token);
 
   const [dropDown, setDropDown] = useState({
     user: false,
@@ -22,7 +24,7 @@ const Links = () => {
   });
   return (
     <div className={styles.nav_div}>
-      {router.pathname !== "/logbook" ? (
+      {!(isAuth && token ) ? (
         <>
           <Link href="/">
             <a

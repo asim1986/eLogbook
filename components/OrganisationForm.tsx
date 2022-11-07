@@ -1,3 +1,5 @@
+import { IFileInputType, IUploadFile } from "../interfaces/upload.interface";
+import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import { IFormInput } from "../interfaces/formInput";
@@ -8,6 +10,15 @@ import { sectors } from "../utils/sectors";
 import React, { useState } from "react";
 import Select from "react-select";
 import Link from "next/link";
+import { useMutation } from "@apollo/client";
+import { REGISTER_ORG } from "../graphql/mutations/student";
+import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/router";
+import constants from "../config/constant.config";
+import { useAppDispatch } from "../hooks/store.hook";
+import { setOrgAuth } from "../store/slice/auth.slice";
+import Loader from "./Loader";
+import axios from "axios";
 
 const OrganisationForm = ({ admin, btnTitle }: IFormInput) => {
   const [textInput, setTextInput] = useState({
@@ -19,6 +30,36 @@ const OrganisationForm = ({ admin, btnTitle }: IFormInput) => {
     email: "",
     password: "",
   });
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const [addOrgan, { loading, reset }] = useMutation(REGISTER_ORG, {
+    onCompleted: (data) => {
+      toast.success("Registered successfully!", successToastStyle);
+      router.push("/profile/organisation");
+      console.log("DATA ==> ", data);
+      dispatch(setOrgAuth(data.organisation));
+      reset();
+      setIsLoading(false);
+    },
+    onError: ({ graphQLErrors, networkError }) => {
+      setIsLoading(false);
+      if (graphQLErrors)
+        graphQLErrors.forEach(({ message, locations, path }) => {
+          console.log(
+            `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+          );
+          const tokenErr = message.split(":")[0];
+          console.log("ERROR ==", tokenErr);
+          toast.error(`${message}`, errorToastStyle);
+          // if (tokenErr[0] === 'TokenExpiredErr')
+          //   return router.push('/login');
+        });
+      if (networkError) {
+        toast.error(`${networkError}`, errorToastStyle);
+        console.log(`[Network error]: ${networkError}`);
+      }
+    },
+  });
 
   const [selectedFile, setSelectedFile] = useState({
     file: null,
@@ -26,6 +67,8 @@ const OrganisationForm = ({ admin, btnTitle }: IFormInput) => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   type OptionType = { label: string; value: string }[];
 
   const optionSector = sectors;
@@ -120,163 +163,235 @@ const OrganisationForm = ({ admin, btnTitle }: IFormInput) => {
     setSelectedFile({ file: evt.target.files[0], isUploaded: true });
   };
 
+  const onSubmitHandler = async (evt: React.FormEvent<HTMLFormElement>) => {
+    if (loading) {
+      setIsLoading(true);
+    }
+    evt.preventDefault();
+    const formData = new FormData();
+    const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
+
+    const fileInput: IFileInputType = {
+      file: null,
+      type: "logo",
+    };
+
+    const map = { "0": ["variables.input.file"] };
+    const operations = JSON.stringify({
+      query,
+      variables: { input: fileInput },
+    });
+    formData.append("operations", operations);
+    formData.append("map", JSON.stringify(map));
+    formData.append("0", selectedFile.file);
+
+    if (!selectedFile.file) {
+      toast.error("Please Upload an Image!", errorToastStyle);
+      return;
+    }
+
+    await axios
+      .post(constants.graphqlBaseUrl, formData, {
+        headers: {
+          "apollo-require-preflight": true,
+        },
+      })
+      .then((response) => {
+        // console.log("RESPONSE****", response);
+        const status = response.status;
+        const { data } = response.data;
+        const { imageUrl } = data.uploadFile as IUploadFile;
+        // const { imageUrl } = data;
+        // const { imageUrl }  = data;
+        if (status === 200) {
+          addOrgan({
+            variables: {
+              registerInput: {
+                name: textInput.name,
+                sector: textInput.sector,
+                phone: textInput.phone,
+                address: textInput.address,
+                employees: +textInput.employees,
+                email: textInput.email,
+                password: textInput.password,
+                logo: imageUrl,
+              },
+            },
+          });
+        }
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        console.log(error);
+        toast.error("An error occurred while uploading image", errorToastStyle);
+      });
+    setIsLoading(false);
+  };
+
   return (
-    <form className="mt-4">
-      <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-2">
-        <div className="w-full">
+    <>
+      <Toaster position="top-center" reverseOrder={false} />
+      {isLoading && <Loader show={true} />}
+      <form className="mt-4" onSubmit={onSubmitHandler}>
+        <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-2">
+          <div className="w-full">
+            <input
+              required
+              placeholder="Establishment/Industry Name"
+              name="name"
+              type="text"
+              className={styles.signupInput}
+              value={textInput.name}
+              onChange={onChangeName}
+            />
+          </div>
+          <div className="w-full">
+            <Select
+              isClearable
+              options={optionSector}
+              className={styles.select}
+              placeholder="Business Sector"
+              onChange={selectSector}
+              styles={customStyles}
+            />
+          </div>
+        </div>
+        <div className="mb-4">
           <input
             required
-            placeholder="Establishment/Industry Name"
-            name="name"
             type="text"
+            name="address"
+            id="address"
+            placeholder="Organisation Address"
             className={styles.signupInput}
-            value={textInput.name}
-            onChange={onChangeName}
+            value={textInput.address}
+            onChange={onChangeAddress}
           />
         </div>
-        <div className="w-full">
-          <Select
-            isClearable
-            options={optionSector}
-            className={styles.select}
-            placeholder="Business Sector"
-            onChange={selectSector}
-            styles={customStyles}
-          />
+        <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-2">
+          <div className="w-full">
+            <input
+              required
+              placeholder="Number of Employees"
+              name="employees"
+              type="number"
+              className={styles.signupInput}
+              value={textInput.employees}
+              onChange={onChangeEmployee}
+            />
+          </div>
+          <div className="w-full">
+            <PhoneInput
+              international
+              countryCallingCodeEditable={false}
+              placeholder="Phone Number"
+              className={styles.phoneInput}
+              defaultCountry="NG"
+              value={textInput.phone}
+              onChange={onChangePhone}
+              error={
+                textInput.phone
+                  ? isValidPhoneNumber(textInput.phone)
+                    ? undefined
+                    : "Invalid phone number"
+                  : "Phone number required"
+              }
+            />
+          </div>
         </div>
-      </div>
-      <div className="mb-4">
-        <input
-          required
-          type="text"
-          name="address"
-          id="address"
-          placeholder="Organisation Address"
-          className={styles.signupInput}
-          value={textInput.address}
-          onChange={onChangeAddress}
-        />
-      </div>
-      <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-2">
-        <div className="w-full">
+        <div className="mb-4">
           <input
             required
-            placeholder="Number of Employees"
-            name="employees"
-            type="number"
+            type="email"
+            name="email"
+            id="email"
+            placeholder="Email"
             className={styles.signupInput}
-            value={textInput.employees}
-            onChange={onChangeEmployee}
+            value={textInput.email}
+            onChange={onChangeEmail}
           />
         </div>
-        <div className="w-full">
-          <PhoneInput
-            international
-            countryCallingCodeEditable={false}
-            placeholder="Phone Number"
-            className={styles.phoneInput}
-            defaultCountry="NG"
-            value={textInput.phone}
-            onChange={onChangePhone}
-            error={
-              textInput.phone
-                ? isValidPhoneNumber(textInput.phone)
-                  ? undefined
-                  : "Invalid phone number"
-                : "Phone number required"
-            }
+        <div className={styles.passwordInput}>
+          <input
+            required
+            type={showPassword ? "text" : "password"}
+            name="password"
+            id="password"
+            placeholder="Password"
+            className={styles.signupInput}
+            value={textInput.password}
+            onChange={onChangePassword}
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? (
+              <AiFillEyeInvisible size="1.5rem" />
+            ) : (
+              <AiFillEye size="1.5rem" />
+            )}
+          </button>
         </div>
-      </div>
-      <div className="mb-4">
-        <input
-          required
-          type="email"
-          name="email"
-          id="email"
-          placeholder="Email"
-          className={styles.signupInput}
-          value={textInput.email}
-          onChange={onChangeEmail}
-        />
-      </div>
-      <div className={styles.passwordInput}>
-        <input
-          required
-          type={showPassword ? "text" : "password"}
-          name="password"
-          id="password"
-          placeholder="Password"
-          className={styles.signupInput}
-          value={textInput.password}
-          onChange={onChangePassword}
-        />
-        <button type="button" onClick={() => setShowPassword((prev) => !prev)}>
-          {showPassword ? (
-            <AiFillEyeInvisible size="1.5rem" />
-          ) : (
-            <AiFillEye size="1.5rem" />
+        <div className="flex items-start justify-between mb-3">
+          {!admin && (
+            <div className="flex items-start">
+              <div className="flex items-center h-5">
+                <input
+                  required
+                  id="terms"
+                  aria-describedby="terms"
+                  name="terms"
+                  type="checkbox"
+                  className={styles.checkBox}
+                />
+              </div>
+              <div className="ml-3 text-sm">
+                <label
+                  htmlFor="terms"
+                  className="font-medium text-gray-900 dark:text-white"
+                >
+                  I accept the
+                  <a className={styles.terms} href="/terms-and-conditions/">
+                    Terms and Conditions
+                  </a>
+                </label>
+              </div>
+            </div>
           )}
-        </button>
-      </div>
-      <div className="flex items-start justify-between mb-3">
-        {!admin && (
-          <div className="flex items-start">
-            <div className="flex items-center h-5">
+          <div
+            className={[
+              styles.uploadAvatarBtn,
+              selectedFile.isUploaded ? styles.fileUpload : "",
+            ].join(" ")}
+          >
+            <label>
               <input
-                required
-                id="terms"
-                aria-describedby="terms"
-                name="terms"
-                type="checkbox"
-                className={styles.checkBox}
+                type="file"
+                name="avatar"
+                id="avatar"
+                accept="image/png, image/jpg, image/jpeg"
+                onChange={onFileUpload}
               />
-            </div>
-            <div className="ml-3 text-sm">
-              <label
-                htmlFor="terms"
-                className="font-medium text-gray-900 dark:text-white"
-              >
-                I accept the
-                <a className={styles.terms} href="/terms-and-conditions/">
-                  Terms and Conditions
-                </a>
-              </label>
-            </div>
+              {selectedFile.isUploaded ? "File Uploaded" : "Upload Logo"}
+            </label>
+          </div>
+        </div>
+        <div className={styles.btnWrapper}>
+          <button className={styles.signupBtn} type="submit">
+            <span className="flex justify-center items-center">{btnTitle}</span>
+          </button>
+        </div>
+        {!admin && (
+          <div className={styles.notReg}>
+            Already have an account?
+            <Link href="/login">
+              <a className={styles.actionBtn}>Login here.</a>
+            </Link>
           </div>
         )}
-        <div
-          className={[
-            styles.uploadAvatarBtn,
-            selectedFile.isUploaded ? styles.fileUpload : "",
-          ].join(" ")}
-        >
-          <label>
-            <input
-              type="file"
-              name="avatar"
-              id="avatar"
-              accept="image/png, image/jpg, image/jpeg"
-              onChange={onFileUpload}
-            />
-            {selectedFile.isUploaded ? "File Uploaded" : "Upload Logo"}
-          </label>
-        </div>
-      </div>
-      <div className={styles.btnWrapper}>
-        <button className={styles.signupBtn} type="submit">
-          <span className="flex justify-center items-center">{btnTitle}</span>
-        </button>
-      </div>
-      {!admin && (
-        <div className={styles.notReg}>
-          Already have an account?
-          <Link href="/login">
-            <a className={styles.actionBtn}>Login here.</a>
-          </Link>
-        </div>
-      )}
-    </form>
+      </form>
+    </>
   );
 };
 

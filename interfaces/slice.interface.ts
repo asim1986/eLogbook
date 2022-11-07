@@ -1,4 +1,4 @@
-export interface IAuthSlice {
+export interface IAuthStudSlice {
   id: string;
   firstName: string;
   lastName: string;
@@ -14,6 +14,19 @@ export interface IAuthSlice {
   gender: string;
   place: string;
   eligible: string;
+}
+
+export interface IAuthOrganSlice {
+  id: string;
+  name: string;
+  sector: string;
+  phone: string;
+  address: string;
+  employees: string;
+  email: string;
+  password: string;
+  logo: string;
+  user: string;
 }
 
 export interface IEligibleSlice {

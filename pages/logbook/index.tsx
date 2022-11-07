@@ -11,23 +11,23 @@ import Month from "../../components/Month";
 import store from "../../store/store";
 import Head from "next/head";
 
-export const getServerSideProps = (context: any) => {
-  const isAuth = store.getState().auth.isAuth;
-  const role = store.getState().auth.userData.user;
+// export const getServerSideProps = (context: any) => {
+//   const isAuth = store.getState().auth.isAuth;
+//   const role = store.getState().auth.userData.user;
 
-  if ((!isAuth && role !== "Student" && role !== "Admin") || !role) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
+//   if ((!isAuth && role !== "Student" && role !== "Admin") || !role) {
+//     return {
+//       redirect: {
+//         destination: "/login",
+//         permanent: false,
+//       },
+//     };
+//   }
 
-  return {
-    props: {},
-  };
-};
+//   return {
+//     props: {},
+//   };
+// };
 
 const LogBook: NextPage = () => {
   const [currenMonth, setCurrentMonth] = useState(getMonth());

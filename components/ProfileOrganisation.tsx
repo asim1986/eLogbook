@@ -1,23 +1,85 @@
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
 import styles from "../styles/Profile.module.scss";
 import ManageProfile from "./ManageProfile";
 import "react-phone-number-input/style.css";
 import { useState } from "react";
+import { IAuthOrganSlice } from "../interfaces/slice.interface";
+import toast, { Toaster } from "react-hot-toast";
+import Select from "react-select";
+import { OptionType } from "dayjs";
+import { customStyles } from "../utils/util";
+import { sectors } from "../utils/sectors";
+import axios from "axios";
+import {
+  IFileInputType,
+  IFileType,
+  IUploadFile,
+} from "../interfaces/upload.interface";
+import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
+import { useMutation } from "@apollo/client";
+import router from "next/router";
+import { UPDATE_ORG } from "../graphql/mutations/student";
+import { setOrgAuth, setRest } from "../store/slice/auth.slice";
+import constants from "../config/constant.config";
+import Loader from "./Loader";
 
 const ProfileOrganisation = () => {
+  const data: IAuthOrganSlice = useAppSelector(
+    (state) => state.auth.userOrgData
+  );
+  const token = useAppSelector((state) => state.auth.token);
+  console.log(token)
+  // console.log(">>>*** ==", data);
+
   const [textInput, setTextInput] = useState({
-    name: "nHub Foundation",
-    type: "Information Technology",
-    address: "3rd Floor TAEN Building Along Old Airport Road, Jos",
-    people: "10",
-    phone: "",
-    email: "solabayo@nhubfoundation.com",
+    name: `${data?.name}`,
+    type: `${data?.sector}`,
+    address: `${data?.address}`,
+    people: `${data?.employees}`,
+    phone: `${data?.phone}`,
+    email: `${data?.email}`,
   });
+
+  const dispatch = useAppDispatch();
 
   const [selectedFile, setSelectedFile] = useState({
     file: null,
     isUploaded: false,
     img: null,
+  });
+
+  const [updateOrgan, { loading, reset }] = useMutation(UPDATE_ORG, {
+    onCompleted: (data) => {
+      toast.success(data.updateOrganisation?.message, successToastStyle);
+      console.log("DATA ==> ", data);
+      dispatch(setOrgAuth(data.updateOrganisation));
+      reset();
+    },
+    onError: ({ graphQLErrors, networkError }) => {
+      try {
+        if (graphQLErrors)
+          graphQLErrors.forEach(({ message, locations, path }) => {
+            console.log(
+              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+            );
+            const tokenErr = message.split(":")[0];
+            console.log("ERROR ==", tokenErr);
+            toast.error(`${message}`, errorToastStyle);
+            if (tokenErr === 'TokenExpiredError') {
+              dispatch(setRest());
+              router.push('/login');
+            }  
+              
+          });
+        if (networkError) {
+          toast.error(`${networkError}`, errorToastStyle);
+          console.log(`[Network error]: ${networkError}`);
+        }
+      } catch (err) {
+        console.log("ERR****", err);
+      }
+    },
   });
 
   const onChangeName = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,7 +89,7 @@ const ProfileOrganisation = () => {
       address: prev.address,
       people: prev.people,
       phone: prev.phone,
-      email: prev.email
+      email: prev.email,
     }));
   };
 
@@ -38,18 +100,18 @@ const ProfileOrganisation = () => {
       address: prev.address,
       people: prev.people,
       phone: prev.phone,
-      email: prev.email
+      email: prev.email,
     }));
   };
 
-const onChangeAddress = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeAddress = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
       name: prev.name,
       type: prev.type,
       address: evt.target.value,
       people: prev.people,
       phone: prev.phone,
-      email: prev.email
+      email: prev.email,
     }));
   };
 
@@ -60,7 +122,7 @@ const onChangeAddress = (evt: React.ChangeEvent<HTMLInputElement>) => {
       address: prev.address,
       people: evt.target.value,
       phone: prev.phone,
-      email: prev.email
+      email: prev.email,
     }));
   };
 
@@ -71,9 +133,9 @@ const onChangeAddress = (evt: React.ChangeEvent<HTMLInputElement>) => {
       address: prev.address,
       people: prev.people,
       phone: value,
-      email: prev.email
+      email: prev.email,
     }));
-  }; 
+  };
 
   const onFileUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const mainFile = evt.target.files;
@@ -93,8 +155,98 @@ const onChangeAddress = (evt: React.ChangeEvent<HTMLInputElement>) => {
     }));
   };
 
+  const optionSector = sectors;
+
+  const selectSector = (option: OptionType | null | any) => {
+    if (option) {
+      setTextInput((prev) => ({
+        name: prev.name,
+        type: option.value,
+        address: prev.address,
+        people: prev.people,
+        phone: prev.phone,
+        email: prev.email,
+      }));
+    }
+  };
+
+  const onSubmitHandler = async (evt: React.FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+
+    if (selectedFile.file) {
+      const formData = new FormData();
+      const query = `mutation($updateInput: FileUpdateInput!) { updateFile(updateInput: $updateInput) { message imageUrl status } }`;
+
+      const fileInput: IFileType = {
+        id: `${data?.id}`,
+        type: "logo",
+        file: null,
+      };
+
+      const map = { "0": ["variables.updateInput.file"] };
+      const operations = JSON.stringify({
+        query,
+        variables: { updateInput: fileInput },
+      });
+      formData.append("operations", operations);
+      formData.append("map", JSON.stringify(map));
+      formData.append("0", selectedFile.file);
+
+      await axios
+        .post(constants.graphqlBaseUrl, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "apollo-require-preflight": true,
+          },
+        })
+        .then((response) => {
+          const status = response.status;
+          const { dataRes } = response.data;
+          const { imageUrl } = dataRes.uploadFile as IUploadFile;
+          if (status === 200) {
+            updateOrgan({
+              variables: {
+                updateInput: {
+                  email: textInput.email,
+                  name: textInput.name,
+                  sector: textInput.type,
+                  phone: textInput.phone,
+                  address: textInput.address,
+                  employees: +textInput.people,
+                  logo: imageUrl,
+                },
+              },
+            });
+          }
+        })
+        .catch((error) => {
+          console.log("ERROR ====", error);
+          toast.error(
+            "An error occurred while uploading image",
+            errorToastStyle
+          );
+        });
+    } else {
+      updateOrgan({
+        variables: {
+          updateInput: {
+            email: textInput.email,
+            name: textInput.name,
+            sector: textInput.type,
+            phone: textInput.phone,
+            address: textInput.address,
+            employees: +textInput.people,
+            logo: data.logo,
+          },
+        },
+      });
+    }
+  };
+
   return (
     <div className={styles.profiles}>
+      <Toaster position="top-center" reverseOrder={false} />
+      {loading && <Loader show={true} />}
       <ManageProfile
         profile="/profile/organisation"
         change="/profile/change-password"
@@ -106,13 +258,15 @@ const onChangeAddress = (evt: React.ChangeEvent<HTMLInputElement>) => {
         <div className={styles.userImg}>
           <img
             src={
-              selectedFile.img ? selectedFile.img : "../images/thumbnail.png"
+              selectedFile.img
+                ? selectedFile.img
+                : `http://localhost:8080${data?.logo}`
             }
-            alt="passport"
+            alt="Logo"
           />
           <div>
-            <h1>nHub Foundation</h1>
-            <h2>solabayo@nhubfoundation</h2>
+            <h1>{data?.name}</h1>
+            <h2>{data?.email}</h2>
             <div className="flex items-center justify-between my-3">
               <div
                 className={[
@@ -145,7 +299,7 @@ const onChangeAddress = (evt: React.ChangeEvent<HTMLInputElement>) => {
           </div>
         </div>
 
-        <form className="mt-4">
+        <form className="mt-4" onSubmit={onSubmitHandler}>
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 w-full">
             <div className="w-full md:mr-1">
               <input
@@ -159,14 +313,14 @@ const onChangeAddress = (evt: React.ChangeEvent<HTMLInputElement>) => {
               />
             </div>
             <div className="w-full md:ml-1 mt-3 md:mt-0">
-              <input
-                required
-                placeholder="Business Type Undertaken"
-                name="type"
-                type="text"
-                className={styles.inputStyle}
-                value={textInput.type}
-                onChange={onChangeType}
+              <Select
+                isClearable
+                options={optionSector}
+                className={styles.select}
+                defaultValue={{ value: textInput.type, label: textInput.type }}
+                placeholder="Business Sector"
+                onChange={selectSector}
+                styles={customStyles}
               />
             </div>
           </div>

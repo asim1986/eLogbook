@@ -3,6 +3,12 @@ export interface IFileInputType {
   type: string;
 }
 
+export interface IFileType {
+  id: string;
+  file: null;
+  type: string;
+}
+
 export interface IUploadFile {
   imageUrl: string;
   status: number;

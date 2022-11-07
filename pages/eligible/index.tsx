@@ -1,6 +1,7 @@
 import { errorToastStyle, successToastStyle } from "../../utils/styles.utils";
 import { setEligible } from "../../store/slice/eligible.slice";
 import React, { useEffect, useRef, useState } from "react";
+import { useAppSelector } from "../../hooks/store.hook";
 import { ELIGIBLE } from "../../graphql/query/eligible";
 import styles from "../../styles/Login.module.scss";
 import toast, { Toaster } from "react-hot-toast";
@@ -10,7 +11,6 @@ import Loader from "../../components/Loader";
 import { useDispatch } from "react-redux";
 import { useRouter } from 'next/router'
 import Head from "next/head";
-import { useAppSelector } from "../../hooks/store.hook";
 
 const Eligible = () => {  
   const [isLoading, setIsLoading] = useState(false);
