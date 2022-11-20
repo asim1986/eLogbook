@@ -10,9 +10,10 @@ interface DeleteType {
   show: boolean;
   title: string;
   content: string;
+  onYes: any;
 }
 
-const DeleteModal = ({ show, title, content }: DeleteType) => {
+const DeleteModal = ({ show, title, content, onYes }: DeleteType) => {
   const { setShowDetail } = useContext(GlobalContext);
 
   return (
@@ -29,7 +30,7 @@ const DeleteModal = ({ show, title, content }: DeleteType) => {
           exitActive: animate.fadeExitActive,
         }}
       >
-        <div className={styles.backDrop}></div>
+        <div className={styles.backDropUser}></div>
       </CSSTransition>
       <CSSTransition
         mountOnEnter
@@ -43,7 +44,7 @@ const DeleteModal = ({ show, title, content }: DeleteType) => {
           exitActive: animate.animateExitActive,
         }}
       >
-        <div className={styles.addEligible}>
+        <div className={styles.addEligibleUser}>
           <div className="sm:p-5 lg:p-3">
             <div className="flex justify-between w-full">
               <div className="">
@@ -64,7 +65,7 @@ const DeleteModal = ({ show, title, content }: DeleteType) => {
               </span>
 
               <div className="flex flex-row justify-center mt-4 py-2">
-                <button className="bg-red-700 px-5 py-1 rounded-2xl hover:bg-red-800 mr-2">
+                <button className="bg-red-700 px-5 py-1 rounded-2xl hover:bg-red-800 mr-2" onClick={onYes}>
                   Yes
                 </button>
                 <button

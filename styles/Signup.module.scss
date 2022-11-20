@@ -25,6 +25,13 @@ $sideBarWidth: 15rem;
   @apply w-full lg:ml-[15rem] z-20;
 }
 
+.backDropUser {
+  background: rgba(11, 16, 24, 0.8);
+  backdrop-filter: blur(3px);
+  @apply fixed left-0 top-0 h-screen lg:w-[calc(100%-15rem)];
+  @apply w-full z-20;
+}
+
 .addStudent {
   border-radius: 15px;
   background: $primaryColor;
@@ -53,6 +60,13 @@ $sideBarWidth: 15rem;
   @apply absolute inset-x-0 top-0 lg:w-[40%] w-11/12 md:w-9/12 z-20 overflow-y-auto lg:p-0;
   @apply lg:ml-[calc(15rem+19%)] mt-[15vh] mx-auto p-3 max-h-[80vh] lg:max-h-[70vh];
   @apply xl:ml-[calc(15rem+21%)];
+}
+
+.addEligibleUser {
+  background: $primaryColor;
+  border-radius: 15px;
+  @apply absolute inset-x-0 top-0 lg:w-[40%] w-11/12 md:w-9/12 z-20 overflow-y-auto lg:p-0;
+  @apply mt-[15vh] mx-auto p-3 max-h-[80vh] lg:max-h-[70vh];
 }
 
 .addStudent::-webkit-scrollbar {

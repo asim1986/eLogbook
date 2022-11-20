@@ -20,6 +20,10 @@ export const LOGIN_STUDENT = gql`
         avatar
         eligible
         user
+        organisation {
+          id
+          email
+        }
       }
       accessToken
       refreshToken

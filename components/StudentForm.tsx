@@ -1,6 +1,5 @@
 import React, { Fragment, useContext, useEffect, useRef, useState } from "react";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
-import { REGISTER_STUDENT } from "../graphql/mutations/student";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import { allInstitutions } from "../utils/institutions";
 import { useMutation, useQuery } from "@apollo/client";
@@ -10,73 +9,58 @@ import UPDATE_AVATAR from "../schema/updateAvatar";
 import styles from "../styles/Signup.module.scss";
 import { customStyles } from "../utils/util";
 import "react-phone-number-input/style.css";
-import { ErrorModal } from "./ErrorModal";
 import { gender } from "../utils/gender";
 import { level } from "../utils/levels";
 import Select from "react-select";
 import Loader from "./Loader";
 import Link from "next/link";
+import constants from "../config/constant.config";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
 import { IFileInputType, IUploadFile } from "../interfaces/upload.interface";
+import { ORGANISATIONS } from "../graphql/query/organisation";
+import { useRouter } from "next/router";
+import { useAppDispatch } from "../hooks/store.hook";
+import { setStudAuth } from "../store/slice/auth.slice";
+import { REGISTER_STUDENT } from "../graphql/mutations/student";
 
-const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
+const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
   const { showEventModal, setShowEventModal } = useContext(GlobalContext);
   // const [avatar, setAvatar] = useState<string | null>(null);
   const avatar = useRef<string|null>();
+  const [isLoading, setIsLoading] = useState(false);
   const [textInput, setTextInput] = useState({
     name: { firstName: "", lastName: "" },
     email: "",
     phone: "",
     password: "",
     institute: "",
-    level: 'userData.level',
+    place: "",
+    level: '',
     gender: "",
     address: "",
     other: "",
-    dept: 'userData.department',
+    dept: '',
     matric: "",
   });
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { loading: load, data: orgData } = useQuery(ORGANISATIONS);
 
-  // const [createAvatar, { data }] = useMutation(UPDATE_AVATAR, {
-  //   onError: ({ graphQLErrors, networkError }) => {
-  //     // alert(error?.message);
-  //     setShowEventModal(true);
-  //     if (graphQLErrors)
-  //       graphQLErrors.forEach(({ message, locations, path }) => {
-  //         console.log(
-  //           `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-  //         );
-  //         toast.error(`${message}`, errorToastStyle);
-  //       });
-  //     if (networkError) {
-  //       toast.error(`${networkError}`, errorToastStyle);
-  //       console.log(`[Network error]: ${networkError}`);
-  //     }
-  //   },
-  // });
+  const listOrg = orgData?.organisations?.map((i: any) => {
+    return { value: i.email, label: i.name }
+  });
 
-  const [addStudent, { loading, data, reset }] = useMutation(REGISTER_STUDENT, {
-    variables: {
-      registeredInput: {
-        firstName: textInput.name.firstName,
-        lastName: textInput.name.lastName,
-        email: textInput.email,
-        password: textInput.password,
-        matricNo: textInput.matric,
-        phone: textInput.phone,
-        institute: textInput.institute,
-        department: textInput.dept,
-        place: "nhubfoundation@nhub.org",
-        level: textInput.level,
-        gender: textInput.gender,
-        address: textInput.address,
-        avatar: avatar.current && avatar.current,
-      },
-    },
-    onCompleted: () => {
+  // console.log("LISTOR ==> ", listOrg);
+  // console.log("EMAIL => ", orgData)
+
+  const [addStudent, { loading, reset }] = useMutation(REGISTER_STUDENT, {
+    onCompleted: (data) => {
       toast.success("Registered successfully!", successToastStyle);
+      router.push("/profile/student");
+      dispatch(setStudAuth(data?.student));
+      reset();
     },
     onError: ({ graphQLErrors, networkError }) => {
       // alert(error?.message);
@@ -113,6 +97,7 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
       phone: prev.phone,
       password: prev.password,
       institute: prev.institute,
+      place: prev.place,
       level: prev.level,
       gender: prev.gender,
       address: prev.address,
@@ -132,6 +117,7 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
       phone: prev.phone,
       password: prev.password,
       institute: prev.institute,
+      place: prev.place,
       level: prev.level,
       gender: prev.gender,
       address: prev.address,
@@ -151,6 +137,7 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
       phone: prev.phone,
       password: prev.password,
       institute: prev.institute,
+      place: prev.place,
       level: prev.level,
       gender: prev.gender,
       address: prev.address,
@@ -170,6 +157,7 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
       phone: value,
       password: prev.password,
       institute: prev.institute,
+      place: prev.place,
       level: prev.level,
       gender: prev.gender,
       address: prev.address,
@@ -191,6 +179,7 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
       phone: prev.phone,
       password: evt.target.value,
       institute: prev.institute,
+      place: prev.place,
       level: prev.level,
       gender: prev.gender,
       address: prev.address,
@@ -210,6 +199,7 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
       phone: prev.phone,
       password: prev.password,
       institute: prev.institute,
+      place: prev.place,
       level: prev.level,
       gender: prev.gender,
       address: evt.target.value,
@@ -229,6 +219,7 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
       phone: prev.phone,
       password: prev.password,
       institute: prev.institute,
+      place: prev.place,
       level: prev.level,
       gender: prev.gender,
       address: prev.address,
@@ -248,6 +239,7 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
       phone: prev.phone,
       password: prev.password,
       institute: prev.institute,
+      place: prev.place,
       level: prev.level,
       gender: prev.gender,
       address: prev.address,
@@ -267,6 +259,7 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
       phone: prev.phone,
       password: prev.password,
       institute: prev.institute,
+      place: prev.place,
       level: prev.level,
       gender: prev.gender,
       address: prev.address,
@@ -295,19 +288,19 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
 
   const optionsGender: OptionType = gender;
 
-  const optionsPlace: OptionType = [{ value: "Upcoming", label: "Upcoming" }];
+  const optionsPlace: OptionType = load ? [{label: 'Loading'}] : listOrg
 
   const selectInstitution = (option: OptionType | null | any) => {
     if (option) {
       setTextInput((prev) => ({
         name: {
           firstName: prev.name.firstName,
-
           lastName: prev.name.lastName,
         },
         email: prev.email,
         phone: prev.phone,
         password: prev.password,
+        place: option.value,
         institute: option.value,
         level: prev.level,
         gender: prev.gender,
@@ -325,13 +318,13 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
       setTextInput((prev) => ({
         name: {
           firstName: prev.name.firstName,
-
           lastName: prev.name.lastName,
         },
         email: prev.email,
         phone: prev.phone,
         password: prev.password,
         institute: prev.institute,
+        place: prev.place,
         level: option.value,
         gender: prev.gender,
         address: prev.address,
@@ -348,13 +341,13 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
       setTextInput((prev) => ({
         name: {
           firstName: prev.name.firstName,
-
           lastName: prev.name.lastName,
         },
         email: prev.email,
         phone: prev.phone,
         password: prev.password,
         institute: prev.institute,
+        place: prev.place,
         level: prev.level,
         gender: option.value,
         address: prev.address,
@@ -366,8 +359,10 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
     setShowInput(option.value === "Others" ? true : false);
   };
 
-  // if (error) ErrorToast(error.message);
   const onSubmitHandler = async (evt: React.FormEvent<HTMLFormElement>) => {
+    if (loading) {
+      setIsLoading(true);
+    }
     evt.preventDefault();
     const formData = new FormData();
     const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
@@ -385,8 +380,14 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
     formData.append("operations", operations);
     formData.append("map", JSON.stringify(map));
     formData.append("0", selectedFile.file);
+
+    if (!selectedFile.file) {
+      toast.error("Please Upload an Image!", errorToastStyle);
+      return;
+    }
+
     await axios
-      .post("http://localhost:8080/api/graphql", formData, {
+      .post(constants.graphqlBaseUrl, formData, {
         headers: {
           "apollo-require-preflight": true,
         },
@@ -396,28 +397,41 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
         const status = response.status;
         const { data } = response.data;
         const { imageUrl } = data.uploadFile as IUploadFile;
-        // const { imageUrl } = data;
         // const { imageUrl }  = data;
-        if (status === 200) {   
-          avatar.current = imageUrl
-          if (avatar.current) addStudent();
+        if (status === 200) {
+          addStudent({
+            variables: {
+              registeredInput: {
+                firstName: textInput.name.firstName,
+                lastName: textInput.name.lastName,
+                email: textInput.email,
+                password: textInput.password,
+                matricNo: textInput.matric,
+                phone: textInput.phone,
+                institute: textInput.institute,
+                department: textInput.dept,
+                place: textInput.place,
+                level: textInput.level,
+                gender: textInput.gender,
+                address: textInput.address,
+                avatar: imageUrl,
+              },
+            },
+          });
         }
       })
       .catch((error) => {
+        setIsLoading(false);
         console.log(error);
         toast.error("An error occurred while uploading image", errorToastStyle);
       });
+    setIsLoading(false);
   };
 
   return (
     <Fragment>
       <Toaster position="top-center" reverseOrder={false} />
       {loading && <Loader show={true} />}
-      {/* <ErrorModal
-        // message={error?.message}
-        show={showEventModal}
-        reset={reset}
-      /> */}
       <form className="mt-4" onSubmit={onSubmitHandler}>
         <div className="flex flex-col-reverse md:flex-row justify-between">
           <div className="w-full">
@@ -607,7 +621,7 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
           </button>
         </div>
         <div className="flex items-start justify-between mb-3">
-          {!admin && (
+          {!isAdmin && (
             <div className="flex items-start">
               <div className="flex items-center h-5">
                 <input
@@ -658,7 +672,7 @@ const StudentForm = ({ admin, btnTitle }: IFormInput): JSX.Element => {
             <span className="flex justify-center items-center">{btnTitle}</span>
           </button>
         </div>
-        {!admin && (
+        {!isAdmin && (
           <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
             Already have an account?
             <Link href="/login">

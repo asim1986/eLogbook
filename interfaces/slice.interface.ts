@@ -14,6 +14,26 @@ export interface IAuthStudSlice {
   gender: string;
   place: string;
   eligible: string;
+  organisation: {
+    id: string;
+    email: string;
+    name: string;
+  }
+}
+
+export interface IAuthSupSlice {
+  id: string;
+  title: string;
+  firstName: string;
+  lastName: string;
+  staffID: string;
+  email: string;
+  phone: string;
+  user: string;
+  avatar: string;
+  institute: string;
+  department: string;
+  gender: string;
 }
 
 export interface IAuthOrganSlice {

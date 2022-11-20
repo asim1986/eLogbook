@@ -15,10 +15,18 @@ export const LOGIN_ORGAN = gql`
         address
         employees
         email
-        password
         logo
         user
       }
+    }
+  }
+`;
+
+export const ORGANISATIONS = gql`
+  query Organisations {
+    organisations {
+      email
+      name
     }
   }
 `;

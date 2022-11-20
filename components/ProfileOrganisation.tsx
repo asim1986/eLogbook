@@ -17,11 +17,11 @@ import {
   IUploadFile,
 } from "../interfaces/upload.interface";
 import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
-import { useMutation } from "@apollo/client";
-import router from "next/router";
-import { UPDATE_ORG } from "../graphql/mutations/student";
+import { UPDATE_ORG } from "../graphql/mutations/organisation";
 import { setOrgAuth, setRest } from "../store/slice/auth.slice";
 import constants from "../config/constant.config";
+import { useMutation } from "@apollo/client";
+import router from "next/router";
 import Loader from "./Loader";
 
 const ProfileOrganisation = () => {
@@ -29,7 +29,7 @@ const ProfileOrganisation = () => {
     (state) => state.auth.userOrgData
   );
   const token = useAppSelector((state) => state.auth.token);
-  console.log(token)
+  console.log(token);
   // console.log(">>>*** ==", data);
 
   const [textInput, setTextInput] = useState({
@@ -64,13 +64,10 @@ const ProfileOrganisation = () => {
               `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
             );
             const tokenErr = message.split(":")[0];
-            console.log("ERROR ==", tokenErr);
             toast.error(`${message}`, errorToastStyle);
-            if (tokenErr === 'TokenExpiredError') {
-              dispatch(setRest());
-              router.push('/login');
-            }  
-              
+            if (tokenErr === "TokenExpiredError") {
+              logout();
+            }
           });
         if (networkError) {
           toast.error(`${networkError}`, errorToastStyle);
@@ -170,6 +167,11 @@ const ProfileOrganisation = () => {
     }
   };
 
+  const logout = () => {
+    dispatch(setRest());
+    router.push("/login");
+  };
+
   const onSubmitHandler = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
@@ -192,6 +194,7 @@ const ProfileOrganisation = () => {
       formData.append("map", JSON.stringify(map));
       formData.append("0", selectedFile.file);
 
+      // console.log("formData === ", constants.graphqlBaseUrl);
       await axios
         .post(constants.graphqlBaseUrl, formData, {
           headers: {
@@ -201,8 +204,21 @@ const ProfileOrganisation = () => {
         })
         .then((response) => {
           const status = response.status;
-          const { dataRes } = response.data;
-          const { imageUrl } = dataRes.uploadFile as IUploadFile;
+          console.log("RESPONSESS ===", response);
+          if (response?.data?.errors) {
+            const errMsg = response?.data?.errors;
+            toast.error(errMsg[0].message, errorToastStyle);
+            const tokenErr = errMsg[0].message.split(":")[0];
+            if (tokenErr === "TokenExpiredError") {
+              logout();
+            }
+            return;
+          }
+          const { updateFile } = response?.data?.data;
+          console.log("DATES ===", updateFile);
+          const { imageUrl } = updateFile as IUploadFile;
+          console.log("IMAGEURL ===", imageUrl);
+
           if (status === 200) {
             updateOrgan({
               variables: {
@@ -252,7 +268,6 @@ const ProfileOrganisation = () => {
         change="/profile/change-password"
         delete="/profile/delete-account"
       />
-
       <div className={styles.userProfile}>
         <h1>User Profile</h1>
         <div className={styles.userImg}>
@@ -260,7 +275,7 @@ const ProfileOrganisation = () => {
             src={
               selectedFile.img
                 ? selectedFile.img
-                : `http://localhost:8080${data?.logo}`
+                : `${constants.beHost}${data?.logo}`
             }
             alt="Logo"
           />

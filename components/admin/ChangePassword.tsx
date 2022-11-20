@@ -1,7 +1,16 @@
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import styles from "../../styles/Profile.module.scss";
 import ManageProfile from "../ManageProfile";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useMutation } from "@apollo/client";
+import { CHANGE_PASSWORD } from "../../graphql/mutations/changePsw";
+import toast, { Toaster } from "react-hot-toast";
+import { errorToastStyle, successToastStyle } from "../../utils/styles.utils";
+import { setOrgAuth, setRest } from "../../store/slice/auth.slice";
+import { useRouter } from "next/router";
+import { IAuthOrganSlice } from "../../interfaces/slice.interface";
+import { useAppDispatch, useAppSelector } from "../../hooks/store.hook";
+import Loader from "../Loader";
 
 interface ChangePasswordType {
   user: string;
@@ -14,6 +23,39 @@ const ChangePassword = ({ user, style }: ChangePasswordType) => {
     new: "",
     renew: "",
   });
+
+  const role = useAppSelector(
+    (state) =>
+      state.auth?.userCoordData?.user ||
+      state.auth?.userSupData?.user ||
+      state.auth?.userStudData?.user ||
+      state.auth?.userOrgData?.user
+  );
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState(false);  
+  let userId: string = "";
+
+  switch (role) {
+    case "Student":
+      const userIdStud = useAppSelector((state) => state.auth?.userStudData?.id);
+      userId = userIdStud;
+      break;
+    case "Supervisor":
+      const userIdSup = useAppSelector((state) => state.auth?.userSupData?.id);
+      userId = userIdSup;
+      break;
+    case "Coordinator":
+      const userIdCoord = useAppSelector((state) => state.auth?.userCoordData?.id);
+      userId = userIdCoord;
+      break;
+    case "Organisation":
+      const userIdOrg = useAppSelector((state) => state.auth?.userOrgData?.id);
+      userId = userIdOrg;
+      break;
+  }
+
+  // console.log("USERID +++ => ", userId);
   const [showPassword, setShowPassword] = useState({
     old: false,
     new: false,
@@ -26,6 +68,11 @@ const ChangePassword = ({ user, style }: ChangePasswordType) => {
       new: prev.new,
       renew: prev.renew,
     }));
+  };
+
+  const logout = () => {
+    dispatch(setRest());
+    router.push("/login");
   };
 
   const onChangeNewPassword = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,10 +93,62 @@ const ChangePassword = ({ user, style }: ChangePasswordType) => {
     }));
   };
 
+  const [changePsw, { loading, reset }] = useMutation(CHANGE_PASSWORD, {
+    onCompleted: (data) => {
+      toast.success(data?.changePassword?.message, successToastStyle);
+      setTextInput({
+        old: "",
+        new: "",
+        renew: "",
+      });
+      reset();
+    },
+    onError: ({ graphQLErrors, networkError }) => {
+      try {
+        if (graphQLErrors)
+          graphQLErrors.forEach(({ message, locations, path }) => {
+            console.log(
+              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+            );
+            const tokenErr = message.split(":")[0];
+            toast.error(`${message}`, errorToastStyle);
+            if (tokenErr === "TokenExpiredError") {
+              logout();
+            }
+          });
+        if (networkError) {
+          toast.error(`${networkError}`, errorToastStyle);
+          console.log(`[Network error]: ${networkError}`);
+        }
+      } catch (err) {
+        console.log("ERR****", err);
+      }
+    },
+  });
+
+  const onSubmitHandler = async (evt: React.FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+    if (loading) {
+      setIsLoading(true);
+    }
+    changePsw({
+      variables: {
+        input: {
+          id: userId,
+          password: textInput.old,
+          con_password: textInput.renew,
+          new_password: textInput.new,
+        },
+      },
+    });
+  };
+
   return (
     <div className={style}>
+      <Toaster position="top-center" reverseOrder={false} />
+      {loading && <Loader show={true} />}
       <ManageProfile
-        profile={user === "admin" ? "/admin/profile" : `/profile/${user}`}
+        profile={user === "admin" ? "/admin/profile" : `/profile/${role.toLowerCase()}`}
         change={
           user === "admin"
             ? "/admin/change-password"
@@ -63,7 +162,7 @@ const ChangePassword = ({ user, style }: ChangePasswordType) => {
       <div className={styles.userProfile}>
         <h1>Change Password</h1>
 
-        <form className="mt-4">
+        <form className="mt-4" onSubmit={onSubmitHandler}>
           <div className="mb-4 w-full">
             <div className={styles.passwordInputCh}>
               <label htmlFor="old">Enter Old Password</label>

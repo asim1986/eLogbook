@@ -21,6 +21,10 @@ export const REGISTER_STUDENT = gql`
         gender
         place
         eligible
+        organisation {
+          id
+          email
+        }
       }
       status
       message
@@ -28,48 +32,41 @@ export const REGISTER_STUDENT = gql`
   }
 `;
 
-export const REGISTER_ORG = gql`
-  mutation Organisation($registerInput: OrganisationInput!) {
-    organisation(registerInput: $registerInput) {
+export const UPDATE_STUDENT = gql`
+  mutation UpdateStudent($updateInput: UpdateStudentInput!) {
+    updateStudent(updateInput: $updateInput) {
       status
       message
       accessToken
       refreshToken
-      organisation {
+      student {
         id
-        name
-        sector
+        firstName
+        lastName
+        matricNo
         phone
         address
-        employees
+        institute
+        department
+        level
+        gender
+        place
         email
         password
-        logo
+        avatar
+        eligible
         user
       }
     }
   }
 `;
 
-export const UPDATE_ORG = gql`
-  mutation UpdateOrganisation($updateInput: UpdateOrganisationInput!) {
-    updateOrganisation(updateInput: $updateInput) {
-      status
+export const DELETE_STUD = gql`
+  mutation DeleteStudent($emailInput: DeleteStudentInput!) {
+    deleteStudent(emailInput: $emailInput) {
+      id
       message
-      accessToken
-      refreshToken
-      organisation {
-        id
-        name
-        sector
-        phone
-        address
-        employees
-        email
-        password
-        logo
-        user
-      }
+      status
     }
   }
 `;

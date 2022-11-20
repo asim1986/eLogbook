@@ -16,7 +16,7 @@ const Supervisor = () => {
           <div className={styles.signupContainer}>
             <div className="p-3 sm:p-5 lg:p-6 w-full">
               <h1 className={styles.h1}>Create a Supervisor Account</h1>
-              <SuperviorForm admin={false} btnTitle={"signup"} />
+              <SuperviorForm isSupervisor={true} isAdmin={false} btnTitle={"signup"} />
             </div>
           </div>
           <div className={styles.spacer}></div>

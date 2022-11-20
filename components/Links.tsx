@@ -1,30 +1,65 @@
 import { RiBook2Fill, RiChat3Fill, RiUserSettingsLine } from "react-icons/ri";
+import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
 import { FaCaretDown, FaPowerOff } from "react-icons/fa";
 import { CSSTransition } from "react-transition-group";
 import { TbActivityHeartbeat } from "react-icons/tb";
-import { useAppSelector } from "../hooks/store.hook";
+import { setRest } from "../store/slice/auth.slice";
 import animate from "../styles/animate.module.css";
 import styles from "../styles/Home.module.scss";
 import { BiCheckShield } from "react-icons/bi";
-import { useRouter } from "next/router";
 import { useRef, useState } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
+import constants from "../config/constant.config";
 
 const Links = () => {
   const router = useRouter();
   const nodeRef = useRef<any>(null);
   const nodeRefLogout = useRef<any>(null);
   const isAuth = useAppSelector((state) => state.auth.isAuth);
-  const token  = useAppSelector((state) => state.auth.token);
+  const token = useAppSelector((state) => state.auth.token);
+  const dispatch = useAppDispatch();
+  const role = useAppSelector(
+    (state) =>
+      state.auth?.userStudData?.user ||
+      state.auth?.userSupData?.user ||
+      state.auth?.userCoordData?.user ||
+      state.auth?.userOrgData?.user
+  );
+  const DEFAULT_IMG = "https://i.pinimg.com/236x/00/70/d0/0070d05bc3d01aa3e04e5ebab7132985.jpg";
 
   const [dropDown, setDropDown] = useState({
     user: false,
     profile: false,
     chat: false,
   });
+
+  console.log("ROLE ==> ", role);
+
+  const logout = () => {
+    dispatch(setRest());
+    router.push("/login");
+  };
+
+  const name: string = useAppSelector(
+    (state) =>
+      state.auth?.userCoordData?.firstName ||
+      state.auth?.userSupData?.firstName ||
+      state.auth?.userStudData?.firstName ||
+      state.auth?.userOrgData?.name
+  );
+
+  const avatar: string = useAppSelector(
+    (state) =>
+      state.auth?.userCoordData?.avatar ||
+      state.auth?.userSupData?.avatar ||
+      state.auth?.userStudData?.avatar ||
+      state.auth?.userOrgData?.logo
+  );
+
   return (
     <div className={styles.nav_div}>
-      {!(isAuth && token ) ? (
+      {!(isAuth && token) ? (
         <>
           <Link href="/">
             <a
@@ -159,19 +194,21 @@ const Links = () => {
         </>
       ) : (
         <>
-          <Link href="/logbook">
-            <a
-              className={[
-                styles.nav_li,
-                router.pathname === "/logbook" ? styles.active : "",
-              ].join(" ")}
-            >
-              <div className="w-full flex items-center">
-                <RiBook2Fill />
-                <span className="pl-1">Logbook</span>
-              </div>
-            </a>
-          </Link>
+          {role === "Student" && (
+            <Link href="/logbook">
+              <a
+                className={[
+                  styles.nav_li,
+                  router.pathname === "/logbook" ? styles.active : "",
+                ].join(" ")}
+              >
+                <div className="w-full flex items-center">
+                  <RiBook2Fill />
+                  <span className="pl-1">Logbook</span>
+                </div>
+              </a>
+            </Link>
+          )}
           <Link href="/chats">
             <a
               className={[
@@ -185,37 +222,45 @@ const Links = () => {
               </div>
             </a>
           </Link>
-          <Link href="/activities">
+          {role !== "Student" && (
+            <Link href="/activities">
+              <a
+                className={[
+                  styles.nav_li,
+                  router.pathname === "/activities" ? styles.active : "",
+                ].join(" ")}
+              >
+                <div className="w-full flex items-center">
+                  <TbActivityHeartbeat />
+                  <span className="pl-1">Activities</span>
+                </div>
+              </a>
+            </Link>
+          )}
+          {role === "Coordinator" && (
+            <Link href="/eligible/send">
+              <a
+                className={[
+                  styles.nav_li,
+                  router.pathname === "/eligible/send" ? styles.active : "",
+                ].join(" ")}
+              >
+                <div className="w-full flex items-center">
+                  <BiCheckShield />
+                  <span className="pl-1">Eligible</span>
+                </div>
+              </a>
+            </Link>
+          )}
+          <Link href={`/profile/${role.toLowerCase()}`}>
             <a
               className={[
                 styles.nav_li,
-                router.pathname === "/activities" ? styles.active : "",
-              ].join(" ")}
-            >
-              <div className="w-full flex items-center">
-                <TbActivityHeartbeat />
-                <span className="pl-1">Activities</span>
-              </div>
-            </a>
-          </Link>
-          <Link href="/eligible/send">
-            <a
-              className={[
-                styles.nav_li,
-                router.pathname === "/eligible/send" ? styles.active : "",
-              ].join(" ")}
-            >
-              <div className="w-full flex items-center">
-                <BiCheckShield />
-                <span className="pl-1">Eligible</span>
-              </div>
-            </a>
-          </Link>
-          <Link href="/profile/student">
-            <a
-              className={[
-                styles.nav_li,
-                router.pathname === "/profile" ? styles.active : "",
+                router.pathname === `/profile/${role.toLowerCase()}` ||
+                router.pathname === "/profile/change-password" ||
+                router.pathname === "/profile/delete-account"
+                  ? styles.active
+                  : "",
               ].join(" ")}
             >
               <div className="w-full flex items-center">
@@ -237,10 +282,10 @@ const Links = () => {
             >
               <div className="w-full">
                 <img
-                  src="../images/thumbnail.png"
+                  src={avatar === DEFAULT_IMG ? avatar :  `${constants.beHost}${avatar}` || "../images/thumbnail.png"}
                   className={styles.displayPic}
                 />
-                <span className="pl-2">Vicolas</span> <FaCaretDown />
+                <span className="pl-2">{name}</span> <FaCaretDown />
               </div>
               <CSSTransition
                 nodeRef={nodeRefLogout}
@@ -264,7 +309,7 @@ const Links = () => {
                             : "",
                         ].join(" ")}
                       >
-                        <div className="p-0 m-0">
+                        <div className="p-0 m-0" onClick={logout}>
                           <FaPowerOff /> <span className="pl-1">Logout</span>{" "}
                         </div>
                       </a>

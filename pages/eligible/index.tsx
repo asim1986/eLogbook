@@ -9,7 +9,7 @@ import { Navbar } from "../../components/NavBar";
 import { useLazyQuery } from "@apollo/client";
 import Loader from "../../components/Loader";
 import { useDispatch } from "react-redux";
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 import Head from "next/head";
 
 const Eligible = () => {  

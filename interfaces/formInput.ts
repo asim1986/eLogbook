@@ -1,6 +1,5 @@
-import { IEligibleSlice } from "./slice.interface";
-
 export interface IFormInput {
-  admin: boolean;
+  isAdmin: boolean;
+  isSupervisor: boolean;
   btnTitle: string;
 }

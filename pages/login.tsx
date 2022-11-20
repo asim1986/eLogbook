@@ -6,19 +6,25 @@ import { customStyles } from "../utils/util";
 import { roles } from "../utils/role.util";
 import React, { useState } from "react";
 import Select from "react-select";
-import store from "../store/store";
-import { NextPage } from "next";
 import Link from "next/link";
 import Head from "next/head";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { DocumentNode, useLazyQuery, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import toast, { Toaster } from "react-hot-toast";
-import { REGISTER_ORG } from "../graphql/mutations/student";
-import { setOrgAuth } from "../store/slice/auth.slice";
+import { REGISTER_ORG } from "../graphql/mutations/organisation";
+import {
+  setCoordAuth,
+  setOrgAuth,
+  setStudAuth,
+  setSupAuth,
+} from "../store/slice/auth.slice";
 import { successToastStyle, errorToastStyle } from "../utils/styles.utils";
 import { LOGIN_ORGAN } from "../graphql/query/organisation";
 import { useAppDispatch } from "../hooks/store.hook";
 import Loader from "../components/Loader";
+import { LOGIN_STUDENT } from "../graphql/query/student";
+import { LOGIN_SUP } from "../graphql/query/supervisor";
+import { LOGIN_COORD } from "../graphql/query/coordinator";
 
 const Login = () => {
   const [textInput, setTextInput] = useState({
@@ -31,15 +37,32 @@ const Login = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   // const isAuth = store.getState().auth.isAuth;
-  // const role = store.getState().auth.userData.user;
+  // const role = store.getState().auth.userStudData.user;
   // console.log("ISAUTH <===> ", isAuth);
+  let doctType: DocumentNode = LOGIN_COORD;
 
-  const [loginOrgan, { loading, called }] = useLazyQuery(LOGIN_ORGAN, {
+  const [loginUser, { loading, called }] = useLazyQuery(doctType, {
     onCompleted: (data) => {
-      toast.success(data.loginOrganisation.message, successToastStyle);
-      router.push("/profile/organisation");
-      console.log("DATA ==> ", data);
-      dispatch(setOrgAuth(data.loginOrganisation));
+      //console.log("LOGIN DATA ==> ", data); 
+      if (data?.loginOrganisation) {
+        router.push("/profile/organisation");
+        console.log("DATA ==> ", data.loginOrganisation);
+        dispatch(setOrgAuth(data.loginOrganisation));
+      } else if (data?.loginStudent) {
+        router.push("/logbook");
+        console.log("DATA ==> ", data.loginStudent);
+        dispatch(setStudAuth(data.loginStudent));
+      } else if (data?.loginSupervisor) {
+        router.push("/activities");
+        console.log("DATA ==> ", data.loginSupervisor);
+        dispatch(setSupAuth(data.loginSupervisor));
+      } else if (data?.loginCoordinator) {
+        router.push("/activities");
+        console.log("DATA ==> ", data.loginCoordinator);
+        dispatch(setCoordAuth(data.loginCoordinator));
+      }
+      // dispatch(setUser(data));
+      toast.success("Login Successfully", successToastStyle);
       setIsLoading(false);
     },
     onError: ({ graphQLErrors, networkError }) => {
@@ -97,18 +120,28 @@ const Login = () => {
     }
     switch (textInput.role) {
       case "Organisation":
-        loginOrgan({
-          variables: {
-            loginInput: {
-              email: textInput.email,
-              password: textInput.password,
-            },
-          },
-        });
+        doctType = LOGIN_ORGAN;
+        break;
+      case "Student":
+        doctType = LOGIN_STUDENT;
+        break;
+      case "Supervisor":
+        doctType = LOGIN_SUP;
+        break;
+      case "Coordinator":
+        doctType = LOGIN_COORD;
         break;
       default:
-        toast.error('Please your user type', errorToastStyle);
+        toast.error("Please your user type", errorToastStyle);
     }
+    loginUser({
+      variables: {
+        loginInput: {
+          email: textInput.email,
+          password: textInput.password,
+        },
+      },
+    });
   };
 
   return (
@@ -125,7 +158,7 @@ const Login = () => {
             <div className="p-6 w-full sm:p-8 lg:p-10">
               <h1 className={styles.h1}>Login to your account</h1>
               <Toaster position="top-center" reverseOrder={false} />
-              {isLoading && <Loader show={true} />}
+              {loading && <Loader show={true} />}
               <form className="mt-8" onSubmit={onSubmitHandler}>
                 <div className="mb-6">
                   <input

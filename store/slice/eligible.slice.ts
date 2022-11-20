@@ -3,12 +3,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 type EligibleType = {
   isEligible: boolean;
-  userData: IEligibleSlice;
+  userStudData: IEligibleSlice;
 };
 
 const initialState: EligibleType = {
   isEligible: false,
-  userData: {
+  userStudData: {
     id: null,
     institute: null,
     department: null,
@@ -24,7 +24,7 @@ const eligibleSlice = createSlice({
   reducers: {
     setEligible: (state, { payload }) => {
       state.isEligible = true;
-      state.userData = payload;
+      state.userStudData = payload;
     },
   },
 });

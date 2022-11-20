@@ -11,16 +11,16 @@ import React, { useState } from "react";
 import Select from "react-select";
 import Link from "next/link";
 import { useMutation } from "@apollo/client";
-import { REGISTER_ORG } from "../graphql/mutations/student";
+import { REGISTER_ORG } from "../graphql/mutations/organisation";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
 import constants from "../config/constant.config";
 import { useAppDispatch } from "../hooks/store.hook";
-import { setOrgAuth } from "../store/slice/auth.slice";
+import { setOrgAuth, setUser } from "../store/slice/auth.slice";
 import Loader from "./Loader";
 import axios from "axios";
 
-const OrganisationForm = ({ admin, btnTitle }: IFormInput) => {
+const OrganisationForm = ({ isAdmin, btnTitle }: IFormInput) => {
   const [textInput, setTextInput] = useState({
     name: "",
     sector: "",
@@ -38,6 +38,7 @@ const OrganisationForm = ({ admin, btnTitle }: IFormInput) => {
       router.push("/profile/organisation");
       console.log("DATA ==> ", data);
       dispatch(setOrgAuth(data.organisation));
+      // dispatch(setUser(data));
       reset();
       setIsLoading(false);
     },
@@ -51,8 +52,6 @@ const OrganisationForm = ({ admin, btnTitle }: IFormInput) => {
           const tokenErr = message.split(":")[0];
           console.log("ERROR ==", tokenErr);
           toast.error(`${message}`, errorToastStyle);
-          // if (tokenErr[0] === 'TokenExpiredErr')
-          //   return router.push('/login');
         });
       if (networkError) {
         toast.error(`${networkError}`, errorToastStyle);
@@ -334,7 +333,7 @@ const OrganisationForm = ({ admin, btnTitle }: IFormInput) => {
           </button>
         </div>
         <div className="flex items-start justify-between mb-3">
-          {!admin && (
+          {!isAdmin && (
             <div className="flex items-start">
               <div className="flex items-center h-5">
                 <input
@@ -382,7 +381,7 @@ const OrganisationForm = ({ admin, btnTitle }: IFormInput) => {
             <span className="flex justify-center items-center">{btnTitle}</span>
           </button>
         </div>
-        {!admin && (
+        {!isAdmin && (
           <div className={styles.notReg}>
             Already have an account?
             <Link href="/login">
@@ -394,5 +393,6 @@ const OrganisationForm = ({ admin, btnTitle }: IFormInput) => {
     </>
   );
 };
+
 
 export default OrganisationForm;

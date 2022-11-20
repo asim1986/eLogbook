@@ -3,8 +3,19 @@ import styles from "../../styles/Profile.module.scss";
 import { Navbar } from "../../components/NavBar";
 import Head from "next/head";
 import React from "react";
+import Login from "../login";
+import { useRouter } from "next/router";
+import { useAppSelector } from "../../hooks/store.hook";
 
 const ChangeUserPassword = () => {
+  const isAuth = useAppSelector((state) => state.auth?.isAuth);
+  const router = useRouter();
+
+  if (!isAuth) {
+    router.replace("/login");
+    return <Login />;
+  }
+
   return (
     <>
       <Head>
@@ -14,7 +25,7 @@ const ChangeUserPassword = () => {
         <Navbar />
       </header>
       <main>
-        <ChangePassword style={styles.profiles} user="student"  />
+        <ChangePassword style={styles.profiles} user="student" />
       </main>
     </>
   );

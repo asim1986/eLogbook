@@ -1,13 +1,19 @@
 import {
   IAuthOrganSlice,
   IAuthStudSlice,
+  IAuthSupSlice,
 } from "../../interfaces/slice.interface";
 import { createSlice } from "@reduxjs/toolkit";
 
 type authType = {
+  id: string;
+  role: string;
+  name: string;
   isAuth: boolean;
-  userData: IAuthStudSlice;
+  userStudData: IAuthStudSlice;
   userOrgData: IAuthOrganSlice;
+  userSupData: IAuthSupSlice;
+  userCoordData: IAuthSupSlice;
   token: string;
   refreshToken: string;
 };
@@ -28,6 +34,26 @@ const AuthStudInit: IAuthStudSlice = {
   gender: null,
   place: null,
   eligible: null,
+  organisation: {
+    id: null,
+    email: null,
+    name: null
+  }
+};
+
+const AuthSupInit: IAuthSupSlice = {
+  id: null,
+  title: null,
+  firstName: null,
+  lastName: null,
+  staffID: null,
+  phone: null,
+  institute: null,
+  department: null,
+  gender: null,
+  email: null,
+  avatar: null,
+  user: null,
 };
 
 const AuthOrgInit: IAuthOrganSlice = {
@@ -45,8 +71,13 @@ const AuthOrgInit: IAuthOrganSlice = {
 
 const initialState: authType = {
   isAuth: false,
-  userData: AuthStudInit,
+  id: null,
+  role: null,
+  name: null,
+  userStudData: AuthStudInit,
   userOrgData: AuthOrgInit,
+  userSupData: AuthSupInit,
+  userCoordData: AuthSupInit,
   token: null,
   refreshToken: null,
 };
@@ -55,28 +86,75 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    setUser: (state, { payload }) => {
+      state.id =
+        payload?.loginOrganisation?.organisation?.id ||
+        payload?.loginStudent?.student.id ||
+        payload?.loginCoordinator?.coordinator?.id ||
+        payload?.loginSupervisor?.supervisor?.id;
+      state.role =
+        payload?.loginOrganisation?.organisation?.user ||
+        payload?.loginStudent?.student.user ||
+        payload?.loginCoordinator?.coordinator?.user ||
+        payload?.loginSupervisor?.supervisor?.user;
+      state.name =
+        payload?.loginOrganisation?.organisation?.name.split(" ")[0] ||
+        payload?.loginStudent?.student.lastName ||
+        payload?.loginCoordinator?.coordinator?.lastName ||
+        payload?.loginSupervisor?.supervisor?.lastName;
+      state.token = payload?.accessToken;
+      state.refreshToken = payload?.refreshToken;
+    },
     setStudAuth: (state, { payload }) => {
       state.isAuth = true;
-      state.userData = payload.student;
-      state.token = payload.accessToken;
-      state.refreshToken = payload.refreshToken;
+      state.id = payload?.id;
+      state.userStudData = payload?.student;
+      state.token = payload?.accessToken;
+      state.refreshToken = payload?.refreshToken;
+    },
+    setSupAuth: (state, { payload }) => {
+      state.isAuth = true;
+      state.id = payload?.id;
+      state.userSupData = payload?.supervisor;
+      state.token = payload?.accessToken;
+      state.refreshToken = payload?.refreshToken;
+    },
+    setCoordAuth: (state, { payload }) => {
+      state.isAuth = true;
+      state.id = payload?.id;
+      state.userCoordData = payload?.coordinator;
+      state.token = payload?.accessToken;
+      state.refreshToken = payload?.refreshToken;
     },
     setOrgAuth: (state, { payload }) => {
       state.isAuth = true;
-      state.userOrgData = payload.organisation;
-      state.token = payload.accessToken;
-      state.refreshToken = payload.refreshToken;
+      state.id = payload?.id;
+      state.userOrgData = payload?.organisation;
+      state.token = payload?.accessToken;
+      state.refreshToken = payload?.refreshToken;
     },
     setRest: (state) => {
       state.isAuth = false;
-      state.userData = AuthStudInit,
-      state.userOrgData = AuthOrgInit,
+      state.id = null;
+      state.role = null;
+      state.name = null;
+      state.userStudData = AuthStudInit;
+      state.userOrgData = AuthOrgInit;
+      state.userCoordData = AuthSupInit;
+      state.userSupData = AuthSupInit;
       state.token = null;
       state.refreshToken = null;
-    }
+    },
   },
 });
 
-export const { setStudAuth, setOrgAuth, setRest } = authSlice.actions;
+export const {
+  setStudAuth,
+  setOrgAuth,
+  setRest,
+  setUser,
+  setCoordAuth,
+  setSupAuth,
+} = authSlice.actions;
 
 export default authSlice.reducer;

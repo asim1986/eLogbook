@@ -31,7 +31,7 @@ const Signup = () => {
                     <h1>Organisation</h1>
                   </div>
                 </Link>
-                <Link href="/signup/cordinator">
+                <Link href="/signup/coordinator">
                   <div>
                     <MdSupervisedUserCircle size="8rem" />
                     <h1>Cordinator</h1>
