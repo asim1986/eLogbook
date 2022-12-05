@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer, useMemo } from "react";
-import GlobalContext from "./GlobalContext";
+import GlobalContext, { event } from "./GlobalContext";
 import dayjs from "dayjs";
 
 const savedEventsReducer = (state: any, { type, payload }: any) => {
@@ -10,6 +10,8 @@ const savedEventsReducer = (state: any, { type, payload }: any) => {
       return state.map((evt: any) => (evt.id === payload.id ? payload : evt));
     case "delete":
       return state.filter((evt: any) => evt.id !== payload.id);
+    case "reset":
+        return [];
     default:
       throw new Error();
   }
@@ -32,7 +34,7 @@ const ContextWrapper = (props: any) => {
   const [showSideBar, setShowSideBar] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDetail, setShowDetail]  = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(event);
   const [labels, setLabels] = useState([]);
   const [savedEvents, dispatchCalEvent] = useReducer(
     savedEventsReducer,

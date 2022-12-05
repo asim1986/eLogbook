@@ -11,11 +11,7 @@ import { OptionType } from "dayjs";
 import { customStyles } from "../utils/util";
 import { sectors } from "../utils/sectors";
 import axios from "axios";
-import {
-  IFileInputType,
-  IFileType,
-  IUploadFile,
-} from "../interfaces/upload.interface";
+import { IFileType, IUploadFile } from "../interfaces/upload.interface";
 import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
 import { UPDATE_ORG } from "../graphql/mutations/organisation";
 import { setOrgAuth, setRest } from "../store/slice/auth.slice";
@@ -23,13 +19,13 @@ import constants from "../config/constant.config";
 import { useMutation } from "@apollo/client";
 import router from "next/router";
 import Loader from "./Loader";
+import { client } from "../graphql/apolloClient";
 
 const ProfileOrganisation = () => {
   const data: IAuthOrganSlice = useAppSelector(
     (state) => state.auth.userOrgData
   );
   const token = useAppSelector((state) => state.auth.token);
-  console.log(token);
   // console.log(">>>*** ==", data);
 
   const [textInput, setTextInput] = useState({
@@ -55,6 +51,7 @@ const ProfileOrganisation = () => {
       console.log("DATA ==> ", data);
       dispatch(setOrgAuth(data.updateOrganisation));
       reset();
+      resetImage();
     },
     onError: ({ graphQLErrors, networkError }) => {
       try {
@@ -167,7 +164,9 @@ const ProfileOrganisation = () => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    // Reset Apollo Cache
+    client.resetStore();
     dispatch(setRest());
     router.push("/login");
   };
@@ -332,7 +331,19 @@ const ProfileOrganisation = () => {
                 isClearable
                 options={optionSector}
                 className={styles.select}
-                defaultValue={{ value: textInput.type, label: textInput.type }}
+                defaultValue={{
+                  value: textInput.type,
+                  label:
+                    textInput.type === "ICT"
+                      ? "Information Technology"
+                      : textInput.type === "Financial"
+                      ? "Financail Services"
+                      : textInput.type === "Education"
+                      ? "Education & Training"
+                      : textInput.type === "Oil"
+                      ? "Oil & Gas"
+                      : textInput.type,
+                }}
                 placeholder="Business Sector"
                 onChange={selectSector}
                 styles={customStyles}
@@ -352,6 +363,7 @@ const ProfileOrganisation = () => {
                 onChange={onChangePeople}
               />
             </div>
+
             <div className="w-full md:ml-1 mt-3 md:mt-0">
               <PhoneInput
                 international

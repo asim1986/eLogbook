@@ -1,22 +1,27 @@
+
+import { successToastStyle, errorToastStyle } from "../utils/styles.utils";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import { IFileType, IUploadFile } from "../interfaces/upload.interface";
+import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
+import { setRest, setStudAuth } from "../store/slice/auth.slice";
+import { IAuthStudSlice } from "../interfaces/slice.interface";
+import { UPDATE_STUDENT } from "../graphql/mutations/student";
 import styles from "../styles/Profile.module.scss";
+import constants from "../config/constant.config";
+import toast, { Toaster } from "react-hot-toast";
+import { client } from "../graphql/apolloClient";
+import { useMutation } from "@apollo/client";
+import { DEFAULT_IMG } from "../utils/util";
 import ManageProfile from "./ManageProfile";
 import "react-phone-number-input/style.css";
+import { gender } from "../utils/gender";
+import { level } from "../utils/levels";
 import Select from "react-select";
 import { useState } from "react";
 import router from "next/router";
-import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
-import { IAuthStudSlice } from "../interfaces/slice.interface";
-import { setOrgAuth, setRest } from "../store/slice/auth.slice";
-import { useMutation } from "@apollo/client";
-import toast, { Toaster } from "react-hot-toast";
-import { UPDATE_ORG } from "../graphql/mutations/organisation";
-import { successToastStyle, errorToastStyle } from "../utils/styles.utils";
 import Loader from "./Loader";
-import { IFileType, IUploadFile } from "../interfaces/upload.interface";
-import constants from "../config/constant.config";
 import axios from "axios";
-import { UPDATE_STUDENT } from "../graphql/mutations/student";
+import { setEligReset } from "../store/slice/eligible.slice";
 
 const ProfileStudent = () => {
   const data: IAuthStudSlice = useAppSelector(
@@ -131,12 +136,21 @@ const ProfileStudent = () => {
     }));
   };
 
+  const logout = async () => {
+    // Reset Apollo Cache
+    client.resetStore();
+    dispatch(setRest());
+    dispatch(setEligReset());
+    router.push("/login");
+  };
+
   const [updateStudent, { loading, reset }] = useMutation(UPDATE_STUDENT, {
     onCompleted: (data) => {
       toast.success(data.updateStudent?.message, successToastStyle);
       console.log("DATA ==> ", data);
-      dispatch(setOrgAuth(data.updateStudent));
+      dispatch(setStudAuth(data?.updateStudent));
       reset();
+      resetImage();
     },
     onError: ({ graphQLErrors, networkError }) => {
       try {
@@ -161,28 +175,15 @@ const ProfileStudent = () => {
     },
   });
 
-  const logout = () => {
-    dispatch(setRest());
-    router.push("/login");
-  };
-
   const optionsPlace: OptionType = [
     { value: `${data.place}`, label: `${data.place}` },
   ];
 
   type OptionType = { label: string; value: string }[];
 
-  const optionsLevel: OptionType = [
-    { value: "ND1", label: "ND1" },
-    { value: "NC2", label: "NC2" },
-    { value: "300", label: "300" },
-    { value: "400", label: "400" },
-  ];
+  const optionsLevel: OptionType = level;
 
-  const optionsGender: OptionType = [
-    { value: "Male", label: "Male" },
-    { value: "Female", label: "Female" },
-  ];
+  const optionsGender: OptionType = gender;
 
   const selectGender = (option: OptionType | null | any) => {
     if (option) {
@@ -234,7 +235,7 @@ const ProfileStudent = () => {
         phone: prev.phone,
         level: option.value,
         institute: prev.institute,
-        gender: option.value,
+        gender: prev.gender,
         address: prev.address,
         dept: prev.dept,
         matric: prev.matric,
@@ -251,7 +252,7 @@ const ProfileStudent = () => {
 
       const fileInput: IFileType = {
         id: `${data?.id}`,
-        type: "logo",
+        type: "avatar",
         file: null,
       };
 
@@ -294,13 +295,13 @@ const ProfileStudent = () => {
               variables: {
                 updateInput: {
                   address: textInput.address,
-                  avatar: imageUrl,
                   email: textInput.email,
                   firstName: textInput.name.firstName,
                   gender: textInput.gender,
                   lastName: textInput.name.lastName,
                   level: textInput.level,
                   phone: textInput.phone,
+                  avatar: imageUrl,
                 },
               },
             });
@@ -346,7 +347,12 @@ const ProfileStudent = () => {
         <div className={styles.userImg}>
           <img
             src={
-              selectedFile.img ? selectedFile.img : "../images/thumbnail.png"
+              selectedFile.img
+                ? selectedFile.img
+                : data?.avatar === DEFAULT_IMG
+                ? data?.avatar
+                : `${constants.beHost}${data?.avatar}` ||
+                  "../images/thumbnail.png"
             }
             alt="passport"
           />
@@ -427,6 +433,7 @@ const ProfileStudent = () => {
               <div className="md:mx-1 mx-0 w-full">
                 <Select
                   id="long-value"
+                  isClearable
                   instanceId="long-value"
                   options={optionsLevel}
                   defaultValue={{
@@ -442,20 +449,19 @@ const ProfileStudent = () => {
                   className={styles.select}
                   placeholder="Level"
                   onChange={changeLevel}
-                  value={optionsLevel}
                   styles={customStyles}
                 />
               </div>
               <div className="w-full ml-2 md:ml-1">
                 <Select
                   id="long-value"
+                  isClearable
                   instanceId="long-value"
                   defaultValue={{
                     value: `${data?.gender}`,
                     label: `${data?.gender}`,
                   }}
                   options={optionsGender}
-                  value={optionsGender}
                   className={styles.select}
                   placeholder="Gender"
                   onChange={selectGender}
@@ -503,7 +509,7 @@ const ProfileStudent = () => {
               <input
                 required
                 placeholder="Address"
-                name="firstName"
+                name="address"
                 type="text"
                 className={styles.inputStyle}
                 value={textInput.address}
@@ -561,6 +567,89 @@ const ProfileStudent = () => {
             </button>
           </div>
         </form>
+
+        <div className="mt-3">
+          <h1 className="font-bold text-start pb-2 border-b-2 border-gray-500">
+            Place of IT/SIWES
+          </h1>
+          <div className="flex space-x-2 mt-2">
+            <img
+              className="w-16 h-16 rounded-[50%]"
+              src={`${constants.beHost}${data?.organisation.logo}`}
+              alt="logo"
+            />
+            <div>
+              <h1 className="text-xl">{data?.organisation.name}</h1>
+              <p className="text-gray-400 m-0 p-0 text-sm">
+                {data?.organisation.sector === "ICT"
+                  ? "Information Technology"
+                  : data?.organisation.sector === "Financial"
+                  ? "Financail Services"
+                  : data?.organisation.sector === "Education"
+                  ? "Education & Training"
+                  : data?.organisation.sector === "Oil"
+                  ? "Oil & Gas"
+                  : data?.organisation.sector}
+              </p>
+              <p className="text-gray-400 text-sm">
+                {data?.organisation.email}
+              </p>
+              <p className="text-gray-400 text-sm">
+                {data?.organisation.address}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3">
+          <h1 className="font-bold text-center pb-2 border-b-2 border-gray-500">
+            Supervisor
+          </h1>
+          <div className="flex space-x-2 mt-2">
+            <img
+              className="w-16 h-16 rounded-[50%]"
+              src={
+                selectedFile.img
+                  ? selectedFile.img
+                  : data?.supervisor.avatar === DEFAULT_IMG
+                  ? data?.supervisor.avatar
+                  : `${constants.beHost}${data?.supervisor.avatar}` ||
+                    "../images/thumbnail.png"
+              }
+              alt="avatar"
+            />
+            <div>
+              <h1 className="text-xl">{`${data?.supervisor.title}. ${data?.supervisor.firstName} ${data?.supervisor.lastName}`}</h1>
+              <p className="text-gray-400 text-sm">{data?.supervisor.phone}</p>
+              <p className="text-gray-400 text-sm">{data?.supervisor.email}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3">
+          <h1 className="font-bold text-center pb-2 border-b-2 border-gray-500">
+            Coordinator
+          </h1>
+          <div className="flex space-x-2 mt-2">
+            <img
+              className="w-16 h-16 rounded-[50%]"
+              src={
+                selectedFile.img
+                  ? selectedFile.img
+                  : data?.coordinator.avatar === DEFAULT_IMG
+                  ? data?.coordinator.avatar
+                  : `${constants.beHost}${data?.coordinator.avatar}` ||
+                    "../images/thumbnail.png"
+              }
+              alt="avatar"
+            />
+            <div>
+              <h1 className="text-xl">{`${data?.coordinator.title}. ${data?.coordinator.firstName} ${data?.coordinator.lastName}`}</h1>
+              <p className="text-gray-400 text-sm">{data?.coordinator.phone}</p>
+              <p className="text-gray-400 text-sm">{data?.coordinator.email}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -5,29 +5,51 @@ export const REGISTER_STUDENT = gql`
     student(registerInput: $registeredInput) {
       accessToken
       refreshToken
+      status
+      message
       student {
         id
         firstName
         lastName
-        email
         matricNo
         phone
-        level
-        user
-        avatar
         address
         institute
         department
+        level
         gender
         place
+        email
+        avatar
         eligible
+        user
+        supervisor {
+          id
+          title
+          firstName
+          lastName
+          email
+          phone
+          avatar
+        }
+        coordinator {
+          id
+          title
+          firstName
+          lastName
+          email
+          phone
+          avatar
+        }
         organisation {
           id
+          name
+          sector
           email
+          logo
+          address
         }
       }
-      status
-      message
     }
   }
 `;
@@ -52,10 +74,35 @@ export const UPDATE_STUDENT = gql`
         gender
         place
         email
-        password
         avatar
         eligible
         user
+        supervisor {
+          id
+          title
+          firstName
+          lastName
+          email
+          phone
+          avatar
+        }
+        coordinator {
+          id
+          title
+          firstName
+          lastName
+          email
+          phone
+          avatar
+        }
+        organisation {
+          id
+          name
+          sector
+          email
+          logo
+          address
+        }
       }
     }
   }

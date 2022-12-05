@@ -1,13 +1,9 @@
+import { MainHeaderType } from "../../interfaces/comp.interface";
 import GlobalContext from "../../context/GlobalContext";
 import styles from "../../styles/Dashboard.module.scss";
 import { BiSearchAlt2 } from "react-icons/bi";
 import { FaPlus } from "react-icons/fa";
 import { useContext } from "react";
-
-interface MainHeaderType {
-  style: any;
-  title: string;
-}
 
 const MainHeader = ({ style, title }: MainHeaderType) => {
   const { setShowAddModal } = useContext(GlobalContext);
@@ -21,11 +17,9 @@ const MainHeader = ({ style, title }: MainHeaderType) => {
         </span>
       </div>
       <div className="lg:mr-5 md:mr-2">
-        <button
-          onClick={() => setShowAddModal(true)}
-          className={styles.addBtn}
-        >
-          <span className="md:text-lg">{title}</span> <FaPlus className="text-xl md:mr-2 md:text-lg" />
+        <button onClick={() => setShowAddModal(true)} className={styles.addBtn}>
+          <span className="md:text-lg">{title}</span>{" "}
+          <FaPlus className="text-xl md:mr-2 md:text-lg" />
         </button>
       </div>
     </div>

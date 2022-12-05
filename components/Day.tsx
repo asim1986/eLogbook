@@ -1,9 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
 import GlobalContext from "../context/GlobalContext";
 import dayjs from "dayjs";
+import { EventType } from "../interfaces/comp.interface";
+import { useAppDispatch } from "../hooks/store.hook";
+import { setLog } from "../store/slice/logbook.slice";
 
 const Day = ({ day, rowIdx }: any) => {
   const [dayEvents, setDayEvents] = useState([]);
+  const dispatch = useAppDispatch();
   const {
     setDaySelected,
     setShowEventModal,
@@ -25,6 +29,13 @@ const Day = ({ day, rowIdx }: any) => {
       : "";
   }
 
+  const onEventHandler = (evt: EventType, idx: number) => {
+    setSelectedEvent(evt);
+    // dispatch(setLog(evt));
+    // console.log("EVENT ==> ", evt);
+    // console.log("STATUS => ", selectedEvent);
+  }
+
   return (
     <div className="border border-gray-500 flex flex-col">
       <header className="flex flex-col items-center">
@@ -44,12 +55,13 @@ const Day = ({ day, rowIdx }: any) => {
         onClick={() => {
           setDaySelected(day);
           setShowEventModal(true);
+          // console.log("DAY => ", day)
         }}
       >
         {dayEvents.map((evt, idx) => (
           <div
             key={idx}
-            onClick={() => setSelectedEvent(evt)}
+            onClick={() => onEventHandler(evt, idx)}
             className={`bg-${evt.label}-200 p-1 mr-3 text-gray-400 text-sm rounded mb-1 truncate`}
           >
             {evt.title}

@@ -67,3 +67,6 @@ export const customStyles = {
     width: "100%",
   }),
 };
+
+export const DEFAULT_IMG = "https://i.pinimg.com/236x/00/70/d0/0070d05bc3d01aa3e04e5ebab7132985.jpg";
+   

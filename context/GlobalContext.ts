@@ -1,4 +1,13 @@
+import { EventType } from "../interfaces/comp.interface";
 import React from "react";
+
+export const event: EventType = {
+  title: null,
+  description: null,
+  label: null,
+  day: null,
+  id: null,
+}
 
 const GlobalContext = React.createContext({
   monthIndex: 0,
@@ -11,8 +20,8 @@ const GlobalContext = React.createContext({
   setShowEventModal: (arg: boolean) => {},
   dispatchCalEvent: ({ type, payload }: any) => {},
   savedEvents: [],
-  selectedEvent: null,
-  setSelectedEvent: (arg: any) => {},
+  selectedEvent: event,
+  setSelectedEvent: (arg: EventType) => {},
   setLabels: (args: any) => {},
   labels: [],
   updateLabel: (arg: any) => {},
@@ -21,7 +30,7 @@ const GlobalContext = React.createContext({
   setShowSideBar: (arg: boolean) => {},
   showAddModal: false,
   setShowAddModal: (arg: boolean) => {},
-  showDetail: false, 
+  showDetail: false,
   setShowDetail: (arg: boolean) => {},
 });
 

@@ -1,3 +1,4 @@
+import { ViewDetailType } from "../interfaces/comp.interface";
 import { CSSTransition } from "react-transition-group";
 import GlobalContext from "../context/GlobalContext";
 import animate from "../styles/animate.module.css";
@@ -7,19 +8,8 @@ import { useContext, useRef } from "react";
 import { MdClose } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 
-interface LabelType {
-  title: string;
-  value: string;
-}
-
-interface ViewDetailType {
-  show: boolean;
-  labels: LabelType[];
-  img: boolean;
-  title: string;
-}
-
-const ViewDetails = ({ show, labels, img, title }: ViewDetailType) => {
+const ViewDetails = (props: ViewDetailType) => {
+  const { show, labels, img, title, isAdmin = true, id, onDelCallback } = props;
   const { setShowDetail, setShowAddModal } = useContext(GlobalContext);
   const nodeRef = useRef<any>(null);
 
@@ -35,7 +25,10 @@ const ViewDetails = ({ show, labels, img, title }: ViewDetailType) => {
         exitActive: animate.animateExitActive,
       }}
     >
-      <div ref={nodeRef} className={styles.addStudent}>
+      <div
+        ref={nodeRef}
+        className={isAdmin ? styles.addStudent : styles.addStudentUser}
+      >
         <div className="sm:p-5 lg:p-5">
           <div className="flex justify-between w-full mt-2 md:mt-0">
             <div className="">
@@ -57,6 +50,7 @@ const ViewDetails = ({ show, labels, img, title }: ViewDetailType) => {
               <CgTrashEmpty
                 size={"1.5rem"}
                 className="cursor-pointer hover:text-red-500"
+                onClick={() => onDelCallback(id)}
               />
             </div>
           </div>
@@ -88,9 +82,7 @@ const ViewDetails = ({ show, labels, img, title }: ViewDetailType) => {
               <div className={styles.infoSection}>
                 {labels.map((lbl, i) => (
                   <div key={i.toString()}>
-                    <span className="text-gray-500 uppercase">
-                      {lbl.title}
-                    </span>
+                    <span className="text-gray-500 uppercase">{lbl.title}</span>
                     <span className="font-bold text-start w-1/2">
                       {lbl.value}
                     </span>

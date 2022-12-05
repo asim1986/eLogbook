@@ -2,7 +2,7 @@ import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import styles from "../../styles/Profile.module.scss";
 import ManageProfile from "../ManageProfile";
 import { useEffect, useState } from "react";
-import { useMutation } from "@apollo/client";
+import { useApolloClient, useMutation } from "@apollo/client";
 import { CHANGE_PASSWORD } from "../../graphql/mutations/changePsw";
 import toast, { Toaster } from "react-hot-toast";
 import { errorToastStyle, successToastStyle } from "../../utils/styles.utils";
@@ -11,11 +11,8 @@ import { useRouter } from "next/router";
 import { IAuthOrganSlice } from "../../interfaces/slice.interface";
 import { useAppDispatch, useAppSelector } from "../../hooks/store.hook";
 import Loader from "../Loader";
-
-interface ChangePasswordType {
-  user: string;
-  style: any;
-}
+import { ChangePasswordType } from "../../interfaces/comp.interface";
+import { client } from "../../graphql/apolloClient";
 
 const ChangePassword = ({ user, style }: ChangePasswordType) => {
   const [textInput, setTextInput] = useState({
@@ -70,7 +67,9 @@ const ChangePassword = ({ user, style }: ChangePasswordType) => {
     }));
   };
 
-  const logout = () => {
+  const logout = async () => {
+    // Reset Apollo Cache
+    client.resetStore();
     dispatch(setRest());
     router.push("/login");
   };

@@ -1,8 +1,4 @@
-import {
-  IAuthOrganSlice,
-  IAuthStudSlice,
-  IAuthSupSlice,
-} from "../../interfaces/slice.interface";
+import { IAuthOrganSlice, IAuthStudSlice, IAuthSupSlice } from "../../interfaces/slice.interface";
 import { createSlice } from "@reduxjs/toolkit";
 
 type authType = {
@@ -33,11 +29,32 @@ const AuthStudInit: IAuthStudSlice = {
   department: null,
   gender: null,
   place: null,
-  eligible: null,
+  eligible: false,
+  supervisor: {
+    id: null,
+    title: null,
+    firstName: null,
+    lastName: null,
+    email: null,
+    phone: null,
+    avatar: null,
+  },
+  coordinator: {
+    id: null,
+    title: null,
+    firstName: null,
+    lastName: null,
+    email: null,
+    phone: null,
+    avatar: null,
+  },
   organisation: {
     id: null,
-    email: null,
-    name: null
+    name: null,
+    sector: null,
+    email: null,    
+    logo: null,
+    address: null
   }
 };
 
@@ -107,28 +124,24 @@ const authSlice = createSlice({
     },
     setStudAuth: (state, { payload }) => {
       state.isAuth = true;
-      state.id = payload?.id;
       state.userStudData = payload?.student;
       state.token = payload?.accessToken;
       state.refreshToken = payload?.refreshToken;
     },
     setSupAuth: (state, { payload }) => {
       state.isAuth = true;
-      state.id = payload?.id;
       state.userSupData = payload?.supervisor;
       state.token = payload?.accessToken;
       state.refreshToken = payload?.refreshToken;
     },
     setCoordAuth: (state, { payload }) => {
       state.isAuth = true;
-      state.id = payload?.id;
       state.userCoordData = payload?.coordinator;
       state.token = payload?.accessToken;
       state.refreshToken = payload?.refreshToken;
     },
     setOrgAuth: (state, { payload }) => {
       state.isAuth = true;
-      state.id = payload?.id;
       state.userOrgData = payload?.organisation;
       state.token = payload?.accessToken;
       state.refreshToken = payload?.refreshToken;

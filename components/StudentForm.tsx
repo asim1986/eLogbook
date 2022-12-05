@@ -1,11 +1,15 @@
-import React, { Fragment, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  Fragment,
+  useContext,
+  useRef,
+  useState,
+} from "react";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import { allInstitutions } from "../utils/institutions";
 import { useMutation, useQuery } from "@apollo/client";
 import { IFormInput } from "../interfaces/formInput";
 import GlobalContext from "../context/GlobalContext";
-import UPDATE_AVATAR from "../schema/updateAvatar";
 import styles from "../styles/Signup.module.scss";
 import { customStyles } from "../utils/util";
 import "react-phone-number-input/style.css";
@@ -21,46 +25,46 @@ import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
 import { IFileInputType, IUploadFile } from "../interfaces/upload.interface";
 import { ORGANISATIONS } from "../graphql/query/organisation";
 import { useRouter } from "next/router";
-import { useAppDispatch } from "../hooks/store.hook";
+import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
 import { setStudAuth } from "../store/slice/auth.slice";
 import { REGISTER_STUDENT } from "../graphql/mutations/student";
+import { setEligReset } from "../store/slice/eligible.slice";
 
 const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
   const { showEventModal, setShowEventModal } = useContext(GlobalContext);
   // const [avatar, setAvatar] = useState<string | null>(null);
-  const avatar = useRef<string|null>();
-  const [isLoading, setIsLoading] = useState(false);
+  const avatar = useRef<string | null>();
+  const eligData = useAppSelector((state) => state.eligible);
   const [textInput, setTextInput] = useState({
     name: { firstName: "", lastName: "" },
     email: "",
     phone: "",
     password: "",
-    institute: "",
+    institute: eligData ? eligData.institute : "",
     place: "",
-    level: '',
+    level: eligData ? eligData.level : "",
     gender: "",
     address: "",
     other: "",
-    dept: '',
-    matric: "",
+    dept: eligData ? eligData.department : "",
+    matric: eligData ? eligData.matricNo : "",
   });
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { loading: load, data: orgData } = useQuery(ORGANISATIONS);
 
   const listOrg = orgData?.organisations?.map((i: any) => {
-    return { value: i.email, label: i.name }
+    return { value: i.email, label: i.name };
   });
-
-  // console.log("LISTOR ==> ", listOrg);
-  // console.log("EMAIL => ", orgData)
 
   const [addStudent, { loading, reset }] = useMutation(REGISTER_STUDENT, {
     onCompleted: (data) => {
-      toast.success("Registered successfully!", successToastStyle);
-      router.push("/profile/student");
-      dispatch(setStudAuth(data?.student));
+      toast.success(data?.student.message, successToastStyle);
+      router.push("/logbook");
+      // console.log("STUDENT DATA => ", data?.student);
+      dispatch(setStudAuth(data?.student));  
       reset();
+      dispatch(setEligReset());
     },
     onError: ({ graphQLErrors, networkError }) => {
       // alert(error?.message);
@@ -288,7 +292,7 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
 
   const optionsGender: OptionType = gender;
 
-  const optionsPlace: OptionType = load ? [{label: 'Loading'}] : listOrg
+  const optionsPlace: OptionType = load ? [{ label: "Loading" }] : listOrg;
 
   const selectInstitution = (option: OptionType | null | any) => {
     if (option) {
@@ -300,7 +304,7 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
         email: prev.email,
         phone: prev.phone,
         password: prev.password,
-        place: option.value,
+        place: prev.place,
         institute: option.value,
         level: prev.level,
         gender: prev.gender,
@@ -333,7 +337,6 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
         matric: prev.matric,
       }));
     }
-    setShowInput(option.value === "Others" ? true : false);
   };
 
   const selectGender = (option: OptionType | null | any) => {
@@ -356,14 +359,38 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
         matric: prev.matric,
       }));
     }
-    setShowInput(option.value === "Others" ? true : false);
+  };
+
+  const selectPlace = (option: OptionType | null | any) => {
+    if (option) {
+      setTextInput((prev) => ({
+        name: {
+          firstName: prev.name.firstName,
+          lastName: prev.name.lastName,
+        },
+        email: prev.email,
+        phone: prev.phone,
+        password: prev.password,
+        institute: prev.institute,
+        place: option.value,
+        level: prev.level,
+        gender: prev.gender,
+        address: prev.address,
+        other: prev.other,
+        dept: prev.dept,
+        matric: prev.matric,
+      }));
+    }
   };
 
   const onSubmitHandler = async (evt: React.FormEvent<HTMLFormElement>) => {
-    if (loading) {
-      setIsLoading(true);
-    }
     evt.preventDefault();
+
+    if (!selectedFile.file) {
+      toast.error("Please Upload a Passport!", errorToastStyle);
+      return;
+    }
+
     const formData = new FormData();
     const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
 
@@ -381,11 +408,6 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
     formData.append("map", JSON.stringify(map));
     formData.append("0", selectedFile.file);
 
-    if (!selectedFile.file) {
-      toast.error("Please Upload an Image!", errorToastStyle);
-      return;
-    }
-
     await axios
       .post(constants.graphqlBaseUrl, formData, {
         headers: {
@@ -393,11 +415,20 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
         },
       })
       .then((response) => {
-        // console.log("RESPONSE****", response);
-        const status = response.status;
-        const { data } = response.data;
-        const { imageUrl } = data.uploadFile as IUploadFile;
+        // console.log("RESPONSE****", response);        
+        if (response?.data?.errors) {
+          const errMsg = response?.data?.errors[0];
+          toast.error(errMsg?.message, errorToastStyle);
+          return;
+        }
+
+        const status = response?.status;
+        const { data } = response?.data;
+        const { imageUrl } = data?.uploadFile as IUploadFile;
         // const { imageUrl }  = data;
+        console.log("imageUrl Response***", imageUrl);
+        console.log("Status ***>", status);
+
         if (status === 200) {
           addStudent({
             variables: {
@@ -421,11 +452,9 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
         }
       })
       .catch((error) => {
-        setIsLoading(false);
         console.log(error);
         toast.error("An error occurred while uploading image", errorToastStyle);
       });
-    setIsLoading(false);
   };
 
   return (
@@ -522,6 +551,11 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
           <div className="mb-4">
             <Select
               options={options}
+              isClearable
+              defaultValue={{
+                value: `${eligData?.institute}`,
+                label: `${eligData?.institute}`,
+              }}
               className={styles.select}
               placeholder="Select Institution"
               onChange={selectInstitution}
@@ -560,6 +594,17 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
             <div className="w-full mr-1">
               <Select
                 options={optionsLevel}
+                isClearable
+                defaultValue={{
+                  value: `${eligData?.level}`,
+                  label: `${
+                    eligData?.level === "L4"
+                      ? "400"
+                      : eligData?.level === "L3"
+                      ? "300"
+                      : eligData?.level
+                  }`,
+                }}
                 className={styles.select}
                 placeholder="Level"
                 onChange={selectLevel}
@@ -568,6 +613,7 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
             </div>
             <div className="w-full ml-1">
               <Select
+                isClearable
                 options={optionsGender}
                 className={styles.select}
                 placeholder="Gender"
@@ -579,10 +625,11 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
         </div>
         <div className="mb-4">
           <Select
+            isClearable
             options={optionsPlace}
             className={styles.select}
             placeholder="Select Place of SIWES"
-            onChange={selectInstitution}
+            onChange={selectPlace}
             styles={customStyles}
           />
         </div>

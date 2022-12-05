@@ -1,14 +1,16 @@
 import { successToastStyle, errorToastStyle } from "../../utils/styles.utils";
 import { useAppDispatch, useAppSelector } from "../../hooks/store.hook";
+import { DeleteAccountType } from "../../interfaces/comp.interface";
 import { DELETE_ORG } from "../../graphql/mutations/organisation";
 import { DELETE_CORD } from "../../graphql/mutations/coordinator";
 import { DELETE_SUP } from "../../graphql/mutations/supervisor";
 import { DELETE_STUD } from "../../graphql/mutations/student";
-import { DocumentNode, useMutation } from "@apollo/client";
 import { DELETE_FILE } from "../../graphql/mutations/file";
+import { DocumentNode, useMutation } from "@apollo/client";
 import GlobalContext from "../../context/GlobalContext";
 import { setRest } from "../../store/slice/auth.slice";
 import styles from "../../styles/Profile.module.scss";
+import { client } from "../../graphql/apolloClient";
 import toast, { Toaster } from "react-hot-toast";
 import { useContext, useState } from "react";
 import ManageProfile from "../ManageProfile";
@@ -16,21 +18,12 @@ import DeleteModal from "./DeleteModal";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
 
-interface DeleteAccountType {
-  user: string;
-  style: any;
-}
-
 const DeleteAccount = ({ user, style }: DeleteAccountType) => {
-  const { showDetail, setShowDetail } = useContext(GlobalContext);
+  const { showDetail, setShowDetail, dispatchCalEvent } =
+    useContext(GlobalContext);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
   const router = useRouter();
-
-  const logout = () => {
-    dispatch(setRest());
-    router.push("/login");
-  };
 
   let userEmail: string = "";
   let userID: string = "";
@@ -43,6 +36,16 @@ const DeleteAccount = ({ user, style }: DeleteAccountType) => {
       state.auth?.userOrgData?.user
   );
   let mutationType: DocumentNode | null = null;
+
+  const logout = async () => {
+    // Reset Apollo Cache
+    client.resetStore();
+    dispatch(setRest());
+    router.push("/login");
+    if (role === "Student") {
+      dispatchCalEvent({ type: "reset" });
+    }
+  };
 
   switch (role) {
     case "Student":
@@ -92,7 +95,7 @@ const DeleteAccount = ({ user, style }: DeleteAccountType) => {
       );
       setIsLoading(false);
       // Redirect to Login Page
-      logout();  
+      logout();
     },
     onError: ({ graphQLErrors, networkError }) => {
       try {
@@ -161,7 +164,9 @@ const DeleteAccount = ({ user, style }: DeleteAccountType) => {
     }
     deleteFile({
       variables: {
-        deleteInput: userID,
+        deleteInput: {
+          id: userID,
+        },
       },
     });
   };

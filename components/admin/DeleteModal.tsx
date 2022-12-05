@@ -1,17 +1,11 @@
-import { CSSTransition } from "react-transition-group";
-import React, { useContext } from "react";
-import styles from "../../styles/Signup.module.scss";
-import animate from "../../styles/animate.module.css";
-import { MdClose } from "react-icons/md";
+import { DeleteType } from "../../interfaces/comp.interface";
 import GlobalContext from "../../context/GlobalContext";
+import { CSSTransition } from "react-transition-group";
+import animate from "../../styles/animate.module.css";
+import styles from "../../styles/Signup.module.scss";
 import { AiFillWarning } from "react-icons/ai";
-
-interface DeleteType {
-  show: boolean;
-  title: string;
-  content: string;
-  onYes: any;
-}
+import React, { useContext } from "react";
+import { MdClose } from "react-icons/md";
 
 const DeleteModal = ({ show, title, content, onYes }: DeleteType) => {
   const { setShowDetail } = useContext(GlobalContext);
@@ -65,7 +59,10 @@ const DeleteModal = ({ show, title, content, onYes }: DeleteType) => {
               </span>
 
               <div className="flex flex-row justify-center mt-4 py-2">
-                <button className="bg-red-700 px-5 py-1 rounded-2xl hover:bg-red-800 mr-2" onClick={onYes}>
+                <button
+                  className="bg-red-700 px-5 py-1 rounded-2xl hover:bg-red-800 mr-2"
+                  onClick={onYes}
+                >
                   Yes
                 </button>
                 <button

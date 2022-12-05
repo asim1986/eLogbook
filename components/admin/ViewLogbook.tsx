@@ -5,32 +5,41 @@ import styles from "../../styles/Signup.module.scss";
 import { CgTrashEmpty } from "react-icons/cg";
 import { RiCheckFill } from "react-icons/ri";
 import { useContext, useRef } from "react";
+import BackBlurDrop from "../BackBlurDrop";
 import { MdClose } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import BackBlurDrop from "../BackBlurDrop";
+import { StudLog } from "../../interfaces/comp.interface";
+import constants from "../../config/constant.config";
 
-const ViewLogbook = ({ show }: { show: boolean }) => {
+const ViewLogbook = ({
+  show,
+  isAdmin,
+  data,
+}: {
+  show: boolean;
+  isAdmin?: boolean;
+  data: StudLog;
+}) => {
   const nodeRef = useRef<any>(null);
   const { setShowDetail, setShowAddModal } = useContext(GlobalContext);
   const labels = [
-    { title: "ID", value: 1661438735332 },
+    { title: "ID", value: data?.id },
     {
       title: "Day",
-      value: new Date("2022-08-25T23:00:00.000Z").toDateString(),
+      value: new Date(`${data?.day}`).toDateString(),
     },
     {
-      title: "description",
-      value:
-        "Thank God for adding another year to my years. To Him be all the Glory and all the praise for what He is doing. Amen",
+      title: "Description",
+      value: data?.description,
     },
-    { title: "Label", value: "gray" },
+    { title: "Label", value: data?.label },
     { title: "Date", value: new Date().toDateString() },
-    { title: "Approved", value: true },
+    { title: "Approved", value: data?.approved },
   ];
 
   const activities = [
     {
-      title: "Birthday",
+      title: data?.title,
       description: "",
       label: "red",
       day: new Date("2022-08-25T23:00:00.000Z"),
@@ -40,7 +49,7 @@ const ViewLogbook = ({ show }: { show: boolean }) => {
 
   return (
     <>
-      <BackBlurDrop show={show} />
+      <BackBlurDrop show={show} style={true} isAdmin={isAdmin} />
       <CSSTransition
         nodeRef={nodeRef}
         mountOnEnter
@@ -52,7 +61,10 @@ const ViewLogbook = ({ show }: { show: boolean }) => {
           exitActive: animate.animateExitActive,
         }}
       >
-        <div ref={nodeRef} className={styles.addStudent}>
+        <div
+          ref={nodeRef}
+          className={`${!isAdmin ? styles.addStudentUser : styles.addStudent}`}
+        >
           <div className="sm:p-5 lg:p-5">
             <div className="flex justify-between w-full">
               <div className="">
@@ -79,9 +91,15 @@ const ViewLogbook = ({ show }: { show: boolean }) => {
 
             <h1>{activities[0].title}</h1>
             <div className="flex flex-col md:flex-row items-center md:items-start flex-wrap w-full mt-2 p-3 md:p-1">
-              <div className={styles.passportSt}>
-                <img src="../../images/image3.jpg" alt="diagram" />
-              </div>
+              {data?.diagram && <div className={styles.passportSt}>
+                <img
+                  src={
+                    data?.diagram
+                      && `${constants.beHost}${data?.diagram}`
+                  }
+                  alt="diagram"
+                />
+              </div>}
               <div className={styles.infoSection}>
                 {labels.map((lbl, i) => (
                   <div key={i.toString()}>

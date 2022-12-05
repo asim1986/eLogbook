@@ -1,4 +1,4 @@
-import ListLogbooks from "../../components/admin/ListLogbooks";
+import Activities from "../../components/admin/Activities";
 import styles from "../../styles/Dashboard.module.scss";
 import { useAppSelector } from "../../hooks/store.hook";
 import { Navbar } from "../../components/NavBar";
@@ -6,22 +6,12 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Login from "../login";
 
-const Activities = () => {
-  const role = useAppSelector(
-    (state) => state.auth?.userCoordData?.user || state.auth?.userSupData?.user
-  );
+const StudentLogBook = () => {
+  const role = useAppSelector((state) => state.auth?.userStudData?.user);
   const isAuth = useAppSelector((state) => state.auth?.isAuth);
   const router = useRouter();
 
-  console.log("act role => ", role);
-
-  if (
-    !isAuth &&
-    role !== "Supervisor" &&
-    role !== "Coordinator" &&
-    role !== "Admin" ||
-    !role
-  ) {
+  if (!isAuth && role !== "Student" && role !== "Admin") {
     router.replace("/login");
     return <Login />;
   }
@@ -29,18 +19,19 @@ const Activities = () => {
   return (
     <>
       <Head>
-        <title>Activities</title>
+        <title>Student Activities</title>
       </Head>
       <Navbar />
       <main>
-        <ListLogbooks
-          style={styles.dashTables}
-          styleHeader={styles.mainHeaders}
+        <Activities
           user="student"
+          isStudent={true}
+          style={styles.dashTableLogs}
+          styleHeader={styles.mainHeaderLogStud}
         />
       </main>
     </>
   );
 };
 
-export default Activities;
+export default StudentLogBook;

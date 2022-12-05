@@ -22,14 +22,16 @@ $sideBarWidth: 15rem;
   background: rgba(11, 16, 24, 0.8);
   backdrop-filter: blur(3px);
   @apply fixed left-0 top-0 h-screen lg:w-[calc(100%-15rem)];
-  @apply w-full lg:ml-[15rem] z-20;
+  @apply w-full lg:ml-[15rem];
+  z-index: 20;
 }
 
 .backDropUser {
   background: rgba(11, 16, 24, 0.8);
   backdrop-filter: blur(3px);
   @apply fixed left-0 top-0 h-screen lg:w-[calc(100%-15rem)];
-  @apply w-full z-20;
+  @apply w-full;
+  z-index: 20;
 }
 
 .addStudent {
@@ -38,6 +40,13 @@ $sideBarWidth: 15rem;
   @apply absolute md:fixed top-0 inset-x-0 mx-auto w-10/12 mt-20 landscape:mt-5 md:mt-40;
   @apply lg:mt-[15vh] md:w-10/12 lg:w-6/12 z-20 overflow-y-auto;
   @apply lg:ml-[calc((15rem+50%)*0.5)]
+}
+
+.addStudentUser {
+  border-radius: 15px;
+  background: $primaryColor;
+  @apply absolute md:fixed top-0 inset-x-0 mx-auto w-10/12 mt-20 landscape:mt-5 md:mt-40;
+  @apply lg:mt-[15vh] md:w-10/12 lg:w-6/12 z-20 overflow-y-auto;
 }
 
 .addStudent div > form::-webkit-scrollbar {
@@ -62,6 +71,19 @@ $sideBarWidth: 15rem;
   @apply xl:ml-[calc(15rem+21%)];
 }
 
+.textAreaErr {
+  @apply bg-gray-50 border border-red-300 outline-red-300 text-gray-900;
+  @apply block w-full p-2.5 dark:bg-gray-50 placeholder-red-400 rounded-lg;
+  @apply dark:border-red-600 dark:outline-red-600 dark:text-white sm:text-sm;
+  background: #374151;
+}
+
+.textAreaErr:focus, .textAreaErr:active {
+  border: 1px solid rgb(185 28 28);
+  outline: 1px solid rgb(185 28 28);
+  background: #374151;
+}
+
 .addEligibleUser {
   background: $primaryColor;
   border-radius: 15px;
@@ -83,10 +105,17 @@ $sideBarWidth: 15rem;
   @apply lit:ml-5;
 }
 
+.addStudentUser h1 {
+  @apply font-bold text-center ml-0 md:ml-9 mt-1 md:mt-[-1.6rem] lit:mt-[-2.1rem] mb-2;
+  @apply md:mt-[-1.8rem] text-lg md:text-xl lg:text-2xl py-2 md:py-0;
+  @apply lit:ml-5;
+}
+
 .signupBtnSt {
   border-radius: 15px;
   @apply text-white font-medium text-base px-7 py-2 mx-1;
   @apply w-full sm:w-auto text-center bg-blue-700 hover:bg-blue-800;
+  @apply disabled:bg-[#374151] disabled:cursor-not-allowed;
 }
 
 .blogTitle {

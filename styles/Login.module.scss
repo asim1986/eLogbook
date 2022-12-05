@@ -48,11 +48,13 @@
   @apply bg-red-50 border border-red-300 outline-red-300 text-gray-900;
   @apply block w-full p-2.5 dark:bg-red-50 placeholder-red-400 rounded-lg;
   @apply dark:border-red-600 dark:outline-red-600 dark:text-white sm:text-sm;
+  background: #374151;
 }
 
 .loginInputErr:focus {
   border: 1px solid rgb(185 28 28);
   outline: 1px solid rgb(185 28 28);
+  background: #374151;
 }
 
 .checkBox {

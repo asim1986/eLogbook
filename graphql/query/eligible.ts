@@ -11,3 +11,23 @@ export const ELIGIBLE = gql`
     }
   }
 `;
+
+export const GET_ELIGIBLES_DEPT = gql`
+  query EligiblesByDept($input: EligDeptsInput!) {
+    eligiblesByDept(input: $input) {
+      id
+      institute
+      department
+      level
+      supervisor {
+        id
+        title
+        firstName
+        lastName
+        email
+      }
+      matricNo
+      createdAt
+    }
+  }
+`;

@@ -1,30 +1,25 @@
+import { setCoordAuth, setOrgAuth, setStudAuth, setSupAuth } from "../store/slice/auth.slice";
+import { successToastStyle, errorToastStyle } from "../utils/styles.utils";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
+import { setEligReset } from "../store/slice/eligible.slice";
+import { DocumentNode, useLazyQuery } from "@apollo/client";
+import { LOGIN_ORGAN } from "../graphql/query/organisation";
+import { LOGIN_COORD } from "../graphql/query/coordinator";
+import { LOGIN_STUDENT } from "../graphql/query/student";
+import { LOGIN_SUP } from "../graphql/query/supervisor";
+import { useAppDispatch } from "../hooks/store.hook";
 import styles_ from "../styles/Signup.module.scss";
 import styles from "../styles/Login.module.scss";
+import toast, { Toaster } from "react-hot-toast";
 import { Navbar } from "../components/NavBar";
 import { customStyles } from "../utils/util";
+import Loader from "../components/Loader";
 import { roles } from "../utils/role.util";
 import React, { useState } from "react";
+import { useRouter } from "next/router";
 import Select from "react-select";
 import Link from "next/link";
 import Head from "next/head";
-import { DocumentNode, useLazyQuery, useMutation } from "@apollo/client";
-import { useRouter } from "next/router";
-import toast, { Toaster } from "react-hot-toast";
-import { REGISTER_ORG } from "../graphql/mutations/organisation";
-import {
-  setCoordAuth,
-  setOrgAuth,
-  setStudAuth,
-  setSupAuth,
-} from "../store/slice/auth.slice";
-import { successToastStyle, errorToastStyle } from "../utils/styles.utils";
-import { LOGIN_ORGAN } from "../graphql/query/organisation";
-import { useAppDispatch } from "../hooks/store.hook";
-import Loader from "../components/Loader";
-import { LOGIN_STUDENT } from "../graphql/query/student";
-import { LOGIN_SUP } from "../graphql/query/supervisor";
-import { LOGIN_COORD } from "../graphql/query/coordinator";
 
 const Login = () => {
   const [textInput, setTextInput] = useState({
@@ -33,17 +28,13 @@ const Login = () => {
     role: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [docNode, setDocNode] = useState<DocumentNode>(LOGIN_COORD);
   const dispatch = useAppDispatch();
   const router = useRouter();
-  // const isAuth = store.getState().auth.isAuth;
-  // const role = store.getState().auth.userStudData.user;
-  // console.log("ISAUTH <===> ", isAuth);
-  let doctType: DocumentNode = LOGIN_COORD;
 
-  const [loginUser, { loading, called }] = useLazyQuery(doctType, {
+  const [loginUser, { loading }] = useLazyQuery(docNode, {
     onCompleted: (data) => {
-      //console.log("LOGIN DATA ==> ", data); 
+      //console.log("LOGIN DATA ==> ", data);
       if (data?.loginOrganisation) {
         router.push("/profile/organisation");
         console.log("DATA ==> ", data.loginOrganisation);
@@ -52,6 +43,7 @@ const Login = () => {
         router.push("/logbook");
         console.log("DATA ==> ", data.loginStudent);
         dispatch(setStudAuth(data.loginStudent));
+        dispatch(setEligReset());
       } else if (data?.loginSupervisor) {
         router.push("/activities");
         console.log("DATA ==> ", data.loginSupervisor);
@@ -63,10 +55,8 @@ const Login = () => {
       }
       // dispatch(setUser(data));
       toast.success("Login Successfully", successToastStyle);
-      setIsLoading(false);
     },
     onError: ({ graphQLErrors, networkError }) => {
-      setIsLoading(false);
       if (graphQLErrors)
         graphQLErrors.forEach(({ message, locations, path }) => {
           console.log(
@@ -103,37 +93,46 @@ const Login = () => {
 
   const optionRole = roles;
 
-  const selectSector = (option: OptionType | null | any) => {
+  const selectRole = (option: OptionType | null | any) => {
     if (option) {
       setTextInput((prev) => ({
         email: prev.email,
         password: prev.password,
         role: option.value,
       }));
+      customRole(option.value);
     }
   };
 
+  const customRole = (role: string) => {
+    console.log("CUSTOM ROLE => ", role);
+    if (role !== '') {
+      switch (role) {
+        case "Organisation":
+          setDocNode(LOGIN_ORGAN);
+          break;
+        case "Student":
+          setDocNode(LOGIN_STUDENT);
+          break;
+        case "Supervisor":
+          setDocNode(LOGIN_SUP);
+          break;
+        case "Coordinator":
+          setDocNode(LOGIN_COORD);
+          break;
+        default:
+          toast.error("Please select your user type", errorToastStyle);
+      }
+    }
+  }
+
   const onSubmitHandler = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    if (loading) {
-      setIsLoading(true);
+
+    if (textInput.role === '')  {
+      toast.error("Please select your user type", errorToastStyle);
     }
-    switch (textInput.role) {
-      case "Organisation":
-        doctType = LOGIN_ORGAN;
-        break;
-      case "Student":
-        doctType = LOGIN_STUDENT;
-        break;
-      case "Supervisor":
-        doctType = LOGIN_SUP;
-        break;
-      case "Coordinator":
-        doctType = LOGIN_COORD;
-        break;
-      default:
-        toast.error("Please your user type", errorToastStyle);
-    }
+
     loginUser({
       variables: {
         loginInput: {
@@ -142,6 +141,7 @@ const Login = () => {
         },
       },
     });
+
   };
 
   return (
@@ -200,7 +200,7 @@ const Login = () => {
                     options={optionRole}
                     className={styles_.select}
                     placeholder="Login As"
-                    onChange={selectSector}
+                    onChange={selectRole}
                     styles={customStyles}
                   />
                 </div>

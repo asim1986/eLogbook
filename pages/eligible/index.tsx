@@ -9,22 +9,20 @@ import { Navbar } from "../../components/NavBar";
 import { useLazyQuery } from "@apollo/client";
 import Loader from "../../components/Loader";
 import { useDispatch } from "react-redux";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
+import { NextPage } from "next";
 import Head from "next/head";
 
-const Eligible = () => {  
+const Eligible: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [matricNoErr, setMatricNoErr] = useState(false);
   const [textInput, setTextInput] = useState<string | null>("");
   const [showEligibleErr, setShowEligibleErr] = useState(false);
   const inputRef = useRef<HTMLInputElement>();
-  const validMatricNo = new RegExp(
-    "^([A-Z0-9]+){8}((,s)([A-Z0-9]+){7})*([A-Z0-9]+)$"
-  );
+  const validMatricNo = new RegExp(/^([A-Z0-9]+){8}([A-Z0-9]+)$/);
   const router = useRouter();
   const dispatch = useDispatch();
-  const isEligible = useAppSelector(state => state.eligible.isEligible);
-
+  const isEligible = useAppSelector((state) => state.eligible.isEligible);
 
   const onChangeEligible = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const newTextInput = evt.target.value;
@@ -49,7 +47,7 @@ const Eligible = () => {
       const eligData = data.eligible;
       // console.log("ELIG <==>", eligData);
       dispatch(setEligible(eligData));
-      router.push('/signup/student');
+      router.push("/signup/student");
     },
     onError: ({ graphQLErrors, networkError }) => {
       if (graphQLErrors)
@@ -79,8 +77,8 @@ const Eligible = () => {
   };
 
   useEffect(() => {
-    console.log(isEligible);
-  }, [])
+    // console.log(isEligible);
+  }, []);
 
   return (
     <>
@@ -109,13 +107,17 @@ const Eligible = () => {
                     name="eligible"
                     id="eligible"
                     placeholder="Enter Matriculation Number"
-                    className={matricNoErr ? styles.loginInputErr : styles.loginInput}
+                    className={
+                      matricNoErr ? styles.loginInputErr : styles.loginInput
+                    }
                     value={textInput}
                     onChange={onChangeEligible}
                   />
-                  {matricNoErr && <p className="text-red-700 py-2 rounded-lg text-sm absolute">
-                    Invalid Matric Number
-                  </p>}
+                  {matricNoErr && (
+                    <p className="text-red-700 py-2 rounded-lg text-sm absolute">
+                      Invalid Matric Number
+                    </p>
+                  )}
                 </div>
                 <div className={styles.btnWrapper}>
                   <button className={styles.loginBtn} type="submit">

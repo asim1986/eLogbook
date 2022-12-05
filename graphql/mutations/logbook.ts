@@ -7,29 +7,14 @@ export const CREATE_LOG = gql`
       message
       logbook {
         id
+        actId
         day
         title
         description
         label
         diagram
         approved
-        student {
-          id
-          firstName
-          lastName
-          matricNo
-          phone
-          address
-          institute
-          department
-          level
-          gender
-          place
-          email
-          avatar
-          eligible
-          user
-        }
+        createdAt
       }
     }
   }
@@ -42,29 +27,14 @@ export const UPDATE_LOG = gql`
       message
       logbook {
         id
+        actId
         day
         title
         description
         label
         diagram
         approved
-        student {
-          id
-          firstName
-          lastName
-          matricNo
-          phone
-          address
-          institute
-          department
-          level
-          gender
-          place
-          email
-          avatar
-          eligible
-          user
-        }
+        createdAt
       }
     }
   }
@@ -75,6 +45,17 @@ export const DELETE_LOG = gql`
     deleteLogbook(input: $input) {
       message
       status
+      logbook {
+        id
+        actId
+        day
+        title
+        description
+        label
+        diagram
+        approved
+        createdAt
+      }
     }
   }
 `;

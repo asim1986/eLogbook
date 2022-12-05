@@ -1,6 +1,6 @@
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import styles from "../styles/Profile.module.scss";
-import { customStyles } from "../utils/util";
+import { customStyles, DEFAULT_IMG } from "../utils/util";
 import ManageProfile from "./ManageProfile";
 import "react-phone-number-input/style.css";
 import Select from "react-select";
@@ -11,7 +11,7 @@ import { UPDATE_COORD } from "../graphql/mutations/coordinator";
 import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
 import toast, { Toaster } from "react-hot-toast";
 import { setCoordAuth, setRest } from "../store/slice/auth.slice";
-import { useMutation } from "@apollo/client";
+import { useApolloClient, useMutation } from "@apollo/client";
 import router from "next/router";
 import { staffTitle } from "../utils/title.utils";
 import { gender } from "../utils/gender";
@@ -19,9 +19,9 @@ import { IFileType, IUploadFile } from "../interfaces/upload.interface";
 import axios from "axios";
 import constants from "../config/constant.config";
 import Loader from "./Loader";
+import { client } from "../graphql/apolloClient";
 
 const ProfileCoordinator = () => {
-  const DEFAULT_IMG = "https://i.pinimg.com/236x/00/70/d0/0070d05bc3d01aa3e04e5ebab7132985.jpg";
   const data: IAuthSupSlice = useAppSelector(
     (state) => state.auth.userCoordData
   );
@@ -55,7 +55,9 @@ const ProfileCoordinator = () => {
 
   const dispatch = useAppDispatch();
 
-  const logout = () => {
+  const logout = async () => {
+    // Reset Apollo Cache
+    client.resetStore();
     dispatch(setRest());
     router.push("/login");
   };
@@ -66,6 +68,7 @@ const ProfileCoordinator = () => {
       console.log("DATA PROFILE ==> ", data);
       dispatch(setCoordAuth(data?.updateCoordinator));
       reset();
+      resetImage();
     },
     onError: ({ graphQLErrors, networkError }) => {
       try {
@@ -299,7 +302,7 @@ const ProfileCoordinator = () => {
             alt="passport"
           />
           <div>
-            <h1>{`${data?.title} ${data?.firstName} ${data?.lastName}`}</h1>
+            <h1>{`${data?.title}. ${data?.firstName} ${data?.lastName}`}</h1>
             <h2>{`${data?.email}`}</h2>
             <div className="flex items-center justify-between my-3">
               <div

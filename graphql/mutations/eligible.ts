@@ -1,30 +1,24 @@
 import { gql } from "@apollo/client";
 
-export const CREATE_LOG = gql`
+export const CREATE_ELIG = gql`
   mutation Eligible($registerInput: EligibleInput!) {
     eligible(registerInput: $registerInput) {
-      eligible {
-        coordinator {
-          email
-          id
-          firstName
-          lastName
-          staffID
-        }
-        supervisor {
-          firstName
-          lastName
-          staffID
-          email
-        }
-        id
-        department
-        institute
-        level
-        matricNo
-      }
       message
       status
+      eligible {
+        id
+        institute
+        department
+        level
+        matricNo
+        supervisor {
+          id
+          title
+          firstName
+          lastName
+          email
+        }
+      }
     }
   }
 `;
@@ -62,6 +56,10 @@ export const DELETE_ELIG = gql`
     deleteEligible(deleteInput: $deleteInput) {
       message
       status
+      eligible {
+        id
+        matricNo
+      }
     }
   }
 `;

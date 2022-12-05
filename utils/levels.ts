@@ -6,6 +6,6 @@ interface ILevel {
 export const level: Array<ILevel> = [
   { value: "ND1", label: "ND1" },
   { value: "NC2", label: "NC2" },
-  { value: "300", label: "300" },
-  { value: "400", label: "400" },
+  { value: "L3", label: "300" },
+  { value: "L4", label: "400" },
 ];

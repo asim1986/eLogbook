@@ -5,12 +5,14 @@ import { CSSTransition } from "react-transition-group";
 import { TbActivityHeartbeat } from "react-icons/tb";
 import { setRest } from "../store/slice/auth.slice";
 import animate from "../styles/animate.module.css";
+import constants from "../config/constant.config";
+import { client } from "../graphql/apolloClient";
 import styles from "../styles/Home.module.scss";
 import { BiCheckShield } from "react-icons/bi";
+import { DEFAULT_IMG } from "../utils/util";
 import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import constants from "../config/constant.config";
 
 const Links = () => {
   const router = useRouter();
@@ -26,7 +28,6 @@ const Links = () => {
       state.auth?.userCoordData?.user ||
       state.auth?.userOrgData?.user
   );
-  const DEFAULT_IMG = "https://i.pinimg.com/236x/00/70/d0/0070d05bc3d01aa3e04e5ebab7132985.jpg";
 
   const [dropDown, setDropDown] = useState({
     user: false,
@@ -34,9 +35,9 @@ const Links = () => {
     chat: false,
   });
 
-  console.log("ROLE ==> ", role);
-
   const logout = () => {
+    // Reset Apollo Cache
+    client.resetStore();
     dispatch(setRest());
     router.push("/login");
   };
@@ -46,7 +47,7 @@ const Links = () => {
       state.auth?.userCoordData?.firstName ||
       state.auth?.userSupData?.firstName ||
       state.auth?.userStudData?.firstName ||
-      state.auth?.userOrgData?.name
+      state.auth?.userOrgData?.name?.split(" ")[0]
   );
 
   const avatar: string = useAppSelector(
@@ -222,6 +223,7 @@ const Links = () => {
               </div>
             </a>
           </Link>
+
           {role !== "Student" && (
             <Link href="/activities">
               <a
@@ -237,12 +239,31 @@ const Links = () => {
               </a>
             </Link>
           )}
-          {role === "Coordinator" && (
-            <Link href="/eligible/send">
+
+          {role === "Student" && (
+            <Link href="/student/activities">
               <a
                 className={[
                   styles.nav_li,
-                  router.pathname === "/eligible/send" ? styles.active : "",
+                  router.pathname === "/student/activities"
+                    ? styles.active
+                    : "",
+                ].join(" ")}
+              >
+                <div className="w-full flex items-center">
+                  <TbActivityHeartbeat />
+                  <span className="pl-1">Activities</span>
+                </div>
+              </a>
+            </Link>
+          )}
+
+          {role === "Coordinator" && (
+            <Link href="/eligibility">
+              <a
+                className={[
+                  styles.nav_li,
+                  router.pathname === "/eligibility" ? styles.active : "",
                 ].join(" ")}
               >
                 <div className="w-full flex items-center">
@@ -282,7 +303,12 @@ const Links = () => {
             >
               <div className="w-full">
                 <img
-                  src={avatar === DEFAULT_IMG ? avatar :  `${constants.beHost}${avatar}` || "../images/thumbnail.png"}
+                  src={
+                    avatar === DEFAULT_IMG
+                      ? avatar
+                      : `${constants.beHost}${avatar}` ||
+                        "../images/thumbnail.png"
+                  }
                   className={styles.displayPic}
                 />
                 <span className="pl-2">{name}</span> <FaCaretDown />
@@ -301,7 +327,7 @@ const Links = () => {
                 <ul ref={nodeRefLogout} className={styles.dropdown_content}>
                   <li>
                     <Link href="/">
-                      <a
+                      <span
                         className={[
                           styles.dropdownBtn,
                           router.pathname.split("/")[2] === "cordinator"
@@ -312,7 +338,7 @@ const Links = () => {
                         <div className="p-0 m-0" onClick={logout}>
                           <FaPowerOff /> <span className="pl-1">Logout</span>{" "}
                         </div>
-                      </a>
+                      </span>
                     </Link>
                   </li>
                 </ul>

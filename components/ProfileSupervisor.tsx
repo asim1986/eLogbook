@@ -3,7 +3,7 @@ import { IFileType, IUploadFile } from "../interfaces/upload.interface";
 import styles from "../styles/Profile.module.scss";
 import { staffTitle } from "../utils/title.utils";
 import constants from "../config/constant.config";
-import { customStyles } from "../utils/util";
+import { customStyles, DEFAULT_IMG } from "../utils/util";
 import { useMutation } from "@apollo/client";
 import ManageProfile from "./ManageProfile";
 import "react-phone-number-input/style.css";
@@ -13,18 +13,19 @@ import { useState } from "react";
 import router from "next/router";
 import axios from "axios";
 import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { UPDATE_SUP } from "../graphql/mutations/supervisor";
 import { setRest, setSupAuth } from "../store/slice/auth.slice";
 import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
 import { IAuthSupSlice } from "../interfaces/slice.interface";
+import Loader from "./Loader";
+import { client } from "../graphql/apolloClient";
 
 const ProfileSupervisor = () => {
-  const data: IAuthSupSlice = useAppSelector(
-    (state) => state.auth.userCoordData
-  );
+  const data: IAuthSupSlice = useAppSelector((state) => state.auth.userSupData);
   const token = useAppSelector((state) => state.auth.token);
 
+  // console.log("TOKEN SUP +++. ", token)
   const [textInput, setTextInput] = useState({
     name: {
       firstName: `${data?.firstName}`,
@@ -47,7 +48,9 @@ const ProfileSupervisor = () => {
 
   const dispatch = useAppDispatch();
 
-  const logout = () => {
+  const logout = async () => {
+    // Reset Apollo Cache
+    client.resetStore();
     dispatch(setRest());
     router.push("/login");
   };
@@ -58,6 +61,7 @@ const ProfileSupervisor = () => {
       console.log("DATA ==> ", data);
       dispatch(setSupAuth(data?.updateSupervisor));
       reset();
+      resetImage();
     },
     onError: ({ graphQLErrors, networkError }) => {
       try {
@@ -93,7 +97,7 @@ const ProfileSupervisor = () => {
         email: prev.email,
         phone: prev.phone,
         institute: prev.institute,
-        gender: option.value,
+        gender: prev.gender,
         dept: prev.dept,
         staffId: prev.staffId,
       }));
@@ -278,6 +282,8 @@ const ProfileSupervisor = () => {
 
   return (
     <div className={styles.profiles}>
+      <Toaster position="top-center" reverseOrder={false} />
+      {loading && <Loader show={true} />}
       <ManageProfile
         profile="/profile/supervisor"
         change="/profile/change-password"
@@ -291,14 +297,15 @@ const ProfileSupervisor = () => {
             src={
               selectedFile.img
                 ? selectedFile.img
-                : data?.avatar
-                ? `${constants.beHost}${data?.avatar}`
-                : "../images/thumbnail.png"
+                : data?.avatar === DEFAULT_IMG
+                ? data?.avatar
+                : `${constants.beHost}${data?.avatar}` ||
+                  "../images/thumbnail.png"
             }
             alt="passport"
           />
           <div>
-            <h1>{`${data?.title} ${data?.firstName} ${data?.lastName}`}</h1>
+            <h1>{`${data?.title}. ${data?.firstName} ${data?.lastName}`}</h1>
             <h2>{`${data?.email}`}</h2>
             <div className="flex items-center justify-between my-3">
               <div
@@ -334,20 +341,20 @@ const ProfileSupervisor = () => {
 
         <form className="mt-4" onSubmit={onSubmitHandler}>
           <div className="flex flex-col md:flex-row justify-between mb-4 w-full">
-            <div className="w-full md:mr-1">
-              <div className="w-full md:w-9/12 md:mr-2">
-                <Select
-                  options={optionsTitle}
-                  defaultValue={{
-                    value: `${data?.title}`,
-                    label: `${data?.title}`,
-                  }}
-                  className={styles.select}
-                  placeholder="Title"
-                  onChange={selectTitle}
-                  styles={customStyles}
-                />
-              </div>
+            <div className="w-full md:w-9/12 md:mr-2">
+              <Select
+                options={optionsTitle}
+                defaultValue={{
+                  value: `${data?.title}`,
+                  label: `${data?.title}`,
+                }}
+                className={styles.select}
+                placeholder="Title"
+                onChange={selectTitle}
+                styles={customStyles}
+              />
+            </div>
+            <div className="w-full md:mr-1 mt-3 md:mt-0">
               <input
                 required
                 placeholder="First Name"
@@ -403,7 +410,7 @@ const ProfileSupervisor = () => {
             </div>
           </div>
 
-          <div className="flex flex-col space-x-2 md:flex-row justify-between items-center mb-4 w-full">
+          <div className="flex flex-col space-x-0 space-y-2 md:space-y-0 md:space-x-3 md:flex-row justify-between items-center mb-4 w-full">
             <div className="w-full">
               <input
                 required

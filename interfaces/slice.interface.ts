@@ -13,11 +13,32 @@ export interface IAuthStudSlice {
   department: string;
   gender: string;
   place: string;
-  eligible: string;
+  eligible: boolean;
+  supervisor: {
+    id: string;
+    title: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    avatar: string;
+  }
+  coordinator: {
+    id: string;
+    title: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    avatar: string;
+  }
   organisation: {
     id: string;
-    email: string;
     name: string;
+    sector: string;
+    email: string;    
+    logo: string;
+    address: string;
   }
 }
 
@@ -55,5 +76,6 @@ export interface IEligibleSlice {
   department: string;
   level: string;
   matricNo: string;
+  isEligible: boolean,
   __typename: "Eligible";
 }

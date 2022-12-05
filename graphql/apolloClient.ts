@@ -22,9 +22,10 @@ const cache = new InMemoryCache({});
 
 export const useAppApolloClient = () => {
   const authToken = store.getState().auth.token;
-//   console.log("AUTH TOKEN ==> ", authToken);
   return new ApolloClient({
     link: authMiddleware(authToken).concat(httpLink),
     cache,
   });
 };
+
+export const client = useAppApolloClient();

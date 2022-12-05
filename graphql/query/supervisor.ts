@@ -25,3 +25,15 @@ export const LOGIN_SUP = gql`
     }
   }
 `;
+
+export const GET_SUP_DEPT = gql`
+  query SupervisorsByDepts($input: SupByDeptsInput!) {
+  supervisorsByDepts(input: $input) {
+    id
+    title
+    firstName
+    lastName
+    email
+  }
+}
+`;

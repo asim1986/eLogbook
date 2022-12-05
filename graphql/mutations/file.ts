@@ -1,11 +1,12 @@
 import { gql } from "@apollo/client";
 
 export const DELETE_FILE = gql`
-  mutation DeleteFile($deleteInput: ID!) {
+  mutation DeleteFile($deleteInput: FileDelInput!) {
     deleteFile(deleteInput: $deleteInput) {
       message
-      status
       imageUrl
+      status
+      actId
     }
   }
 `;

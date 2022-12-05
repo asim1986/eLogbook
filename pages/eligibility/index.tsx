@@ -1,34 +1,34 @@
-import ChangePassword from "../../components/admin/ChangePassword";
+import ListEligible from "../../components/admin/ListEligible";
 import { useAppSelector } from "../../hooks/store.hook";
-import styles from "../../styles/Profile.module.scss";
 import { Navbar } from "../../components/NavBar";
 import { useRouter } from "next/router";
+import { NextPage } from "next";
 import Head from "next/head";
 import Login from "../login";
-import React from "react";
 
-const ChangeUserPassword = () => {
+const Eligibility: NextPage = () => {
+  const role = useAppSelector(
+    (state) => state.auth?.userCoordData?.user || state.auth?.userSupData?.user
+  );
   const isAuth = useAppSelector((state) => state.auth?.isAuth);
   const router = useRouter();
 
-  if (!isAuth) {
+  if (!isAuth && role !== "Coordinator" && role !== "Admin") {
     router.replace("/login");
     return <Login />;
   }
-
+  
   return (
     <>
       <Head>
-        <title>Change Password</title>
+        <title>Eligibility</title>
       </Head>
-      <header>
-        <Navbar />
-      </header>
+      <Navbar />
       <main>
-        <ChangePassword style={styles.profiles} user="student" />
+        <ListEligible isAdmin={false}  />
       </main>
     </>
   );
 };
 
-export default ChangeUserPassword;
+export default Eligibility;

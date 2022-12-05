@@ -1,6 +1,7 @@
 import { IFileInputType, IUploadFile } from "../interfaces/upload.interface";
 import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import { REGISTER_ORG } from "../graphql/mutations/organisation";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import { IFormInput } from "../interfaces/formInput";
 import styles from "../styles/Signup.module.scss";
@@ -11,7 +12,6 @@ import React, { useState } from "react";
 import Select from "react-select";
 import Link from "next/link";
 import { useMutation } from "@apollo/client";
-import { REGISTER_ORG } from "../graphql/mutations/organisation";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
 import constants from "../config/constant.config";
@@ -37,7 +37,7 @@ const OrganisationForm = ({ isAdmin, btnTitle }: IFormInput) => {
       toast.success("Registered successfully!", successToastStyle);
       router.push("/profile/organisation");
       console.log("DATA ==> ", data);
-      dispatch(setOrgAuth(data.organisation));
+      dispatch(setOrgAuth(data?.organisation));
       // dispatch(setUser(data));
       reset();
       setIsLoading(false);
@@ -230,7 +230,7 @@ const OrganisationForm = ({ isAdmin, btnTitle }: IFormInput) => {
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
-      {isLoading && <Loader show={true} />}
+      {loading && <Loader show={true} />}
       <form className="mt-4" onSubmit={onSubmitHandler}>
         <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-2">
           <div className="w-full">

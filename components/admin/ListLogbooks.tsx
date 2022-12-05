@@ -1,3 +1,4 @@
+import { ListLogType } from "../../interfaces/comp.interface";
 import GlobalContext from "../../context/GlobalContext";
 import styles from "../../styles/Dashboard.module.scss";
 import { AiOutlineEye } from "react-icons/ai";
@@ -8,12 +9,6 @@ import ViewLogbook from "./ViewLogbook";
 import { useContext } from "react";
 import Link from "next/link";
 
-interface ListLogType {
-  style: any;
-  styleHeader: any;
-  user: string;
-}
-
 const ListLogbooks = ({ style, styleHeader, user }: ListLogType) => {
   const { showDetail } = useContext(GlobalContext);
   const labels = ["Name", "Matric No", "School", "Department"];
@@ -22,11 +17,12 @@ const ListLogbooks = ({ style, styleHeader, user }: ListLogType) => {
       return {
         name: "Vicolas Akoh",
         matric: "SCI17CSC031",
-        school: "Federal Unversity Lokoja",
+        school: "Federal Unversity Lokoja Admin",
         department: "Computer Science",
       };
     }),
   ];
+
   return (
     <>
       <div className={styleHeader}>
@@ -82,7 +78,13 @@ const ListLogbooks = ({ style, styleHeader, user }: ListLogType) => {
                   <td className="py-1 px-6">{item.school}</td>
                   <td className="py-1 px-6">{item.department}</td>
                   <td className="py-4 px-6 text-right flex flex-row items-center">
-                    <Link href={user == "admin" ? "/admin/logbook/56" : "/activities/2344"}>
+                    <Link
+                      href={
+                        user === "admin"
+                          ? "/admin/logbook/56"
+                          : "/activities/2344"
+                      }
+                    >
                       <a className="px-1">
                         <AiOutlineEye
                           size={"1.2rem"}

@@ -1,21 +1,14 @@
 import { IEligibleSlice } from "../../interfaces/slice.interface";
 import { createSlice } from "@reduxjs/toolkit";
 
-type EligibleType = {
-  isEligible: boolean;
-  userStudData: IEligibleSlice;
-};
-
-const initialState: EligibleType = {
+const initialState: IEligibleSlice = {
   isEligible: false,
-  userStudData: {
-    id: null,
-    institute: null,
-    department: null,
-    level: null,
-    matricNo: null,
-    __typename: null
-  },
+  id: null,
+  level: null,
+  matricNo: null,
+  institute: null,
+  department: null,
+  __typename: null,
 };
 
 const eligibleSlice = createSlice({
@@ -24,11 +17,23 @@ const eligibleSlice = createSlice({
   reducers: {
     setEligible: (state, { payload }) => {
       state.isEligible = true;
-      state.userStudData = payload;
+      state.id = payload?.id;
+      state.level = payload?.level;
+      state.matricNo = payload?.matricNo;
+      state.department = payload?.department;
+      state.institute = payload?.institute;    
     },
+    setEligReset: (state) => {
+      state.isEligible = false;
+      state.id = null;
+      state.level = null;
+      state.matricNo = null;
+      state.department = null;
+      state.institute = null;
+    }
   },
 });
 
-export const { setEligible } = eligibleSlice.actions;
+export const { setEligible, setEligReset } = eligibleSlice.actions;
 
 export default eligibleSlice.reducer;
