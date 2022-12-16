@@ -14,7 +14,6 @@ import { NextPage } from "next";
 import Head from "next/head";
 
 const Eligible: NextPage = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [matricNoErr, setMatricNoErr] = useState(false);
   const [textInput, setTextInput] = useState<string | null>("");
   const [showEligibleErr, setShowEligibleErr] = useState(false);
@@ -42,7 +41,6 @@ const Eligible: NextPage = () => {
 
   const [getEligible, { loading }] = useLazyQuery(ELIGIBLE, {
     onCompleted: (data) => {
-      setIsLoading(false);
       toast.success("Congratulations! Register now", successToastStyle);
       const eligData = data.eligible;
       // console.log("ELIG <==>", eligData);
@@ -62,7 +60,6 @@ const Eligible: NextPage = () => {
         toast.error(`${networkError}`, errorToastStyle);
         console.log(`[Network error]: ${networkError}`);
       }
-      setIsLoading(false);
     },
   });
 
@@ -73,7 +70,6 @@ const Eligible: NextPage = () => {
         eligibleId: textInput,
       },
     });
-    loading && setIsLoading(true);
   };
 
   useEffect(() => {
@@ -91,7 +87,7 @@ const Eligible: NextPage = () => {
       <main>
         <section className={styles.hero}>
           <Toaster position="top-center" reverseOrder={false} />
-          {isLoading && <Loader show={true} />}
+          {loading && <Loader show={true} />}
           <div className={styles.loginContainer}>
             <div className="p-6 w-full sm:p-8 lg:p-10">
               <h1 className={styles.h1}>Eligibility</h1>

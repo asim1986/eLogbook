@@ -4,6 +4,9 @@ interface IConstants {
   graphqlBaseUrl: string;
   reduxStorePersistenceKey: string;
   reduxStoreSecretKey: string;
+  dev: boolean;
+  prod: boolean;
+  test: boolean;
 }
 
 export default IConstants;

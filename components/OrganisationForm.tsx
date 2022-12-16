@@ -1,5 +1,5 @@
 import { IFileInputType, IUploadFile } from "../interfaces/upload.interface";
-import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
+import { errorToastStyle, successToastStyle, warnToastStyle } from "../utils/styles.utils";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import { REGISTER_ORG } from "../graphql/mutations/organisation";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
@@ -19,6 +19,7 @@ import { useAppDispatch } from "../hooks/store.hook";
 import { setOrgAuth, setUser } from "../store/slice/auth.slice";
 import Loader from "./Loader";
 import axios from "axios";
+import { uploadToCloudinary } from "../utils/cloudUpload";
 
 const OrganisationForm = ({ isAdmin, btnTitle }: IFormInput) => {
   const [textInput, setTextInput] = useState({
@@ -40,10 +41,8 @@ const OrganisationForm = ({ isAdmin, btnTitle }: IFormInput) => {
       dispatch(setOrgAuth(data?.organisation));
       // dispatch(setUser(data));
       reset();
-      setIsLoading(false);
     },
     onError: ({ graphQLErrors, networkError }) => {
-      setIsLoading(false);
       if (graphQLErrors)
         graphQLErrors.forEach(({ message, locations, path }) => {
           console.log(
@@ -66,7 +65,6 @@ const OrganisationForm = ({ isAdmin, btnTitle }: IFormInput) => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   type OptionType = { label: string; value: string }[];
 
@@ -163,68 +161,86 @@ const OrganisationForm = ({ isAdmin, btnTitle }: IFormInput) => {
   };
 
   const onSubmitHandler = async (evt: React.FormEvent<HTMLFormElement>) => {
-    if (loading) {
-      setIsLoading(true);
-    }
     evt.preventDefault();
-    const formData = new FormData();
-    const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
-
-    const fileInput: IFileInputType = {
-      file: null,
-      type: "logo",
-    };
-
-    const map = { "0": ["variables.input.file"] };
-    const operations = JSON.stringify({
-      query,
-      variables: { input: fileInput },
-    });
-    formData.append("operations", operations);
-    formData.append("map", JSON.stringify(map));
-    formData.append("0", selectedFile.file);
 
     if (!selectedFile.file) {
-      toast.error("Please Upload an Image!", errorToastStyle);
+      toast.error("Please Upload an Image!", warnToastStyle);
       return;
     }
+    // const formData = new FormData();
+    // const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
 
-    await axios
-      .post(constants.graphqlBaseUrl, formData, {
-        headers: {
-          "apollo-require-preflight": true,
-        },
-      })
-      .then((response) => {
-        // console.log("RESPONSE****", response);
-        const status = response.status;
-        const { data } = response.data;
-        const { imageUrl } = data.uploadFile as IUploadFile;
-        // const { imageUrl } = data;
-        // const { imageUrl }  = data;
-        if (status === 200) {
-          addOrgan({
-            variables: {
-              registerInput: {
-                name: textInput.name,
-                sector: textInput.sector,
-                phone: textInput.phone,
-                address: textInput.address,
-                employees: +textInput.employees,
-                email: textInput.email,
-                password: textInput.password,
-                logo: imageUrl,
-              },
+    // const fileInput: IFileInputType = {
+    //   file: null,
+    //   type: "logo",
+    // };
+
+    // const map = { "0": ["variables.input.file"] };
+    // const operations = JSON.stringify({
+    //   query,
+    //   variables: { input: fileInput },
+    // });
+    // formData.append("operations", operations);
+    // formData.append("map", JSON.stringify(map));
+    // formData.append("0", selectedFile.file);
+
+    // await axios
+    //   .post(constants.graphqlBaseUrl, formData, {
+    //     headers: {
+    //       "apollo-require-preflight": true,
+    //     },
+    //   })
+    //   .then((response) => {
+    //     // console.log("RESPONSE****", response);
+    //     const status = response.status;
+    //     const { data } = response.data;
+    //     const { imageUrl } = data.uploadFile as IUploadFile;
+    //     // const { imageUrl } = data;
+    //     // const { imageUrl }  = data;
+    //     if (status === 200) {
+    //       addOrgan({
+    //         variables: {
+    //           registerInput: {
+    //             name: textInput.name,
+    //             sector: textInput.sector,
+    //             phone: textInput.phone,
+    //             address: textInput.address,
+    //             employees: +textInput.employees,
+    //             email: textInput.email,
+    //             password: textInput.password,
+    //             logo: imageUrl,
+    //           },
+    //         },
+    //       });
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //     toast.error("An error occurred while uploading image", errorToastStyle);
+    //   });
+
+    try {
+      const imgUrl = await uploadToCloudinary(selectedFile.file);
+      if (imgUrl || imgUrl !== "") {
+        addOrgan({
+          variables: {
+            registerInput: {
+              name: textInput.name,
+              sector: textInput.sector,
+              phone: textInput.phone,
+              address: textInput.address,
+              employees: +textInput.employees,
+              email: textInput.email,
+              password: textInput.password,
+              logo: imgUrl,
             },
-          });
-        }
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        console.log(error);
-        toast.error("An error occurred while uploading image", errorToastStyle);
-      });
-    setIsLoading(false);
+          },
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error(`${err}`, errorToastStyle);
+    }
   };
 
   return (
@@ -393,6 +409,5 @@ const OrganisationForm = ({ isAdmin, btnTitle }: IFormInput) => {
     </>
   );
 };
-
 
 export default OrganisationForm;

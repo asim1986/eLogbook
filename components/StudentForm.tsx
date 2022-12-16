@@ -1,9 +1,4 @@
-import React, {
-  Fragment,
-  useContext,
-  useRef,
-  useState,
-} from "react";
+import React, { Fragment, useContext, useRef, useState } from "react";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import { allInstitutions } from "../utils/institutions";
@@ -29,6 +24,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
 import { setStudAuth } from "../store/slice/auth.slice";
 import { REGISTER_STUDENT } from "../graphql/mutations/student";
 import { setEligReset } from "../store/slice/eligible.slice";
+import { uploadToCloudinary } from "../utils/cloudUpload";
 
 const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
   const { showEventModal, setShowEventModal } = useContext(GlobalContext);
@@ -62,7 +58,7 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
       toast.success(data?.student.message, successToastStyle);
       router.push("/logbook");
       // console.log("STUDENT DATA => ", data?.student);
-      dispatch(setStudAuth(data?.student));  
+      dispatch(setStudAuth(data?.student));
       reset();
       dispatch(setEligReset());
     },
@@ -390,71 +386,106 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
       toast.error("Please Upload a Passport!", errorToastStyle);
       return;
     }
+    // If in Development Environment
+    // if (constants.dev) {
+    //   const formData = new FormData();
+    //   const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
 
-    const formData = new FormData();
-    const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
+    //   const fileInput: IFileInputType = {
+    //     file: null,
+    //     type: "avatar",
+    //   };
 
-    const fileInput: IFileInputType = {
-      file: null,
-      type: "avatar",
-    };
+    //   const map = { "0": ["variables.input.file"] };
+    //   const operations = JSON.stringify({
+    //     query,
+    //     variables: { input: fileInput },
+    //   });
+    //   formData.append("operations", operations);
+    //   formData.append("map", JSON.stringify(map));
+    //   formData.append("0", selectedFile.file);
 
-    const map = { "0": ["variables.input.file"] };
-    const operations = JSON.stringify({
-      query,
-      variables: { input: fileInput },
-    });
-    formData.append("operations", operations);
-    formData.append("map", JSON.stringify(map));
-    formData.append("0", selectedFile.file);
+    //   await axios
+    //     .post(constants.graphqlBaseUrl, formData, {
+    //       headers: {
+    //         "apollo-require-preflight": true,
+    //       },
+    //     })
+    //     .then((response) => {
+    //       // console.log("RESPONSE****", response);
+    //       if (response?.data?.errors) {
+    //         const errMsg = response?.data?.errors[0];
+    //         toast.error(errMsg?.message, errorToastStyle);
+    //         return;
+    //       }
 
-    await axios
-      .post(constants.graphqlBaseUrl, formData, {
-        headers: {
-          "apollo-require-preflight": true,
-        },
-      })
-      .then((response) => {
-        // console.log("RESPONSE****", response);        
-        if (response?.data?.errors) {
-          const errMsg = response?.data?.errors[0];
-          toast.error(errMsg?.message, errorToastStyle);
-          return;
-        }
+    //       const status = response?.status;
+    //       const { data } = response?.data;
+    //       const { imageUrl } = data?.uploadFile as IUploadFile;
+    //       // const { imageUrl }  = data;
+    //       console.log("imageUrl Response***", imageUrl);
+    //       console.log("Status ***>", status);
 
-        const status = response?.status;
-        const { data } = response?.data;
-        const { imageUrl } = data?.uploadFile as IUploadFile;
-        // const { imageUrl }  = data;
-        console.log("imageUrl Response***", imageUrl);
-        console.log("Status ***>", status);
-
-        if (status === 200) {
-          addStudent({
-            variables: {
-              registeredInput: {
-                firstName: textInput.name.firstName,
-                lastName: textInput.name.lastName,
-                email: textInput.email,
-                password: textInput.password,
-                matricNo: textInput.matric,
-                phone: textInput.phone,
-                institute: textInput.institute,
-                department: textInput.dept,
-                place: textInput.place,
-                level: textInput.level,
-                gender: textInput.gender,
-                address: textInput.address,
-                avatar: imageUrl,
-              },
+    //       if (status === 200) {
+    //         addStudent({
+    //           variables: {
+    //             registeredInput: {
+    //               firstName: textInput.name.firstName,
+    //               lastName: textInput.name.lastName,
+    //               email: textInput.email,
+    //               password: textInput.password,
+    //               matricNo: textInput.matric,
+    //               phone: textInput.phone,
+    //               institute: textInput.institute,
+    //               department: textInput.dept,
+    //               place: textInput.place,
+    //               level: textInput.level,
+    //               gender: textInput.gender,
+    //               address: textInput.address,
+    //               avatar: imageUrl,
+    //             },
+    //           },
+    //         });
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //       toast.error(
+    //         "An error occurred while uploading image",
+    //         errorToastStyle
+    //       );
+    //     });
+    // }
+    // else if (constants.prod) {
+    try {
+      const imgUrl = await uploadToCloudinary(selectedFile.file);
+      if (imgUrl || imgUrl !== "") {
+        addStudent({
+          variables: {
+            registeredInput: {
+              firstName: textInput.name.firstName,
+              lastName: textInput.name.lastName,
+              email: textInput.email,
+              password: textInput.password,
+              matricNo: textInput.matric,
+              phone: textInput.phone,
+              institute: textInput.institute,
+              department: textInput.dept,
+              place: textInput.place,
+              level: textInput.level,
+              gender: textInput.gender,
+              address: textInput.address,
+              avatar: imgUrl,
             },
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error("An error occurred while uploading image", errorToastStyle);
-      });
+          },
+        });
+      }
+    } catch (err) {
+      console.log(err)
+      toast.error(`${err}`, errorToastStyle);
+    }
+
+    // }
   };
 
   return (

@@ -3,7 +3,6 @@ import { useAppApolloClient } from "../graphql/apolloClient";
 import ContextWrapper from "../context/ContextWrapper";
 import { persistor, wrapper } from "../store/store";
 import { ApolloProvider } from "@apollo/client";
-import client from "../graphql/apollo-client";
 import type { AppProps } from "next/app";
 import { Provider } from "react-redux";
 import "../styles/globals.scss";
