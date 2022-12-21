@@ -1,25 +1,27 @@
+import { errorToastStyle, successToastStyle, warnToastStyle } from "../utils/styles.utils";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import { IFileType, IUploadFile } from "../interfaces/upload.interface";
 import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
+import { IAuthOrganSlice } from "../interfaces/slice.interface";
+import { setOrgAuth, setRest } from "../store/slice/auth.slice";
+import { UPDATE_ORG } from "../graphql/mutations/organisation";
+import { CLOUD_DEL_FILE } from "../graphql/mutations/file";
+import { uploadToCloudinary } from "../utils/cloudUpload";
 import styles from "../styles/Profile.module.scss";
+import constants from "../config/constant.config";
+import toast, { Toaster } from "react-hot-toast";
+import { client } from "../graphql/apolloClient";
+import { useMutation } from "@apollo/client";
+import { customStyles } from "../utils/util";
 import ManageProfile from "./ManageProfile";
 import "react-phone-number-input/style.css";
-import { useState } from "react";
-import { IAuthOrganSlice } from "../interfaces/slice.interface";
-import toast, { Toaster } from "react-hot-toast";
-import Select from "react-select";
-import { OptionType } from "dayjs";
-import { customStyles } from "../utils/util";
 import { sectors } from "../utils/sectors";
-import axios from "axios";
-import { IFileType, IUploadFile } from "../interfaces/upload.interface";
-import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
-import { UPDATE_ORG } from "../graphql/mutations/organisation";
-import { setOrgAuth, setRest } from "../store/slice/auth.slice";
-import constants from "../config/constant.config";
-import { useMutation } from "@apollo/client";
+import { OptionType } from "dayjs";
+import Select from "react-select";
+import { useState } from "react";
 import router from "next/router";
 import Loader from "./Loader";
-import { client } from "../graphql/apolloClient";
+import axios from "axios";
 
 const ProfileOrganisation = () => {
   const data: IAuthOrganSlice = useAppSelector(
@@ -27,6 +29,10 @@ const ProfileOrganisation = () => {
   );
   const token = useAppSelector((state) => state.auth.token);
   // console.log(">>>*** ==", data);
+
+  const { beHost, graphqlBaseUrl, prod, dev } = constants;
+  const splitURL = data.logo?.split("/")[2];
+  const cloudinary = splitURL?.split(".")[1];
 
   const [textInput, setTextInput] = useState({
     name: `${data?.name}`,
@@ -75,6 +81,33 @@ const ProfileOrganisation = () => {
       }
     },
   });
+
+  const [delCloudFile, { loading: cLoad, reset: cReset }] = useMutation(
+    CLOUD_DEL_FILE,
+    {
+      onError: ({ graphQLErrors, networkError }) => {
+        try {
+          if (graphQLErrors)
+            graphQLErrors.forEach(({ message, locations, path }) => {
+              console.log(
+                `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+              );
+              const tokenErr = message.split(":")[0];
+              toast.error(`${message}`, errorToastStyle);
+              if (tokenErr === "TokenExpiredError") {
+                logout();
+              }
+            });
+          if (networkError) {
+            toast.error(`${networkError}`, errorToastStyle);
+            console.log(`[Network error]: ${networkError}`);
+          }
+        } catch (err) {
+          console.log("ERR****", err);
+        }
+      },
+    }
+  );
 
   const onChangeName = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
@@ -133,12 +166,13 @@ const ProfileOrganisation = () => {
 
   const onFileUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const mainFile = evt.target.files;
-    // console.log(mainFile[0]);
-    setSelectedFile({
-      file: mainFile[0],
-      isUploaded: true,
-      img: URL.createObjectURL(mainFile[0]),
-    });
+    if(mainFile.length !== 0) {
+      setSelectedFile({
+        file: mainFile[0],
+        isUploaded: true,
+        img: URL.createObjectURL(mainFile[0]),
+      });
+    }    
   };
 
   const resetImage = () => {
@@ -175,72 +209,128 @@ const ProfileOrganisation = () => {
     evt.preventDefault();
 
     if (selectedFile.file) {
-      const formData = new FormData();
-      const query = `mutation($updateInput: FileUpdateInput!) { updateFile(updateInput: $updateInput) { message imageUrl status } }`;
+      // Check File Size and type
+      const { file } = selectedFile;
+      const { type: t, size } = file as File;
 
-      const fileInput: IFileType = {
-        id: `${data?.id}`,
-        type: "logo",
-        file: null,
-      };
+      if (t !== "image/png" && t !== "image/jpg" && t !== "image/jpeg") {
+        toast.error("Invalid file Uploaded", warnToastStyle);
+        return;
+      }
 
-      const map = { "0": ["variables.updateInput.file"] };
-      const operations = JSON.stringify({
-        query,
-        variables: { updateInput: fileInput },
-      });
-      formData.append("operations", operations);
-      formData.append("map", JSON.stringify(map));
-      formData.append("0", selectedFile.file);
+      if (size > 100000) {
+        toast.error("Maximum file size is 100KB!", warnToastStyle);
+        return;
+      }
 
-      // console.log("formData === ", constants.graphqlBaseUrl);
-      await axios
-        .post(constants.graphqlBaseUrl, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "apollo-require-preflight": true,
-          },
-        })
-        .then((response) => {
-          const status = response.status;
-          console.log("RESPONSESS ===", response);
-          if (response?.data?.errors) {
-            const errMsg = response?.data?.errors;
-            toast.error(errMsg[0].message, errorToastStyle);
-            const tokenErr = errMsg[0].message.split(":")[0];
-            if (tokenErr === "TokenExpiredError") {
-              logout();
-            }
-            return;
-          }
-          const { updateFile } = response?.data?.data;
-          console.log("DATES ===", updateFile);
-          const { imageUrl } = updateFile as IUploadFile;
-          console.log("IMAGEURL ===", imageUrl);
+      if (prod) {
+        const formData = new FormData();
+        const query = `mutation($updateInput: FileUpdateInput!) { updateFile(updateInput: $updateInput) { message imageUrl status } }`;
 
-          if (status === 200) {
-            updateOrgan({
-              variables: {
-                updateInput: {
-                  email: textInput.email,
-                  name: textInput.name,
-                  sector: textInput.type,
-                  phone: textInput.phone,
-                  address: textInput.address,
-                  employees: +textInput.people,
-                  logo: imageUrl,
-                },
-              },
-            });
-          }
-        })
-        .catch((error) => {
-          console.log("ERROR ====", error);
-          toast.error(
-            "An error occurred while uploading image",
-            errorToastStyle
-          );
+        const fileInput: IFileType = {
+          id: `${data?.id}`,
+          type: "logo",
+          file: null,
+        };
+
+        const map = { "0": ["variables.updateInput.file"] };
+        const operations = JSON.stringify({
+          query,
+          variables: { updateInput: fileInput },
         });
+        formData.append("operations", operations);
+        formData.append("map", JSON.stringify(map));
+        formData.append("0", selectedFile.file);
+
+        // console.log("formData === ", constants.graphqlBaseUrl);
+        await axios
+          .post(graphqlBaseUrl, formData, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "apollo-require-preflight": true,
+            },
+          })
+          .then((response) => {
+            const status = response.status;
+            console.log("RESPONSESS ===", response);
+            if (response?.data?.errors) {
+              const errMsg = response?.data?.errors;
+              toast.error(errMsg[0].message, errorToastStyle);
+              const tokenErr = errMsg[0].message.split(":")[0];
+              if (tokenErr === "TokenExpiredError") {
+                logout();
+              }
+              return;
+            }
+            const { updateFile } = response?.data?.data;
+            console.log("DATES ===", updateFile);
+            const { imageUrl } = updateFile as IUploadFile;
+            console.log("IMAGEURL ===", imageUrl);
+
+            if (status === 200) {
+              updateOrgan({
+                variables: {
+                  updateInput: {
+                    email: textInput.email,
+                    name: textInput.name,
+                    sector: textInput.type,
+                    phone: textInput.phone,
+                    address: textInput.address,
+                    employees: +textInput.people,
+                    logo: imageUrl,
+                  },
+                },
+              });
+            }
+          })
+          .catch((error) => {
+            console.log("ERROR ====", error);
+            toast.error(
+              "An error occurred while uploading image",
+              errorToastStyle
+            );
+          });
+      }
+      // Upcoming .....
+      if (dev) {
+        // Delete and Update Image File from Cloudinary        
+        delCloudFile({
+          variables: {
+            input: {
+              oldImgURL: data?.logo,
+            },
+          },
+          onCompleted: async (data) => {
+            const { file } = selectedFile;
+            try {
+              const logoUrl = await uploadToCloudinary({ file, type: "logo" });
+              if (data?.deleteFromCloudinary?.status === 200) {
+                updateOrgan({
+                  variables: {
+                    updateInput: {
+                      email: textInput.email,
+                      name: textInput.name,
+                      sector: textInput.type,
+                      phone: textInput.phone,
+                      address: textInput.address,
+                      employees: +textInput.people,
+                      logo: logoUrl,
+                    },
+                  },
+                });
+              }              
+            } catch (err) {
+              const error: any = err;
+              if (error?.status === 100 || error?.status === 101 || error?.status === 102) {
+                toast.error(error?.msg, warnToastStyle);
+                return;
+              }
+              toast.error(`${err}`, errorToastStyle);
+            }
+            cReset();
+          },
+        });
+      }
     } else {
       updateOrgan({
         variables: {
@@ -261,7 +351,7 @@ const ProfileOrganisation = () => {
   return (
     <div className={styles.profiles}>
       <Toaster position="top-center" reverseOrder={false} />
-      {loading && <Loader show={true} />}
+      {cLoad || loading && <Loader show={true} />}
       <ManageProfile
         profile="/profile/organisation"
         change="/profile/change-password"
@@ -274,7 +364,9 @@ const ProfileOrganisation = () => {
             src={
               selectedFile.img
                 ? selectedFile.img
-                : `${constants.beHost}${data?.logo}`
+                : cloudinary === "cloudinary"
+                ? data?.logo
+                : `${beHost}${data?.logo}`
             }
             alt="Logo"
           />

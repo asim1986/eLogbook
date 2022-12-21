@@ -11,7 +11,7 @@ const StudentProfile = () => {
   console.log("ROLE ==>>>>> ", role);
   const router = useRouter();
 
-  if (!isAuth && role !== "Student" && role !== "Admin") {
+  if ((!isAuth && role !== "Student" && role !== "Admin") || !role) {
     router.replace("/login");
     return <Login />;
   }

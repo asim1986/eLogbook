@@ -1,27 +1,33 @@
+import { IFileInputType, IUploadFile } from "../interfaces/upload.interface";
+import {
+  errorToastStyle,
+  successToastStyle,
+  warnToastStyle,
+} from "../utils/styles.utils";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import { setCoordAuth, setSupAuth } from "../store/slice/auth.slice";
+import { REGISTER_COORD } from "../graphql/mutations/coordinator";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
+import { REGISTER_SUP } from "../graphql/mutations/supervisor";
 import { allInstitutions } from "../utils/institutions";
 import { IFormInput } from "../interfaces/formInput";
+import { useAppDispatch } from "../hooks/store.hook";
 import styles from "../styles/Signup.module.scss";
 import constants from "../config/constant.config";
+import { staffTitle } from "../utils/title.utils";
+import { toast, Toaster } from "react-hot-toast";
+import { useMutation } from "@apollo/client";
 import { customStyles } from "../utils/util";
 import "react-phone-number-input/style.css";
 import { gender } from "../utils/gender";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import Select from "react-select";
-import Link from "next/link";
-import { useAppDispatch } from "../hooks/store.hook";
-import { useRouter } from "next/router";
-import { useMutation } from "@apollo/client";
-import { toast, Toaster } from "react-hot-toast";
-import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
-import { setCoordAuth, setSupAuth } from "../store/slice/auth.slice";
-import { REGISTER_SUP } from "../graphql/mutations/supervisor";
-import { staffTitle } from "../utils/title.utils";
-import { REGISTER_COORD } from "../graphql/mutations/coordinator";
-import axios from "axios";
-import { IFileInputType, IUploadFile } from "../interfaces/upload.interface";
 import Loader from "./Loader";
+import Link from "next/link";
+import axios from "axios";
+import { uploadToCloudinary } from "../utils/cloudUpload";
+import { depts } from "../utils/department";
 
 const SuperviorForm = ({ isSupervisor, isAdmin, btnTitle }: IFormInput) => {
   const [textInput, setTextInput] = useState({
@@ -38,6 +44,7 @@ const SuperviorForm = ({ isSupervisor, isAdmin, btnTitle }: IFormInput) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { prod, dev } = constants;
 
   const [addUser, { loading, reset }] = useMutation(
     isSupervisor ? REGISTER_SUP : REGISTER_COORD,
@@ -82,6 +89,7 @@ const SuperviorForm = ({ isSupervisor, isAdmin, btnTitle }: IFormInput) => {
 
   type OptionType = { label: string; value: string }[];
 
+  const optionsDept = depts;
   const optionsGender = gender;
   const optionsTitle = staffTitle;
 
@@ -199,6 +207,26 @@ const SuperviorForm = ({ isSupervisor, isAdmin, btnTitle }: IFormInput) => {
     }
   };
 
+  const selectDept = (option: OptionType | null | any) => {
+    if (option) {
+      setTextInput((prev) => ({
+        name: {
+          firstName: prev.name.firstName,
+          lastName: prev.name.lastName,
+          title: prev.name.title,
+        },
+        staffId: prev.staffId,
+        phone: prev.phone,
+        dept: option.value,
+        gender: prev.gender,
+        institute: prev.institute,
+        other: prev.other,
+        email: prev.email,
+        password: prev.password,
+      }));
+    }
+  };
+
   const selectGender = (option: OptionType | null | any) => {
     if (option) {
       setTextInput((prev) => ({
@@ -299,9 +327,6 @@ const SuperviorForm = ({ isSupervisor, isAdmin, btnTitle }: IFormInput) => {
   };
 
   const onSubmitHandler = async (evt: React.FormEvent<HTMLFormElement>) => {
-    if (loading) {
-      setIsLoading(true);
-    }
     evt.preventDefault();
 
     if (!selectedFile.file) {
@@ -322,34 +347,83 @@ const SuperviorForm = ({ isSupervisor, isAdmin, btnTitle }: IFormInput) => {
         },
       });
     } else {
-      const formData = new FormData();
-      const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
-      const fileInput: IFileInputType = {
-        file: null,
-        type: "avatar",
-      };
+      // Check File Size and type
+      const { file } = selectedFile;
+      const { type: t, size } = file as File;
 
-      const map = { "0": ["variables.input.file"] };
-      const operations = JSON.stringify({
-        query,
-        variables: { input: fileInput },
-      });
+      if (t !== "image/png" && t !== "image/jpg" && t !== "image/jpeg") {
+        toast.error("Invalid file Uploaded", warnToastStyle);
+        return;
+      }
 
-      formData.append("operations", operations);
-      formData.append("map", JSON.stringify(map));
-      formData.append("0", selectedFile.file);
+      if (size > 100000) {
+        toast.error("Maximum file size is 100KB!", warnToastStyle);
+        return;
+      }
+      // DEVELOPMENT ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      if (prod) {
+        const formData = new FormData();
+        const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
+        const fileInput: IFileInputType = {
+          file: null,
+          type: "avatar",
+        };
 
-      await axios
-        .post(constants.graphqlBaseUrl, formData, {
-          headers: {
-            "apollo-require-preflight": true,
-          },
-        })
-        .then((response) => {
-          const status = response.status;
-          const { data } = response.data;
-          const { imageUrl } = data.uploadFile as IUploadFile;
-          if (status === 200) {
+        const map = { "0": ["variables.input.file"] };
+        const operations = JSON.stringify({
+          query,
+          variables: { input: fileInput },
+        });
+
+        formData.append("operations", operations);
+        formData.append("map", JSON.stringify(map));
+        formData.append("0", selectedFile.file);
+
+        await axios
+          .post(constants.graphqlBaseUrl, formData, {
+            headers: {
+              "apollo-require-preflight": true,
+            },
+          })
+          .then((response) => {
+            const status = response.status;
+            const { data } = response.data;
+            const { imageUrl } = data.uploadFile as IUploadFile;
+            if (status === 200) {
+              addUser({
+                variables: {
+                  registerInput: {
+                    title: textInput.name.title,
+                    firstName: textInput.name.firstName,
+                    lastName: textInput.name.lastName,
+                    staffID: textInput.staffId,
+                    email: textInput.email,
+                    password: textInput.password,
+                    department: textInput.dept,
+                    institute: textInput.institute,
+                    phone: textInput.phone,
+                    gender: textInput.gender,
+                    avatar: imageUrl,
+                  },
+                },
+              });
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            toast.error(
+              "An error occurred while uploading image",
+              errorToastStyle
+            );
+          });
+      }
+      // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      if (dev) {
+        try {
+          const { file } = selectedFile;
+          setIsLoading(true);
+          const imgUrl = await uploadToCloudinary({ file, type: "avatar" });
+          if (imgUrl || imgUrl !== "") {
             addUser({
               variables: {
                 registerInput: {
@@ -363,23 +437,24 @@ const SuperviorForm = ({ isSupervisor, isAdmin, btnTitle }: IFormInput) => {
                   institute: textInput.institute,
                   phone: textInput.phone,
                   gender: textInput.gender,
-                  avatar: imageUrl,
+                  avatar: imgUrl,
                 },
               },
             });
           }
-        })
-        .catch((error) => {
           setIsLoading(false);
-          console.log(error);
-          toast.error(
-            "An error occurred while uploading image",
-            errorToastStyle
-          );
-        });
+        } catch (err) {
+          console.log(err);
+          setIsLoading(false);
+          const error: any = err;
+          if (error?.status === 100 || error?.status === 101 || error?.status === 102) {
+            toast.error(error?.msg, warnToastStyle);
+            return;
+          }
+          toast.error(`${err}`, errorToastStyle);
+        }
+      }
     }
-
-    setIsLoading(false);
   };
 
   return (
@@ -455,15 +530,14 @@ const SuperviorForm = ({ isSupervisor, isAdmin, btnTitle }: IFormInput) => {
         </div>
         <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-2">
           <div className="w-full">
-            <input
-              required
-              placeholder="Department"
-              name="dept"
-              type="text"
-              className={styles.signupInput}
-              value={textInput.dept}
-              onChange={onChangeDept}
-            />
+            <Select
+                isClearable
+                options={optionsDept}
+                className={styles.select}
+                placeholder="Department"
+                onChange={selectDept}
+                styles={customStyles}
+              />
           </div>
           <div className="w-full">
             <Select

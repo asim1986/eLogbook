@@ -1,25 +1,26 @@
-import { IFileInputType, IUploadFile } from "../interfaces/upload.interface";
 import { errorToastStyle, successToastStyle, warnToastStyle } from "../utils/styles.utils";
+import { IFileInputType, IUploadFile } from "../interfaces/upload.interface";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import { REGISTER_ORG } from "../graphql/mutations/organisation";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
+import { uploadToCloudinary } from "../utils/cloudUpload";
+import { setOrgAuth } from "../store/slice/auth.slice";
 import { IFormInput } from "../interfaces/formInput";
+import { useAppDispatch } from "../hooks/store.hook";
 import styles from "../styles/Signup.module.scss";
+import constants from "../config/constant.config";
+import toast, { Toaster } from "react-hot-toast";
+import { useMutation } from "@apollo/client";
 import { customStyles } from "../utils/util";
 import "react-phone-number-input/style.css";
 import { sectors } from "../utils/sectors";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import Select from "react-select";
-import Link from "next/link";
-import { useMutation } from "@apollo/client";
-import toast, { Toaster } from "react-hot-toast";
-import { useRouter } from "next/router";
-import constants from "../config/constant.config";
-import { useAppDispatch } from "../hooks/store.hook";
-import { setOrgAuth, setUser } from "../store/slice/auth.slice";
 import Loader from "./Loader";
+import Link from "next/link";
 import axios from "axios";
-import { uploadToCloudinary } from "../utils/cloudUpload";
+
 
 const OrganisationForm = ({ isAdmin, btnTitle }: IFormInput) => {
   const [textInput, setTextInput] = useState({
@@ -31,8 +32,11 @@ const OrganisationForm = ({ isAdmin, btnTitle }: IFormInput) => {
     email: "",
     password: "",
   });
-  const dispatch = useAppDispatch();
   const router = useRouter();
+  const { dev, prod } = constants;
+  const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [addOrgan, { loading, reset }] = useMutation(REGISTER_ORG, {
     onCompleted: (data) => {
       toast.success("Registered successfully!", successToastStyle);
@@ -164,89 +168,105 @@ const OrganisationForm = ({ isAdmin, btnTitle }: IFormInput) => {
     evt.preventDefault();
 
     if (!selectedFile.file) {
-      toast.error("Please Upload an Image!", warnToastStyle);
+      toast.error("Please Upload Organisation Logo!", warnToastStyle);
       return;
     }
-    // const formData = new FormData();
-    // const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
+    // DEVELOPMENT ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    if (prod) {
+      const formData = new FormData();
+      const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
 
-    // const fileInput: IFileInputType = {
-    //   file: null,
-    //   type: "logo",
-    // };
+      const fileInput: IFileInputType = {
+        file: null,
+        type: "logo",
+      };
 
-    // const map = { "0": ["variables.input.file"] };
-    // const operations = JSON.stringify({
-    //   query,
-    //   variables: { input: fileInput },
-    // });
-    // formData.append("operations", operations);
-    // formData.append("map", JSON.stringify(map));
-    // formData.append("0", selectedFile.file);
+      const map = { "0": ["variables.input.file"] };
+      const operations = JSON.stringify({
+        query,
+        variables: { input: fileInput },
+      });
+      formData.append("operations", operations);
+      formData.append("map", JSON.stringify(map));
+      formData.append("0", selectedFile.file);
 
-    // await axios
-    //   .post(constants.graphqlBaseUrl, formData, {
-    //     headers: {
-    //       "apollo-require-preflight": true,
-    //     },
-    //   })
-    //   .then((response) => {
-    //     // console.log("RESPONSE****", response);
-    //     const status = response.status;
-    //     const { data } = response.data;
-    //     const { imageUrl } = data.uploadFile as IUploadFile;
-    //     // const { imageUrl } = data;
-    //     // const { imageUrl }  = data;
-    //     if (status === 200) {
-    //       addOrgan({
-    //         variables: {
-    //           registerInput: {
-    //             name: textInput.name,
-    //             sector: textInput.sector,
-    //             phone: textInput.phone,
-    //             address: textInput.address,
-    //             employees: +textInput.employees,
-    //             email: textInput.email,
-    //             password: textInput.password,
-    //             logo: imageUrl,
-    //           },
-    //         },
-    //       });
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     toast.error("An error occurred while uploading image", errorToastStyle);
-    //   });
-
-    try {
-      const imgUrl = await uploadToCloudinary(selectedFile.file);
-      if (imgUrl || imgUrl !== "") {
-        addOrgan({
-          variables: {
-            registerInput: {
-              name: textInput.name,
-              sector: textInput.sector,
-              phone: textInput.phone,
-              address: textInput.address,
-              employees: +textInput.employees,
-              email: textInput.email,
-              password: textInput.password,
-              logo: imgUrl,
-            },
+      await axios
+        .post(constants.graphqlBaseUrl, formData, {
+          headers: {
+            "apollo-require-preflight": true,
           },
+        })
+        .then((response) => {
+          // console.log("RESPONSE****", response);
+          const status = response.status;
+          const { data } = response.data;
+          const { imageUrl } = data.uploadFile as IUploadFile;
+          // const { imageUrl } = data;
+          if (status === 200) {
+            addOrgan({
+              variables: {
+                registerInput: {
+                  name: textInput.name,
+                  sector: textInput.sector,
+                  phone: textInput.phone,
+                  address: textInput.address,
+                  employees: +textInput.employees,
+                  email: textInput.email,
+                  password: textInput.password,
+                  logo: imageUrl,
+                },
+              },
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error(
+            "An error occurred while uploading image",
+            errorToastStyle
+          );
         });
+    }
+    // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    if (dev) {
+      try {
+        const { file } = selectedFile;
+        setIsLoading(true);
+        const logoUrl = await uploadToCloudinary({ file, type: "logo" });
+        if (logoUrl || logoUrl !== "") {
+          addOrgan({
+            variables: {
+              registerInput: {
+                name: textInput.name,
+                sector: textInput.sector,
+                phone: textInput.phone,
+                address: textInput.address,
+                employees: +textInput.employees,
+                email: textInput.email,
+                password: textInput.password,
+                logo: logoUrl,
+              },
+            },
+          });
+        }
+        setIsLoading(false);
+      } catch (err) {
+        console.log(err);
+        setIsLoading(false);
+        const error: any = err;
+        if (error?.status === 100 || error?.status === 101 || error?.status === 102) {
+          toast.error(error?.msg, warnToastStyle);
+          return;
+        }
+        toast.error(`${err}`, errorToastStyle);
       }
-    } catch (err) {
-      console.log(err);
-      toast.error(`${err}`, errorToastStyle);
     }
   };
 
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
-      {loading && <Loader show={true} />}
+      {loading || (isLoading && <Loader show={true} />)}
       <form className="mt-4" onSubmit={onSubmitHandler}>
         <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-2">
           <div className="w-full">

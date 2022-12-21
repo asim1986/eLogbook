@@ -9,18 +9,19 @@ import constants from "../config/constant.config";
 import { client } from "../graphql/apolloClient";
 import styles from "../styles/Home.module.scss";
 import { BiCheckShield } from "react-icons/bi";
-import { DEFAULT_IMG } from "../utils/util";
 import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
 const Links = () => {
-  const router = useRouter();
-  const nodeRef = useRef<any>(null);
-  const nodeRefLogout = useRef<any>(null);
   const isAuth = useAppSelector((state) => state.auth.isAuth);
   const token = useAppSelector((state) => state.auth.token);
+  const { defaultImg, beHost } = constants;
+  const nodeRefLogout = useRef<any>(null);
+  const nodeRef = useRef<any>(null);
   const dispatch = useAppDispatch();
+  const router = useRouter();
+
   const role = useAppSelector(
     (state) =>
       state.auth?.userStudData?.user ||
@@ -38,6 +39,7 @@ const Links = () => {
   const logout = () => {
     // Reset Apollo Cache
     client.resetStore();
+    localStorage.removeItem("logBookData");
     dispatch(setRest());
     router.push("/login");
   };
@@ -58,30 +60,35 @@ const Links = () => {
       state.auth?.userOrgData?.logo
   );
 
+  const splitURL = avatar?.split("/")[2];
+  const cloudinary = splitURL?.split(".")[1];
+
   return (
     <div className={styles.nav_div}>
+      <Link href="/">
+        <a
+          className={[
+            styles.nav_li,
+            router.pathname === "/" ? styles.active : "",
+          ].join(" ")}
+        >
+          Home
+        </a>
+      </Link>
+
+      <Link href="/blog/blog-post">
+        <a
+          className={[
+            styles.nav_li,
+            router.pathname.split("/")[1] === "blog" ? styles.active : "",
+          ].join(" ")}
+        >
+          Blog
+        </a>
+      </Link>
+
       {!(isAuth && token) ? (
         <>
-          <Link href="/">
-            <a
-              className={[
-                styles.nav_li,
-                router.pathname === "/" ? styles.active : "",
-              ].join(" ")}
-            >
-              Home
-            </a>
-          </Link>
-          <Link href="/blog/blog-post">
-            <a
-              className={[
-                styles.nav_li,
-                router.pathname.split("/")[1] === "blog" ? styles.active : "",
-              ].join(" ")}
-            >
-              Blog
-            </a>
-          </Link>
           <Link href="/login">
             <a
               className={[
@@ -92,7 +99,8 @@ const Links = () => {
               Login
             </a>
           </Link>
-          <a className={styles.nav_li}>
+
+          <div className={styles.nav_li}>
             <button
               onClick={() =>
                 setDropDown((prev) => ({
@@ -180,7 +188,7 @@ const Links = () => {
                 </ul>
               </CSSTransition>
             </button>
-          </a>
+          </div>
 
           <Link href="/about">
             <a
@@ -210,6 +218,7 @@ const Links = () => {
               </a>
             </Link>
           )}
+
           <Link href="/chats">
             <a
               className={[
@@ -273,6 +282,7 @@ const Links = () => {
               </a>
             </Link>
           )}
+
           <Link href={`/profile/${role.toLowerCase()}`}>
             <a
               className={[
@@ -290,6 +300,7 @@ const Links = () => {
               </div>
             </a>
           </Link>
+
           <a className={styles.nav_li}>
             <button
               onClick={() =>
@@ -304,10 +315,11 @@ const Links = () => {
               <div className="w-full">
                 <img
                   src={
-                    avatar === DEFAULT_IMG
+                    avatar === defaultImg
                       ? avatar
-                      : `${constants.beHost}${avatar}` ||
-                        "../images/thumbnail.png"
+                      : cloudinary === "cloudinary"
+                      ? avatar
+                      : `${beHost}${avatar}` || "../images/thumbnail.png"
                   }
                   className={styles.displayPic}
                 />

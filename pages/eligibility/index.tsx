@@ -13,7 +13,7 @@ const Eligibility: NextPage = () => {
   const isAuth = useAppSelector((state) => state.auth?.isAuth);
   const router = useRouter();
 
-  if (!isAuth && role !== "Coordinator" && role !== "Admin") {
+  if ((!isAuth && role !== "Coordinator" && role !== "Admin") || !role) {
     router.replace("/login");
     return <Login />;
   }

@@ -11,6 +11,7 @@ export const CREATE_ELIG = gql`
         department
         level
         matricNo
+        createdAt
         supervisor {
           id
           title

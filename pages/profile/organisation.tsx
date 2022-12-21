@@ -11,7 +11,7 @@ const OrganisationProfile = () => {
   console.log("ROLE ==>>>>> ", role);
   const router = useRouter();
 
-  if (!isAuth && role !== "Organisation" && role !== "Admin") {
+  if ((!isAuth && role !== "Organisation" && role !== "Admin") || !role) {
     router.replace("/login");
     return <Login />;
   }

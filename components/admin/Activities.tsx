@@ -1,9 +1,18 @@
-import { ActivitiesType, StudLog } from "../../interfaces/comp.interface";
-import { GET_STUD_LOG } from "../../graphql/query/student";
 import { errorToastStyle, successToastStyle } from "../../utils/styles.utils";
+import { CLOUD_DEL_FILE, DELETE_FILE } from "../../graphql/mutations/file";
+import { ActivitiesType, StudLog } from "../../interfaces/comp.interface";
+import { useAppDispatch, useAppSelector } from "../../hooks/store.hook";
+import { DELETE_LOG } from "../../graphql/mutations/logbook";
+import { GET_STUD_LOG } from "../../graphql/query/student";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import GlobalContext from "../../context/GlobalContext";
 import styles from "../../styles/Dashboard.module.scss";
+import { useContext, useEffect, useState } from "react";
+import { setRest } from "../../store/slice/auth.slice";
+import constants from "../../config/constant.config";
+import { client } from "../../graphql/apolloClient";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import toast, { Toaster } from "react-hot-toast";
 import { AiOutlineEye } from "react-icons/ai";
 import { BiSearchAlt2 } from "react-icons/bi";
 import { CgTrashEmpty } from "react-icons/cg";
@@ -11,25 +20,18 @@ import { RiCheckFill } from "react-icons/ri";
 import { MdClose } from "react-icons/md";
 import ViewLogbook from "./ViewLogbook";
 import { FaEdit } from "react-icons/fa";
-import { useContext, useEffect, useState } from "react";
-import Link from "next/link";
-import { useLazyQuery, useMutation } from "@apollo/client";
-import toast, { Toaster } from "react-hot-toast";
-import Loader from "../Loader";
-import { useAppDispatch, useAppSelector } from "../../hooks/store.hook";
-import { DELETE_LOG } from "../../graphql/mutations/logbook";
-import { DELETE_FILE } from "../../graphql/mutations/file";
-import { client } from "../../graphql/apolloClient";
 import router from "next/router";
-import { setRest } from "../../store/slice/auth.slice";
+import Loader from "../Loader";
+import Link from "next/link";
 
 const Activities = (args: ActivitiesType) => {
-  const { style, styleHeader, user, isStudent = false } = args;
   const { showDetail, setShowDetail } = useContext(GlobalContext);
   const labels = ["Title", "Activity ID", "Description", "Day", "Approved"];
   const userData = useAppSelector((state) => state.auth.userStudData);
+  const { style, styleHeader, user, isStudent = false } = args;
   const [idx, setIdx] = useState(0);
   const dispatch = useAppDispatch();
+  const { prod, dev } = constants;
 
   const logout = async () => {
     // Reset Apollo Cache
@@ -57,7 +59,6 @@ const Activities = (args: ActivitiesType) => {
   const [deleteFile, { loading: loadingFile }] = useMutation(DELETE_FILE, {
     onCompleted: (data) => {
       toast.success(data.deleteFile?.message, successToastStyle);
-      console.log("DATA ==> ", data.deleteFile);
       deleteLog({
         variables: {
           input: {
@@ -136,7 +137,42 @@ const Activities = (args: ActivitiesType) => {
     },
   });
 
-  // console.log("STUD_LOG => ", data?.student.logbooks);
+  const [delCloudFile, { loading: cLoad, reset: cReset }] = useMutation(
+    CLOUD_DEL_FILE,
+    {
+      onCompleted: (data) => {
+        deleteLog({
+          variables: {
+            input: {
+              email: userData?.email,
+              actId: data?.deleteFile.actId,
+            },
+          },
+        });
+      },
+      onError: ({ graphQLErrors, networkError }) => {
+        try {
+          if (graphQLErrors)
+            graphQLErrors.forEach(({ message, locations, path }) => {
+              console.log(
+                `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+              );
+              const tokenErr = message.split(":")[0];
+              toast.error(`${message}`, errorToastStyle);
+              if (tokenErr === "TokenExpiredError") {
+                logout();
+              }
+            });
+          if (networkError) {
+            toast.error(`${networkError}`, errorToastStyle);
+            console.log(`[Network error]: ${networkError}`);
+          }
+        } catch (err) {
+          console.log("ERR****", err);
+        }
+      },
+    }
+  );
 
   const studLogData: StudLog[] = data?.student.logbooks;
 
@@ -166,23 +202,35 @@ const Activities = (args: ActivitiesType) => {
       ];
 
   const onDeleteHandler = (actId: string, diagram: string) => {
-    
     if (diagram) {
-      deleteFile({
-        variables: {
-          deleteInput: {
-            actId,
-            id: userData?.id,
-            type: "diagrams",
+      // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      if (dev) {
+        delCloudFile({
+          variables: {
+            input: {
+              oldImgURL: diagram,
+            },
           },
-        },
-      });
+        });
+      }
+      //DEVELOPMENT ENVIRONMENET >>>>>>>>>>>>>>>>>>>>>>>>>>
+      if (prod) {
+        deleteFile({
+          variables: {
+            deleteInput: {
+              actId,
+              id: userData?.id,
+              type: "diagrams",
+            },
+          },
+        });
+      }
     } else {
       deleteLog({
         variables: {
           input: {
             actId,
-            email: userData?.email            
+            email: userData?.email,
           },
         },
       });
@@ -327,7 +375,9 @@ const Activities = (args: ActivitiesType) => {
                       <CgTrashEmpty
                         size={"1.2rem"}
                         className="cursor-pointer text-red-300 hover:text-red-600"
-                        onClick={() => onDeleteHandler(item.id as string, item.diagram)}
+                        onClick={() =>
+                          onDeleteHandler(item.id as string, item.diagram)
+                        }
                       />
                       {user === "admin" && (
                         <>

@@ -3,7 +3,6 @@ import styles from "../../styles/Profile.module.scss";
 import ManageProfile from "../ManageProfile";
 import { useState } from "react";
 
-
 const UserProfile = (props: any) => {
  
   const [textInput, setTextInput] = useState({
@@ -66,12 +65,13 @@ const UserProfile = (props: any) => {
 
   const onFileUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const mainFile = evt.target.files;
-    // console.log(mainFile[0]);
-    setSelectedFile({
-      file: mainFile[0],
-      isUploaded: true,
-      img: URL.createObjectURL(mainFile[0]),
-    });
+    if(mainFile.length !== 0) {
+      setSelectedFile({
+        file: mainFile[0],
+        isUploaded: true,
+        img: URL.createObjectURL(mainFile[0]),
+      });
+    }    
   };
 
   const resetImage = () => {

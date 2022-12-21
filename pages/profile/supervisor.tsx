@@ -12,7 +12,7 @@ const SupervisorProfile = () => {
   const isAuth = useAppSelector((state) => state.auth?.isAuth);
   const router = useRouter();
 
-  if (!isAuth && role !== "Supervisor" && role !== "Admin") {
+  if ((!isAuth && role !== "Supervisor" && role !== "Admin") || !role) {
     router.replace("/login");
     return <Login />;
   }

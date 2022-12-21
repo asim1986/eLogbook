@@ -72,10 +72,6 @@ const Eligible: NextPage = () => {
     });
   };
 
-  useEffect(() => {
-    // console.log(isEligible);
-  }, []);
-
   return (
     <>
       <Head>

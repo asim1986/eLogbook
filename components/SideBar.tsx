@@ -1,10 +1,10 @@
-import React from "react";
 import CreateEventButton from "./CreateEventButton";
-import SmallCalendar from "./SmallCalendar";
 import styles from "../styles/Logbook.module.scss";
+import SmallCalendar from "./SmallCalendar";
 import Labels from "./Labels";
+import React from "react";
 
-export default function Sidebar() {
+const Sidebar = () => {
   return (
     <aside className={styles.eventAside}>
       <CreateEventButton />
@@ -12,4 +12,6 @@ export default function Sidebar() {
       <Labels />
     </aside>
   );
-}
+};
+
+export default Sidebar;

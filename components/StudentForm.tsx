@@ -1,36 +1,36 @@
-import React, { Fragment, useContext, useRef, useState } from "react";
+import { errorToastStyle, successToastStyle, warnToastStyle } from "../utils/styles.utils";
+import { IFileInputType, IUploadFile } from "../interfaces/upload.interface";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import React, { Fragment, useContext, useRef, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
+import { REGISTER_STUDENT } from "../graphql/mutations/student";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
+import { ORGANISATIONS } from "../graphql/query/organisation";
+import { setEligReset } from "../store/slice/eligible.slice";
+import { uploadToCloudinary } from "../utils/cloudUpload";
 import { allInstitutions } from "../utils/institutions";
+import { setStudAuth } from "../store/slice/auth.slice";
 import { useMutation, useQuery } from "@apollo/client";
 import { IFormInput } from "../interfaces/formInput";
 import GlobalContext from "../context/GlobalContext";
+import constants from "../config/constant.config";
 import styles from "../styles/Signup.module.scss";
+import toast, { Toaster } from "react-hot-toast";
 import { customStyles } from "../utils/util";
+import { depts } from "../utils/department";
 import "react-phone-number-input/style.css";
 import { gender } from "../utils/gender";
 import { level } from "../utils/levels";
+import { useRouter } from "next/router";
 import Select from "react-select";
 import Loader from "./Loader";
 import Link from "next/link";
-import constants from "../config/constant.config";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
-import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
-import { IFileInputType, IUploadFile } from "../interfaces/upload.interface";
-import { ORGANISATIONS } from "../graphql/query/organisation";
-import { useRouter } from "next/router";
-import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
-import { setStudAuth } from "../store/slice/auth.slice";
-import { REGISTER_STUDENT } from "../graphql/mutations/student";
-import { setEligReset } from "../store/slice/eligible.slice";
-import { uploadToCloudinary } from "../utils/cloudUpload";
+
 
 const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
-  const { showEventModal, setShowEventModal } = useContext(GlobalContext);
-  // const [avatar, setAvatar] = useState<string | null>(null);
-  const avatar = useRef<string | null>();
   const eligData = useAppSelector((state) => state.eligible);
+  const {graphqlBaseUrl, prod, dev} = constants;
   const [textInput, setTextInput] = useState({
     name: { firstName: "", lastName: "" },
     email: "",
@@ -86,6 +86,8 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
     isUploaded: false,
     img: null,
   });
+
+  type OptionType = { label: string; value: string }[];
 
   const onChangeHandlerFirst = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput((prev) => ({
@@ -229,24 +231,26 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
     }));
   };
 
-  const onChangeHandlerDept = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setTextInput((prev) => ({
-      name: {
-        firstName: prev.name.firstName,
-        lastName: prev.name.lastName,
-      },
-      email: prev.email,
-      phone: prev.phone,
-      password: prev.password,
-      institute: prev.institute,
-      place: prev.place,
-      level: prev.level,
-      gender: prev.gender,
-      address: prev.address,
-      other: prev.other,
-      dept: evt.target.value,
-      matric: prev.matric,
-    }));
+  const selectDept = (option: OptionType | null | any) => {
+    if (option) {
+      setTextInput((prev) => ({
+        name: {
+          firstName: prev.name.firstName,
+          lastName: prev.name.lastName,
+        },
+        email: prev.email,
+        phone: prev.phone,
+        password: prev.password,
+        institute: prev.institute,
+        place: prev.place,
+        level: prev.level,
+        gender: prev.gender,
+        address: prev.address,
+        other: prev.other,
+        dept: option.value,
+        matric: prev.matric,
+      }));
+    }
   };
 
   const onChangeHandlerMatric = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -271,20 +275,22 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
 
   const onFileUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const mainFile = evt.target.files;
-    setSelectedFile({
-      file: mainFile[0],
-      isUploaded: true,
-      img: URL.createObjectURL(mainFile[0]),
-    });
+    if(mainFile.length !== 0) {
+      setSelectedFile({
+        file: mainFile[0],
+        isUploaded: true,
+        img: URL.createObjectURL(mainFile[0]),
+      });
+    }    
   };
-
-  type OptionType = { label: string; value: string }[];
 
   const options: OptionType = allInstitutions.map((inst) => {
     return { value: inst, label: inst };
   });
 
   const optionsLevel: OptionType = level;
+
+  const optionsDept: OptionType = depts;
 
   const optionsGender: OptionType = gender;
 
@@ -383,109 +389,114 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
     evt.preventDefault();
 
     if (!selectedFile.file) {
-      toast.error("Please Upload a Passport!", errorToastStyle);
+      toast.error("Please Upload a Passport!", warnToastStyle);
       return;
     }
-    // If in Development Environment
-    // if (constants.dev) {
-    //   const formData = new FormData();
-    //   const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
+    // DEVELOPMENT ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    if (prod) {
+      const formData = new FormData();
+      const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
 
-    //   const fileInput: IFileInputType = {
-    //     file: null,
-    //     type: "avatar",
-    //   };
+      const fileInput: IFileInputType = {
+        file: null,
+        type: "avatar",
+      };
 
-    //   const map = { "0": ["variables.input.file"] };
-    //   const operations = JSON.stringify({
-    //     query,
-    //     variables: { input: fileInput },
-    //   });
-    //   formData.append("operations", operations);
-    //   formData.append("map", JSON.stringify(map));
-    //   formData.append("0", selectedFile.file);
+      const map = { "0": ["variables.input.file"] };
+      const operations = JSON.stringify({
+        query,
+        variables: { input: fileInput },
+      });
+      formData.append("operations", operations);
+      formData.append("map", JSON.stringify(map));
+      formData.append("0", selectedFile.file);
 
-    //   await axios
-    //     .post(constants.graphqlBaseUrl, formData, {
-    //       headers: {
-    //         "apollo-require-preflight": true,
-    //       },
-    //     })
-    //     .then((response) => {
-    //       // console.log("RESPONSE****", response);
-    //       if (response?.data?.errors) {
-    //         const errMsg = response?.data?.errors[0];
-    //         toast.error(errMsg?.message, errorToastStyle);
-    //         return;
-    //       }
+      await axios
+      .post(graphqlBaseUrl, formData, {
+        headers: {
+          "apollo-require-preflight": true,
+        },
+      })
+      .then((response) => {
+        // console.log("RESPONSE****", response);
+        if (response?.data?.errors) {
+          const errMsg = response?.data?.errors[0];
+          toast.error(errMsg?.message, errorToastStyle);
+          return;
+        }
 
-    //       const status = response?.status;
-    //       const { data } = response?.data;
-    //       const { imageUrl } = data?.uploadFile as IUploadFile;
-    //       // const { imageUrl }  = data;
-    //       console.log("imageUrl Response***", imageUrl);
-    //       console.log("Status ***>", status);
+        const status = response?.status;
+        const { data } = response?.data;
+        const { imageUrl } = data?.uploadFile as IUploadFile;
+        // const { imageUrl }  = data;
+        console.log("imageUrl Response***", imageUrl);
+        console.log("Status ***>", status);
 
-    //       if (status === 200) {
-    //         addStudent({
-    //           variables: {
-    //             registeredInput: {
-    //               firstName: textInput.name.firstName,
-    //               lastName: textInput.name.lastName,
-    //               email: textInput.email,
-    //               password: textInput.password,
-    //               matricNo: textInput.matric,
-    //               phone: textInput.phone,
-    //               institute: textInput.institute,
-    //               department: textInput.dept,
-    //               place: textInput.place,
-    //               level: textInput.level,
-    //               gender: textInput.gender,
-    //               address: textInput.address,
-    //               avatar: imageUrl,
-    //             },
-    //           },
-    //         });
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //       toast.error(
-    //         "An error occurred while uploading image",
-    //         errorToastStyle
-    //       );
-    //     });
-    // }
-    // else if (constants.prod) {
-    try {
-      const imgUrl = await uploadToCloudinary(selectedFile.file);
-      if (imgUrl || imgUrl !== "") {
-        addStudent({
-          variables: {
-            registeredInput: {
-              firstName: textInput.name.firstName,
-              lastName: textInput.name.lastName,
-              email: textInput.email,
-              password: textInput.password,
-              matricNo: textInput.matric,
-              phone: textInput.phone,
-              institute: textInput.institute,
-              department: textInput.dept,
-              place: textInput.place,
-              level: textInput.level,
-              gender: textInput.gender,
-              address: textInput.address,
-              avatar: imgUrl,
+        if (status === 200) {
+          addStudent({
+            variables: {
+              registeredInput: {
+                firstName: textInput.name.firstName,
+                lastName: textInput.name.lastName,
+                email: textInput.email,
+                password: textInput.password,
+                matricNo: textInput.matric,
+                phone: textInput.phone,
+                institute: textInput.institute,
+                department: textInput.dept,
+                place: textInput.place,
+                level: textInput.level,
+                gender: textInput.gender,
+                address: textInput.address,
+                avatar: imageUrl,
+              },
             },
-          },
-        });
-      }
-    } catch (err) {
-      console.log(err)
-      toast.error(`${err}`, errorToastStyle);
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(
+          "An error occurred while uploading image",
+          errorToastStyle
+        );
+      });
     }
-
-    // }
+    // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    else if (dev) {
+      try {
+        const { file } = selectedFile;
+        const imgUrl = await uploadToCloudinary({file, type: "avatar"});
+        if (imgUrl || imgUrl !== "") {
+          addStudent({
+            variables: {
+              registeredInput: {
+                firstName: textInput.name.firstName,
+                lastName: textInput.name.lastName,
+                email: textInput.email,
+                password: textInput.password,
+                matricNo: textInput.matric,
+                phone: textInput.phone,
+                institute: textInput.institute,
+                department: textInput.dept,
+                place: textInput.place,
+                level: textInput.level,
+                gender: textInput.gender,
+                address: textInput.address,
+                avatar: imgUrl,
+              },
+            },
+          });
+        }
+      } catch (err) {
+        const error: any = err;
+          if (error?.status === 100 || error?.status === 101 || error?.status === 102) {
+            toast.error(error?.msg, warnToastStyle);
+            return;
+          }
+          toast.error(`${err}`, errorToastStyle);
+      }
+    }
   };
 
   return (
@@ -611,15 +622,18 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
         )}
         <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-2">
           <div className="w-full">
-            <input
-              required
-              placeholder="Department"
-              name="dept"
-              type="text"
-              className={styles.signupInput}
-              value={textInput.dept}
-              onChange={onChangeHandlerDept}
-            />
+            <Select
+                isClearable
+                options={optionsDept}
+                defaultValue={{
+                  value: `${eligData?.department}`,
+                  label: `${eligData?.department}`,
+                }}
+                className={styles.select}
+                placeholder="Department"
+                onChange={selectDept}
+                styles={customStyles}
+              />
           </div>
           <div className="w-full flex flex-row justify-between">
             <div className="w-full mr-1">

@@ -4,9 +4,11 @@ import React from "react";
 export const event: EventType = {
   title: null,
   description: null,
+  actId: null,
   label: null,
   day: null,
   id: null,
+  diagram: false
 }
 
 const GlobalContext = React.createContext({
@@ -18,8 +20,8 @@ const GlobalContext = React.createContext({
   setDaySelected: (day: any) => {},
   showEventModal: false,
   setShowEventModal: (arg: boolean) => {},
-  dispatchCalEvent: ({ type, payload }: any) => {},
-  savedEvents: [],
+  // dispatchCalEvent: ({ type, payload }: any) => {},
+  logBookData: [],
   selectedEvent: event,
   setSelectedEvent: (arg: EventType) => {},
   setLabels: (args: any) => {},

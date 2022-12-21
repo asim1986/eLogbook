@@ -1,15 +1,16 @@
 import { successToastStyle, errorToastStyle } from "../../utils/styles.utils";
+import { CLOUD_DEL_FILE, DELETE_FILE } from "../../graphql/mutations/file";
 import { useAppDispatch, useAppSelector } from "../../hooks/store.hook";
 import { DeleteAccountType } from "../../interfaces/comp.interface";
 import { DELETE_ORG } from "../../graphql/mutations/organisation";
 import { DELETE_CORD } from "../../graphql/mutations/coordinator";
 import { DELETE_SUP } from "../../graphql/mutations/supervisor";
 import { DELETE_STUD } from "../../graphql/mutations/student";
-import { DELETE_FILE } from "../../graphql/mutations/file";
 import { DocumentNode, useMutation } from "@apollo/client";
 import GlobalContext from "../../context/GlobalContext";
 import { setRest } from "../../store/slice/auth.slice";
 import styles from "../../styles/Profile.module.scss";
+import constants from "../../config/constant.config";
 import { client } from "../../graphql/apolloClient";
 import toast, { Toaster } from "react-hot-toast";
 import { useContext, useState } from "react";
@@ -19,12 +20,12 @@ import { useRouter } from "next/router";
 import Loader from "../Loader";
 
 const DeleteAccount = ({ user, style }: DeleteAccountType) => {
-  const { showDetail, setShowDetail, dispatchCalEvent } =
-    useContext(GlobalContext);
+  const { showDetail, setShowDetail } = useContext(GlobalContext);
   const [isLoading, setIsLoading] = useState(false);
+  let mutationType: DocumentNode | null = null;
   const dispatch = useAppDispatch();
+  const { dev, prod } = constants;
   const router = useRouter();
-
   let userEmail: string = "";
   let userID: string = "";
 
@@ -35,16 +36,20 @@ const DeleteAccount = ({ user, style }: DeleteAccountType) => {
       state.auth?.userStudData?.user ||
       state.auth?.userOrgData?.user
   );
-  let mutationType: DocumentNode | null = null;
+
+  const avatar = useAppSelector(
+    (state) =>
+      state.auth?.userCoordData?.avatar ||
+      state.auth?.userSupData?.avatar ||
+      state.auth?.userStudData?.avatar ||
+      state.auth?.userOrgData?.logo
+  );
 
   const logout = async () => {
     // Reset Apollo Cache
     client.resetStore();
     dispatch(setRest());
     router.push("/login");
-    if (role === "Student") {
-      dispatchCalEvent({ type: "reset" });
-    }
   };
 
   switch (role) {
@@ -94,6 +99,7 @@ const DeleteAccount = ({ user, style }: DeleteAccountType) => {
         successToastStyle
       );
       setIsLoading(false);
+      localStorage.removeItem("logBookData");
       // Redirect to Login Page
       logout();
     },
@@ -158,17 +164,69 @@ const DeleteAccount = ({ user, style }: DeleteAccountType) => {
     },
   });
 
+  const [delCloudFile, { loading: cLoad, reset: cReset }] = useMutation(
+    CLOUD_DEL_FILE,
+    {
+      onCompleted: (data) => {
+        toast.success(data?.deleteFromCloudinary?.message, successToastStyle);
+        // Delete Account
+        deleteAccount({
+          variables: {
+            emailInput: {
+              email: userEmail,
+            },
+          },
+        });
+      },
+      onError: ({ graphQLErrors, networkError }) => {
+        try {
+          if (graphQLErrors)
+            graphQLErrors.forEach(({ message, locations, path }) => {
+              console.log(
+                `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+              );
+              const tokenErr = message.split(":")[0];
+              toast.error(`${message}`, errorToastStyle);
+              if (tokenErr === "TokenExpiredError") {
+                logout();
+              }
+            });
+          if (networkError) {
+            toast.error(`${networkError}`, errorToastStyle);
+            console.log(`[Network error]: ${networkError}`);
+          }
+        } catch (err) {
+          console.log("ERR****", err);
+        }
+      },
+    }
+  );
+
   const onYesHandler = () => {
-    if (loading || loading_) {
+    if (loading || loading_ || cLoad) {
       setIsLoading(true);
     }
-    deleteFile({
-      variables: {
-        deleteInput: {
-          id: userID,
+    // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>
+    if (dev) {
+      delCloudFile({
+        variables: {
+          input: {
+            oldImgURL: avatar,
+          },
         },
-      },
-    });
+      });
+      return;
+    }    
+    // DEVELOPMENT ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>
+    if (prod) {
+      deleteFile({
+        variables: {
+          deleteInput: {
+            id: userID,
+          },
+        },
+      });
+    }
   };
 
   return (

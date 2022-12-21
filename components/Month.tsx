@@ -3,12 +3,12 @@ import GlobalContext from "../context/GlobalContext";
 import { getMonth } from "../utils/util";
 import Day from "./Day";
 
-export default function Month() {
+const Month = () => {
   const { monthIndex } = useContext(GlobalContext);
   const [currenMonth, setCurrentMonth] = useState(getMonth());
 
   useEffect(() => {
-    setCurrentMonth(getMonth(monthIndex));  
+    setCurrentMonth(getMonth(monthIndex));
   }, [monthIndex]);
 
   return (
@@ -22,4 +22,6 @@ export default function Month() {
       ))}
     </div>
   );
-}
+};
+
+export default Month;

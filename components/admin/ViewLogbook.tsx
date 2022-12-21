@@ -1,6 +1,8 @@
+import { IViewLogbook } from "../../interfaces/viewlog.interface";
 import GlobalContext from "../../context/GlobalContext";
 import { CSSTransition } from "react-transition-group";
 import animate from "../../styles/animate.module.css";
+import constants from "../../config/constant.config";
 import styles from "../../styles/Signup.module.scss";
 import { CgTrashEmpty } from "react-icons/cg";
 import { RiCheckFill } from "react-icons/ri";
@@ -8,19 +10,11 @@ import { useContext, useRef } from "react";
 import BackBlurDrop from "../BackBlurDrop";
 import { MdClose } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import { StudLog } from "../../interfaces/comp.interface";
-import constants from "../../config/constant.config";
 
-const ViewLogbook = ({
-  show,
-  isAdmin,
-  data,
-}: {
-  show: boolean;
-  isAdmin?: boolean;
-  data: StudLog;
-}) => {
+
+const ViewLogbook = ({ show, isAdmin, data }: IViewLogbook) => {
   const nodeRef = useRef<any>(null);
+  const { prod, dev, beHost } = constants;
   const { setShowDetail, setShowAddModal } = useContext(GlobalContext);
   const labels = [
     { title: "ID", value: data?.id },
@@ -91,15 +85,14 @@ const ViewLogbook = ({
 
             <h1>{activities[0].title}</h1>
             <div className="flex flex-col md:flex-row items-center md:items-start flex-wrap w-full mt-2 p-3 md:p-1">
-              {data?.diagram && <div className={styles.passportSt}>
-                <img
-                  src={
-                    data?.diagram
-                      && `${constants.beHost}${data?.diagram}`
-                  }
-                  alt="diagram"
-                />
-              </div>}
+              {data?.diagram && (
+                <div className={styles.passportSt}>
+                  <img
+                    src={dev ? data?.diagram : data?.diagram && `${beHost}${data?.diagram}`}
+                    alt="diagram"
+                  />
+                </div>
+              )}
               <div className={styles.infoSection}>
                 {labels.map((lbl, i) => (
                   <div key={i.toString()}>

@@ -1,31 +1,37 @@
+import { errorToastStyle, successToastStyle, warnToastStyle } from "../utils/styles.utils";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import { IFileType, IUploadFile } from "../interfaces/upload.interface";
+import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
+import { setCoordAuth, setRest } from "../store/slice/auth.slice";
+import { UPDATE_COORD } from "../graphql/mutations/coordinator";
+import { IAuthSupSlice } from "../interfaces/slice.interface";
+import { CLOUD_DEL_FILE } from "../graphql/mutations/file";
+import { uploadToCloudinary } from "../utils/cloudUpload";
 import styles from "../styles/Profile.module.scss";
-import { customStyles, DEFAULT_IMG } from "../utils/util";
+import constants from "../config/constant.config";
+import { staffTitle } from "../utils/title.utils";
+import toast, { Toaster } from "react-hot-toast";
+import { client } from "../graphql/apolloClient";
+import { useMutation } from "@apollo/client";
+import { customStyles } from "../utils/util";
 import ManageProfile from "./ManageProfile";
 import "react-phone-number-input/style.css";
+import { gender } from "../utils/gender";
 import Select from "react-select";
 import { useState } from "react";
-import { IAuthSupSlice } from "../interfaces/slice.interface";
-import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
-import { UPDATE_COORD } from "../graphql/mutations/coordinator";
-import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
-import toast, { Toaster } from "react-hot-toast";
-import { setCoordAuth, setRest } from "../store/slice/auth.slice";
-import { useApolloClient, useMutation } from "@apollo/client";
 import router from "next/router";
-import { staffTitle } from "../utils/title.utils";
-import { gender } from "../utils/gender";
-import { IFileType, IUploadFile } from "../interfaces/upload.interface";
-import axios from "axios";
-import constants from "../config/constant.config";
 import Loader from "./Loader";
-import { client } from "../graphql/apolloClient";
+import axios from "axios";
+
 
 const ProfileCoordinator = () => {
   const data: IAuthSupSlice = useAppSelector(
     (state) => state.auth.userCoordData
   );
   const token = useAppSelector((state) => state.auth.token);
+  const { beHost, defaultImg, dev, prod } = constants;
+  const splitURL = data.avatar?.split("/")[2];
+  const cloudinary = splitURL?.split(".")[1];
 
   const [textInput, setTextInput] = useState({
     name: {
@@ -92,6 +98,33 @@ const ProfileCoordinator = () => {
       }
     },
   });
+
+  const [delCloudFile, { loading: cLoad, reset: cReset }] = useMutation(
+    CLOUD_DEL_FILE,
+    {
+      onError: ({ graphQLErrors, networkError }) => {
+        try {
+          if (graphQLErrors)
+            graphQLErrors.forEach(({ message, locations, path }) => {
+              console.log(
+                `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+              );
+              const tokenErr = message.split(":")[0];
+              toast.error(`${message}`, errorToastStyle);
+              if (tokenErr === "TokenExpiredError") {
+                logout();
+              }
+            });
+          if (networkError) {
+            toast.error(`${networkError}`, errorToastStyle);
+            console.log(`[Network error]: ${networkError}`);
+          }
+        } catch (err) {
+          console.log("ERR****", err);
+        }
+      },
+    }
+  );
 
   const selectTitle = (option: OptionType | null | any) => {
     if (option) {
@@ -179,12 +212,13 @@ const ProfileCoordinator = () => {
 
   const onFileUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const mainFile = evt.target.files;
-    // console.log(mainFile[0]);
-    setSelectedFile({
-      file: mainFile[0],
-      isUploaded: true,
-      img: URL.createObjectURL(mainFile[0]),
-    });
+    if (mainFile.length !== 0) {
+      setSelectedFile({
+        file: mainFile[0],
+        isUploaded: true,
+        img: URL.createObjectURL(mainFile[0]),
+      });
+    }
   };
 
   const resetImage = () => {
@@ -199,73 +233,162 @@ const ProfileCoordinator = () => {
     evt.preventDefault();
 
     if (selectedFile.file) {
-      const formData = new FormData();
-      const query = `mutation($updateInput: FileUpdateInput!) { updateFile(updateInput: $updateInput) { message imageUrl status } }`;
+      // Check File Size and type
+      const { file } = selectedFile;
+      const { type: t, size } = file as File;
 
-      const fileInput: IFileType = {
-        id: `${data?.id}`,
-        type: "avatar",
-        file: null,
-      };
+      if (t !== "image/png" && t !== "image/jpg" && t !== "image/jpeg") {
+        toast.error("Invalid file Uploaded", warnToastStyle);
+        return;
+      }
 
-      const map = { "0": ["variables.updateInput.file"] };
-      const operations = JSON.stringify({
-        query,
-        variables: { updateInput: fileInput },
-      });
-      formData.append("operations", operations);
-      formData.append("map", JSON.stringify(map));
-      formData.append("0", selectedFile.file);
+      if (size > 100000) {
+        toast.error("Maximum file size is 100KB!", warnToastStyle);
+        return;
+      }
 
-      // console.log("formData === ", constants.graphqlBaseUrl);
-      await axios
-        .post(constants.graphqlBaseUrl, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "apollo-require-preflight": true,
-          },
-        })
-        .then((response) => {
-          const status = response.status;
-          console.log("RESPONSESS ===", response);
-          if (response?.data?.errors) {
-            const errMsg = response?.data?.errors;
-            toast.error(errMsg[0].message, errorToastStyle);
-            const tokenErr = errMsg[0].message.split(":")[0];
-            if (tokenErr === "TokenExpiredError") {
-              logout();
-            }
-            return;
-          }
-          const { updateFile } = response?.data?.data;
-          console.log("DATES ===", updateFile);
-          const { imageUrl } = updateFile as IUploadFile;
-          console.log("IMAGEURL ===", imageUrl);
+      // DEVELOPMENT ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      if (prod) {
+        const formData = new FormData();
+        const query = `mutation($updateInput: FileUpdateInput!) { updateFile(updateInput: $updateInput) { message imageUrl status } }`;
 
-          if (status === 200) {
-            updateCoord({
-              variables: {
-                updateInput: {
-                  title: textInput.name.title,
-                  firstName: textInput.name.firstName,
-                  lastName: textInput.name.lastName,
-                  gender: textInput.gender,
-                  email: textInput.email,
-                  phone: textInput.phone,
-                  avatar: imageUrl,
-                },
-              },
-            });
-          }
-        })
-        .catch((error) => {
-          console.log("ERROR ====", error);
-          toast.error(
-            "An error occurred while uploading image",
-            errorToastStyle
-          );
+        const fileInput: IFileType = {
+          id: `${data?.id}`,
+          type: "avatar",
+          file: null,
+        };
+
+        const map = { "0": ["variables.updateInput.file"] };
+        const operations = JSON.stringify({
+          query,
+          variables: { updateInput: fileInput },
         });
+        formData.append("operations", operations);
+        formData.append("map", JSON.stringify(map));
+        formData.append("0", selectedFile.file);
+
+        // console.log("formData === ", constants.graphqlBaseUrl);
+        await axios
+          .post(constants.graphqlBaseUrl, formData, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "apollo-require-preflight": true,
+            },
+          })
+          .then((response) => {
+            const status = response.status;
+            console.log("RESPONSESS ===", response);
+            if (response?.data?.errors) {
+              const errMsg = response?.data?.errors;
+              toast.error(errMsg[0].message, errorToastStyle);
+              const tokenErr = errMsg[0].message.split(":")[0];
+              if (tokenErr === "TokenExpiredError") {
+                logout();
+              }
+              return;
+            }
+            const { updateFile } = response?.data?.data;
+            console.log("DATES ===", updateFile);
+            const { imageUrl } = updateFile as IUploadFile;
+
+            if (status === 200) {
+              updateCoord({
+                variables: {
+                  updateInput: {
+                    title: textInput.name.title,
+                    firstName: textInput.name.firstName,
+                    lastName: textInput.name.lastName,
+                    gender: textInput.gender,
+                    email: textInput.email,
+                    phone: textInput.phone,
+                    avatar: imageUrl,
+                  },
+                },
+              });
+            }
+          })
+          .catch((error) => {
+            console.log("ERROR ====", error);
+            toast.error(
+              "An error occurred while uploading image",
+              errorToastStyle
+            );
+          });
+      }
+      // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      if (dev) {
+        // Delete and Update Image File from Cloudinary
+        if (cloudinary === "cloudinary") {
+          delCloudFile({
+            variables: {
+              input: {
+                oldImgURL: data?.avatar,
+              },
+            },
+            onCompleted: async (data) => {
+              const { file } = selectedFile;
+              try {
+                const imgUrl = await uploadToCloudinary({file, type: "avatar"});
+                if (data?.deleteFromCloudinary?.status === 200) {
+                  updateCoord({
+                    variables: {
+                      updateInput: {
+                        title: textInput.name.title,
+                        firstName: textInput.name.firstName,
+                        lastName: textInput.name.lastName,
+                        gender: textInput.gender,
+                        email: textInput.email,
+                        phone: textInput.phone,
+                        avatar: imgUrl,
+                      },
+                    },
+                  });
+                }
+              } catch (err) {
+                const error: any = err;
+                if (error?.status === 100 ||error?.status === 101 ||error?.status === 102) {
+                  toast.error(error?.msg, warnToastStyle);
+                  return;
+                }
+                toast.error(`${err}`, errorToastStyle);
+              }
+              cReset();
+            },
+          });
+        }
+        // Update Default Image with Cloudinary
+        if (data?.avatar === defaultImg) {
+          const { file } = selectedFile;
+          try {
+            const imgUrl = await uploadToCloudinary({file, type: "avatar"});
+            if (imgUrl !== '' && imgUrl) {
+              updateCoord({
+                variables: {
+                  updateInput: {
+                    title: textInput.name.title,
+                    firstName: textInput.name.firstName,
+                    lastName: textInput.name.lastName,
+                    gender: textInput.gender,
+                    email: textInput.email,
+                    phone: textInput.phone,
+                    avatar: imgUrl,
+                  },
+                },
+              });
+            }
+          } catch (err) {
+            const error: any = err;
+            if (error?.status === 100 ||error?.status === 101 ||error?.status === 102) {
+              toast.error(error?.msg, warnToastStyle);
+              return;
+            }
+            toast.error(`${err}`, errorToastStyle);
+          }
+          cReset();
+        }
+      }
     } else {
+      // Update Without Image File Upload
       updateCoord({
         variables: {
           updateInput: {
@@ -284,7 +407,7 @@ const ProfileCoordinator = () => {
   return (
     <div className={styles.profiles}>
       <Toaster position="top-center" reverseOrder={false} />
-      {loading && <Loader show={true} />}
+      {loading || cLoad && <Loader show={true} />}
       <ManageProfile
         profile={`/profile/${data?.user.toLowerCase()}`}
         change="/profile/change-password"
@@ -297,7 +420,11 @@ const ProfileCoordinator = () => {
             src={
               selectedFile.img
                 ? selectedFile.img
-                : data?.avatar === DEFAULT_IMG ? data?.avatar : `${constants.beHost}${data?.avatar}` || "../images/thumbnail.png"
+                : data?.avatar === defaultImg
+                ? data?.avatar
+                : cloudinary === "cloudinary"
+                ? data?.avatar
+                : `${beHost}${data?.avatar}` || "../images/thumbnail.png"
             }
             alt="passport"
           />

@@ -1,9 +1,18 @@
+import { errorToastStyle, successToastStyle, warnToastStyle } from "../utils/styles.utils";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import { IFileType, IUploadFile } from "../interfaces/upload.interface";
+import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
+import { setRest, setSupAuth } from "../store/slice/auth.slice";
+import { IAuthSupSlice } from "../interfaces/slice.interface";
+import { UPDATE_SUP } from "../graphql/mutations/supervisor";
+import { CLOUD_DEL_FILE } from "../graphql/mutations/file";
+import { uploadToCloudinary } from "../utils/cloudUpload";
 import styles from "../styles/Profile.module.scss";
 import { staffTitle } from "../utils/title.utils";
 import constants from "../config/constant.config";
-import { customStyles, DEFAULT_IMG } from "../utils/util";
+import { client } from "../graphql/apolloClient";
+import toast, { Toaster } from "react-hot-toast";
+import { customStyles } from "../utils/util";
 import { useMutation } from "@apollo/client";
 import ManageProfile from "./ManageProfile";
 import "react-phone-number-input/style.css";
@@ -11,19 +20,16 @@ import { gender } from "../utils/gender";
 import Select from "react-select";
 import { useState } from "react";
 import router from "next/router";
-import axios from "axios";
-import { errorToastStyle, successToastStyle } from "../utils/styles.utils";
-import toast, { Toaster } from "react-hot-toast";
-import { UPDATE_SUP } from "../graphql/mutations/supervisor";
-import { setRest, setSupAuth } from "../store/slice/auth.slice";
-import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
-import { IAuthSupSlice } from "../interfaces/slice.interface";
 import Loader from "./Loader";
-import { client } from "../graphql/apolloClient";
+import axios from "axios";
+
 
 const ProfileSupervisor = () => {
   const data: IAuthSupSlice = useAppSelector((state) => state.auth.userSupData);
   const token = useAppSelector((state) => state.auth.token);
+  const { beHost, defaultImg, prod, dev } = constants;
+  const splitURL = data.avatar?.split("/")[2];
+  const cloudinary = splitURL?.split(".")[1];
 
   // console.log("TOKEN SUP +++. ", token)
   const [textInput, setTextInput] = useState({
@@ -85,6 +91,33 @@ const ProfileSupervisor = () => {
       }
     },
   });
+
+  const [delCloudFile, { loading: cLoad, reset: cReset }] = useMutation(
+    CLOUD_DEL_FILE,
+    {
+      onError: ({ graphQLErrors, networkError }) => {
+        try {
+          if (graphQLErrors)
+            graphQLErrors.forEach(({ message, locations, path }) => {
+              console.log(
+                `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+              );
+              const tokenErr = message.split(":")[0];
+              toast.error(`${message}`, errorToastStyle);
+              if (tokenErr === "TokenExpiredError") {
+                logout();
+              }
+            });
+          if (networkError) {
+            toast.error(`${networkError}`, errorToastStyle);
+            console.log(`[Network error]: ${networkError}`);
+          }
+        } catch (err) {
+          console.log("ERR****", err);
+        }
+      },
+    }
+  );
 
   const selectTitle = (option: OptionType | null | any) => {
     if (option) {
@@ -154,12 +187,13 @@ const ProfileSupervisor = () => {
 
   const onFileUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const mainFile = evt.target.files;
-    // console.log(mainFile[0]);
-    setSelectedFile({
-      file: mainFile[0],
-      isUploaded: true,
-      img: URL.createObjectURL(mainFile[0]),
-    });
+    if(mainFile.length !== 0) {
+      setSelectedFile({
+        file: mainFile[0],
+        isUploaded: true,
+        img: URL.createObjectURL(mainFile[0]),
+      });
+    }    
   };
 
   const resetImage = () => {
@@ -198,26 +232,42 @@ const ProfileSupervisor = () => {
     evt.preventDefault();
 
     if (selectedFile.file) {
-      const formData = new FormData();
-      const query = `mutation($updateInput: FileUpdateInput!) { updateFile(updateInput: $updateInput) { message imageUrl status } }`;
+      // Check File Size and type
+      const { file } = selectedFile;
+      const { type: t, size } = file as File;
 
-      const fileInput: IFileType = {
-        id: `${data?.id}`,
-        type: "avatar",
-        file: null,
-      };
+      if (t !== "image/png" && t !== "image/jpg" && t !== "image/jpeg") {
+        toast.error("Invalid file Uploaded", warnToastStyle);
+        return;
+      }
 
-      const map = { "0": ["variables.updateInput.file"] };
-      const operations = JSON.stringify({
-        query,
-        variables: { updateInput: fileInput },
-      });
-      formData.append("operations", operations);
-      formData.append("map", JSON.stringify(map));
-      formData.append("0", selectedFile.file);
+      if (size > 100000) {
+        toast.error("Maximum file size is 100KB!", warnToastStyle);
+        return;
+      }
+      
+      // DEVELOPMENT ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      if (prod) {
+        const formData = new FormData();
+        const query = `mutation($updateInput: FileUpdateInput!) { updateFile(updateInput: $updateInput) { message imageUrl status } }`;
 
-      // console.log("formData === ", constants.graphqlBaseUrl);
-      await axios
+        const fileInput: IFileType = {
+          id: `${data?.id}`,
+          type: "avatar",
+          file: null,
+        };
+
+        const map = { "0": ["variables.updateInput.file"] };
+        const operations = JSON.stringify({
+          query,
+          variables: { updateInput: fileInput },
+        });
+        formData.append("operations", operations);
+        formData.append("map", JSON.stringify(map));
+        formData.append("0", selectedFile.file);
+
+        // console.log("formData === ", constants.graphqlBaseUrl);
+        await axios
         .post(constants.graphqlBaseUrl, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -264,7 +314,81 @@ const ProfileSupervisor = () => {
             errorToastStyle
           );
         });
+      }
+      // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      if (dev) {
+        // Delete and Update Image File from Cloudinary
+        if (cloudinary === "cloudinary") {
+          delCloudFile({
+            variables: {
+              input: {
+                oldImgURL: data?.avatar,
+              },
+            },
+            onCompleted: async (data) => {
+              const { file } = selectedFile;
+              try {
+                const imgUrl = await uploadToCloudinary({file, type: "avatar"});
+                if (data?.deleteFromCloudinary?.status === 200) {
+                  updateSup({
+                    variables: {
+                      updateInput: {
+                        title: textInput.name.title,
+                        firstName: textInput.name.firstName,
+                        lastName: textInput.name.lastName,
+                        gender: textInput.gender,
+                        email: textInput.email,
+                        phone: textInput.phone,
+                        avatar: imgUrl,
+                      },
+                    },
+                  });
+                }
+              } catch (err) {
+                const error: any = err;
+                if (error?.status === 100 ||error?.status === 101 ||error?.status === 102) {
+                  toast.error(error?.msg, warnToastStyle);
+                  return;
+                }
+                toast.error(`${err}`, errorToastStyle);
+              }
+              cReset();
+            },
+          });
+        }
+        // Update Default Image with Cloudinary
+        if (data?.avatar === defaultImg) {
+          const { file } = selectedFile;
+          try {
+            const imgUrl = await uploadToCloudinary({file, type: "avatar"});
+            if (imgUrl !== '' && imgUrl) {
+              updateSup({
+                variables: {
+                  updateInput: {
+                    title: textInput.name.title,
+                    firstName: textInput.name.firstName,
+                    lastName: textInput.name.lastName,
+                    gender: textInput.gender,
+                    email: textInput.email,
+                    phone: textInput.phone,
+                    avatar: imgUrl,
+                  },
+                },
+              });
+            }
+          } catch (err) {
+            const error: any = err;
+            if (error?.status === 100 ||error?.status === 101 ||error?.status === 102) {
+              toast.error(error?.msg, warnToastStyle);
+              return;
+            }
+            toast.error(`${err}`, errorToastStyle);
+          }
+          cReset();
+        }
+      }      
     } else {
+      // Update Without Uploading Image File
       updateSup({
         variables: {
           updateInput: {
@@ -283,13 +407,12 @@ const ProfileSupervisor = () => {
   return (
     <div className={styles.profiles}>
       <Toaster position="top-center" reverseOrder={false} />
-      {loading && <Loader show={true} />}
+      {cLoad || loading && <Loader show={true} />}
       <ManageProfile
         profile="/profile/supervisor"
         change="/profile/change-password"
         delete="/profile/delete-account"
       />
-
       <div className={styles.userProfile}>
         <h1>User Profile</h1>
         <div className={styles.userImg}>
@@ -297,10 +420,11 @@ const ProfileSupervisor = () => {
             src={
               selectedFile.img
                 ? selectedFile.img
-                : data?.avatar === DEFAULT_IMG
+                : data?.avatar === defaultImg
                 ? data?.avatar
-                : `${constants.beHost}${data?.avatar}` ||
-                  "../images/thumbnail.png"
+                : cloudinary === "cloudinary"
+                ? data?.avatar
+                : `${beHost}${data?.avatar}` || "../images/thumbnail.png"
             }
             alt="passport"
           />
@@ -343,6 +467,7 @@ const ProfileSupervisor = () => {
           <div className="flex flex-col md:flex-row justify-between mb-4 w-full">
             <div className="w-full md:w-9/12 md:mr-2">
               <Select
+                isClearable
                 options={optionsTitle}
                 defaultValue={{
                   value: `${data?.title}`,

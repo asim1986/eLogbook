@@ -10,3 +10,12 @@ export const DELETE_FILE = gql`
     }
   }
 `;
+
+export const CLOUD_DEL_FILE = gql`
+  mutation DeleteFromCloudinary($input: CloudDelInput!) {
+    deleteFromCloudinary(input: $input) {
+      message
+      status
+    }
+  }
+`;

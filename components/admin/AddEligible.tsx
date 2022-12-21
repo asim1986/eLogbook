@@ -1,5 +1,6 @@
 import { errorToastStyle, successToastStyle } from "../../utils/styles.utils";
 import { useAppDispatch, useAppSelector } from "../../hooks/store.hook";
+import { GET_ELIGIBLES_DEPT } from "../../graphql/query/eligible";
 import { useContext, useState, useRef, useEffect } from "react";
 import { IAddEligible } from "../../interfaces/comp.interface";
 import { CREATE_ELIG } from "../../graphql/mutations/eligible";
@@ -14,13 +15,14 @@ import styles from "../../styles/Signup.module.scss";
 import { client } from "../../graphql/apolloClient";
 import toast, { Toaster } from "react-hot-toast";
 import { customStyles } from "../../utils/util";
+import { depts } from "../../utils/department";
 import "react-phone-number-input/style.css";
 import BackBlurDrop from "../BackBlurDrop";
 import { level } from "../../utils/levels";
 import { MdClose } from "react-icons/md";
 import Select from "react-select";
 import router from "next/router";
-import { GET_ELIGIBLES_DEPT } from "../../graphql/query/eligible";
+
 
 const AddEligible = ({ show, isAdmin }: IAddEligible) => {
   const nodeRef = useRef<any>(null);
@@ -84,22 +86,13 @@ const AddEligible = ({ show, isAdmin }: IAddEligible) => {
     }));
   };
 
-  const onChangeDept = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setTextInput((prev) => ({
-      supervisor: prev.supervisor,
-      institute: prev.institute,
-      other: prev.other,
-      level: prev.level,
-      dept: evt.target.value,
-      matric: prev.matric,
-    }));
-  };
-
   type OptionType = { label: string; value: string }[];
 
   const options: OptionType = allInstitutions.map((inst) => {
     return { value: inst, label: inst };
   });
+
+  const optionsDept: OptionType = depts;
 
   const optionsLevel: OptionType = level;
 
@@ -125,6 +118,19 @@ const AddEligible = ({ show, isAdmin }: IAddEligible) => {
         other: prev.other,
         level: option.value,
         dept: prev.dept,
+        matric: prev.matric,
+      }));
+    }
+  };
+
+  const selectDept = (option: OptionType | null | any) => {
+    if (option) {
+      setTextInput((prev) => ({
+        supervisor: prev.supervisor,
+        institute: prev.institute,
+        other: prev.other,
+        level: prev.level,
+        dept: option.value,
         matric: prev.matric,
       }));
     }
@@ -291,14 +297,13 @@ const AddEligible = ({ show, isAdmin }: IAddEligible) => {
               {isAdmin && (
                 <div className="flex justify-between w-full mb-4">
                   <div className="w-full">
-                    <input
-                      required
-                      placeholder="Supervisor"
-                      name="supervisor"
-                      type="text"
-                      className={styles.signupInput}
-                      value={textInput.supervisor}
-                      onChange={onChangeSupervisor}
+                    <Select
+                      isClearable
+                      options={optionsDept}
+                      className={styles.select}
+                      placeholder="Department"
+                      onChange={selectDept}
+                      styles={customStyles}
                     />
                   </div>
                 </div>
@@ -307,6 +312,7 @@ const AddEligible = ({ show, isAdmin }: IAddEligible) => {
                 <div className="w-full">
                   <div className="mb-4">
                     <Select
+                      isClearable
                       options={options}
                       className={styles.select}
                       placeholder="Select Institution"
@@ -334,20 +340,20 @@ const AddEligible = ({ show, isAdmin }: IAddEligible) => {
               <div className="flex flex-col mb-4 space-y-4 md:flex-row md:space-y-0 md:space-x-2">
                 <div className="w-full">
                   <Select
+                    isClearable
                     options={optionSup}
                     className={styles.select}
-                    placeholder="Supervisor"
-                    isClearable
+                    placeholder="Supervisor"                    
                     onChange={selectSupervisor}
                     styles={customStyles}
                   />
                 </div>
                 <div className="md:w-1/2 md:mr-1">
                   <Select
+                    isClearable
                     options={optionsLevel}
                     className={styles.select}
-                    placeholder="Level"
-                    isClearable
+                    placeholder="Level"                    
                     onChange={selectLevel}
                     styles={customStyles}
                   />

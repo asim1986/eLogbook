@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useReducer, useMemo } from "react";
 import GlobalContext, { event } from "./GlobalContext";
 import dayjs from "dayjs";
+import { useLazyQuery } from "@apollo/client";
+import { GET_STUD_LOG } from "../graphql/query/student";
+import { client } from "../graphql/apolloClient";
+import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
+import { useRouter } from "next/router";
+import { setRest } from "../store/slice/auth.slice";
+import { StudLog } from "../interfaces/comp.interface";
 
 const savedEventsReducer = (state: any, { type, payload }: any) => {
   switch (type) {
@@ -11,7 +18,7 @@ const savedEventsReducer = (state: any, { type, payload }: any) => {
     case "delete":
       return state.filter((evt: any) => evt.id !== payload.id);
     case "reset":
-        return [];
+      return [];
     default:
       throw new Error();
   }
@@ -20,44 +27,86 @@ const savedEventsReducer = (state: any, { type, payload }: any) => {
 const initEvents = () => {
   let storageEvents;
   if (typeof window !== "undefined") {
-    storageEvents = localStorage.getItem("savedEvents");
-  }  
+    storageEvents = localStorage.getItem("logBookData");
+  }
   const parsedEvents = storageEvents ? JSON.parse(storageEvents) : [];
   return parsedEvents;
 };
 
 const ContextWrapper = (props: any) => {
-  const [monthIndex, setMonthIndex] = useState(dayjs().month());
+  const studentId = useAppSelector((state) => state.auth?.userStudData?.id);
   const [smallCalendarMonth, setSmallCalendarMonth] = useState(null);
-  const [daySelected, setDaySelected] = useState(dayjs());
+  const [monthIndex, setMonthIndex] = useState(dayjs().month());
   const [showEventModal, setShowEventModal] = useState(false);
-  const [showSideBar, setShowSideBar] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showDetail, setShowDetail]  = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(event);
+  const [daySelected, setDaySelected] = useState(dayjs());
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showSideBar, setShowSideBar] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
   const [labels, setLabels] = useState([]);
-  const [savedEvents, dispatchCalEvent] = useReducer(
-    savedEventsReducer,
-    [],
-    initEvents
-  );
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  // const [logBookData, dispatchCalEvent] = useReducer(
+  //   savedEventsReducer,
+  //   [],
+  //   initEvents
+  // );
+
+  const logout = async () => {
+    // Reset Apollo Cache
+    client.resetStore();
+    dispatch(setRest());
+    router.push("/login");
+  };
+
+  const [getStudLog, { data }] = useLazyQuery(GET_STUD_LOG, {
+    onError: ({ graphQLErrors, networkError }) => {
+      if (graphQLErrors)
+        graphQLErrors.forEach(({ message, locations, path }) => {
+          console.log(
+            `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+          );
+          const tokenErr = message.split(":")[0];
+          if (tokenErr === "TokenExpiredError") {
+            logout();
+          }
+        });
+      if (networkError) {
+        console.log(`[Network error]: ${networkError}`);
+      }
+    },
+  });
+
+  useEffect(() => {
+    getStudLog({
+      variables: {
+        studentId,
+      },
+      onCompleted: (data) => {
+        setLogBookData(data?.student.logbooks);
+      },
+    });
+  }, []);
+
+  const [logBookData, setLogBookData] = useState<StudLog[]>(data?.student.logbooks);
+
+  useEffect(() => {
+    localStorage.setItem("logBookData", JSON.stringify(logBookData));
+  }, [logBookData]);
 
   const filteredEvents = useMemo(() => {
-    return savedEvents.filter((evt: any) =>
+    return logBookData?.filter((evt: any) =>
       labels
         .filter((lbl) => lbl.checked)
         .map((lbl) => lbl.label)
         .includes(evt.label)
     );
-  }, [savedEvents, labels]);
-
-  useEffect(() => {
-    localStorage.setItem("savedEvents", JSON.stringify(savedEvents));
-  }, [savedEvents]);
+  }, [logBookData, labels]);
 
   useEffect(() => {
     setLabels((prevLabels) => {
-      return [...new Set(savedEvents.map((evt: any) => evt.label))].map(
+      return [...new Set(logBookData?.map((evt: any) => evt.label))].map(
         (label) => {
           const currentLabel = prevLabels.find((lbl) => lbl.label === label);
           return {
@@ -67,7 +116,7 @@ const ContextWrapper = (props: any) => {
         }
       );
     });
-  }, [savedEvents]);
+  }, [logBookData]);
 
   useEffect(() => {
     if (smallCalendarMonth !== null) {
@@ -96,10 +145,9 @@ const ContextWrapper = (props: any) => {
         setDaySelected,
         showEventModal,
         setShowEventModal,
-        dispatchCalEvent,
         selectedEvent,
         setSelectedEvent,
-        savedEvents,
+        logBookData,
         setLabels,
         labels,
         updateLabel,
@@ -108,8 +156,8 @@ const ContextWrapper = (props: any) => {
         setShowSideBar,
         showAddModal,
         setShowAddModal,
-        showDetail, 
-        setShowDetail
+        showDetail,
+        setShowDetail,
       }}
     >
       {props.children}

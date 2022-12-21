@@ -7,7 +7,9 @@ import { LOGIN_ORGAN } from "../graphql/query/organisation";
 import { LOGIN_COORD } from "../graphql/query/coordinator";
 import { LOGIN_STUDENT } from "../graphql/query/student";
 import { LOGIN_SUP } from "../graphql/query/supervisor";
+import GlobalContext from "../context/GlobalContext";
 import { useAppDispatch } from "../hooks/store.hook";
+import React, { useState, useContext } from "react";
 import styles_ from "../styles/Signup.module.scss";
 import styles from "../styles/Login.module.scss";
 import toast, { Toaster } from "react-hot-toast";
@@ -15,11 +17,11 @@ import { Navbar } from "../components/NavBar";
 import { customStyles } from "../utils/util";
 import Loader from "../components/Loader";
 import { roles } from "../utils/role.util";
-import React, { useState } from "react";
 import { useRouter } from "next/router";
 import Select from "react-select";
 import Link from "next/link";
 import Head from "next/head";
+
 
 const Login = () => {
   const [textInput, setTextInput] = useState({
@@ -27,8 +29,9 @@ const Login = () => {
     password: "",
     role: "",
   });
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);  
   const [docNode, setDocNode] = useState<DocumentNode>(LOGIN_COORD);
+  const { logBookData } = useContext(GlobalContext);
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -44,6 +47,7 @@ const Login = () => {
         console.log("DATA ==> ", data.loginStudent);
         dispatch(setStudAuth(data.loginStudent));
         dispatch(setEligReset());
+        localStorage.setItem("logBookData", JSON.stringify(logBookData));
       } else if (data?.loginSupervisor) {
         router.push("/activities");
         console.log("DATA ==> ", data.loginSupervisor);

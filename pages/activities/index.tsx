@@ -16,10 +16,10 @@ const Activities = () => {
   console.log("act role => ", role);
 
   if (
-    !isAuth &&
-    role !== "Supervisor" &&
-    role !== "Coordinator" &&
-    role !== "Admin" ||
+    (!isAuth &&
+      role !== "Supervisor" &&
+      role !== "Coordinator" &&
+      role !== "Admin") ||
     !role
   ) {
     router.replace("/login");

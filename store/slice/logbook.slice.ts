@@ -11,6 +11,9 @@ const logbookSlice = createSlice({
   name: "logbook",
   initialState,
   reducers: {
+    setBulkLog: (state, { payload }) => {
+      state.logbooks = [...state.logbooks, ...payload];
+    },
     setLog: (state, { payload }) => {
       state.logbooks = [...state.logbooks, payload?.logbook];
     },
@@ -30,7 +33,6 @@ const logbookSlice = createSlice({
   },
 });
 
-export const { setLog, setUpdLog, setDelLog, setLogReset } =
-  logbookSlice.actions;
+export const { setLog, setUpdLog, setDelLog, setLogReset, setBulkLog } = logbookSlice.actions;
 
 export default logbookSlice.reducer;
