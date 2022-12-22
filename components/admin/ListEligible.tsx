@@ -67,7 +67,7 @@ const ListEligible = ({ isAdmin = true }: { isAdmin?: boolean }) => {
     DELETE_ELIG,
     {
       onCompleted: (data) => {
-        toast.success(data.deleteEligible?.message, successToastStyle);
+        toast.success(data?.deleteEligible?.message, successToastStyle);
         reset();
       },
       update(cache, { data: { deleteEligible } }) {
@@ -119,19 +119,19 @@ const ListEligible = ({ isAdmin = true }: { isAdmin?: boolean }) => {
     }
   );
 
-  // console.log("DATA ELIG ==> ", data.eligiblesByDept);
+  // console.log("DATA ELIG ==> ", data?.eligiblesByDept);
   const eligibleData = data?.eligiblesByDept as Array<EligiblebyDept>;
 
   const tableData: ITableData[] = eligibleData?.map((data) => {
     return {
-      id: data.id,
-      matric: data.matricNo,
+      id: data?.id,
+      matric: data?.matricNo,
       level:
-        data.level === "L4" ? "400" : data.level === "L3" ? "300" : data.level,
-      department: data.department,
-      institution: data.institute,
-      supervisor: `${data.supervisor.title}. ${data.supervisor.firstName} ${data.supervisor.lastName}`,
-      date: new Date(data.createdAt).toDateString(),
+        data?.level === "L4" ? "400" : data?.level === "L3" ? "300" : data?.level,
+      department: data?.department,
+      institution: data?.institute,
+      supervisor: `${data?.supervisor?.title}. ${data?.supervisor?.firstName} ${data?.supervisor?.lastName}`,
+      date: new Date(data?.createdAt).toDateString(),
     };
   });
 

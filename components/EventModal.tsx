@@ -26,8 +26,8 @@ import router from "next/router";
 import axios from "axios";
 
 
-const EventModal = ({ show }: IEvent) => {
-  const { setShowEventModal, daySelected, logBookData, selectedEvent } =
+const EventModal = ({ show, logBookData }: IEvent) => {
+  const { setShowEventModal, daySelected, selectedEvent } =
     useContext(GlobalContext); 
   const day = daySelected.toISOString();
   const logData = logBookData?.find((i: any) => i?.day === day);
@@ -356,7 +356,7 @@ const EventModal = ({ show }: IEvent) => {
         }
 
         // DEVELOPMENT ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        if (prod) {
+        if (dev) {
           const formData = new FormData();
           const query = `mutation($updateInput: FileUpdateInput!) { updateFile(updateInput: $updateInput) { message imageUrl status } }`;
 
@@ -424,7 +424,7 @@ const EventModal = ({ show }: IEvent) => {
         }
 
         // PRODUCTION ENVIRONMENT
-        if (dev) {
+        if (prod) {
           // Delete and Update Image File from Cloudinary
           delCloudFile({
             variables: {
@@ -506,7 +506,7 @@ const EventModal = ({ show }: IEvent) => {
         }
 
         // DEVELOPMENT ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        if (prod) {
+        if (dev) {
           const formData = new FormData();
           const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
 
@@ -573,7 +573,7 @@ const EventModal = ({ show }: IEvent) => {
         }
 
         // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        if (dev) {
+        if (prod) {
           setIsLoading(true);
           const { file } = selectFile;
           try {
@@ -628,7 +628,7 @@ const EventModal = ({ show }: IEvent) => {
   const onDeleteHandler = (actId: string, diagram: string) => {
     if (diagram) {
       // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-      if (dev) {
+      if (prod) {
         delCloudFile({
           variables: {
             input: {
@@ -649,7 +649,7 @@ const EventModal = ({ show }: IEvent) => {
         });
       }
       // DEVELOPMENT ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-      if (prod) {
+      if (dev) {
         deleteFile({
           variables: {
             deleteInput: {

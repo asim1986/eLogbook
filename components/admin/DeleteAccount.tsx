@@ -207,7 +207,7 @@ const DeleteAccount = ({ user, style }: DeleteAccountType) => {
       setIsLoading(true);
     }
     // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>
-    if (dev) {
+    if (prod) {
       delCloudFile({
         variables: {
           input: {
@@ -218,7 +218,7 @@ const DeleteAccount = ({ user, style }: DeleteAccountType) => {
       return;
     }    
     // DEVELOPMENT ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>
-    if (prod) {
+    if (dev) {
       deleteFile({
         variables: {
           deleteInput: {

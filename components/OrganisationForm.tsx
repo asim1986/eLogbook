@@ -172,7 +172,7 @@ const OrganisationForm = ({ isAdmin, btnTitle }: IFormInput) => {
       return;
     }
     // DEVELOPMENT ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    if (prod) {
+    if (dev) {
       const formData = new FormData();
       const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
 
@@ -228,7 +228,7 @@ const OrganisationForm = ({ isAdmin, btnTitle }: IFormInput) => {
         });
     }
     // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    if (dev) {
+    if (prod) {
       try {
         const { file } = selectedFile;
         setIsLoading(true);

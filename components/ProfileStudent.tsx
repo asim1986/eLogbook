@@ -701,52 +701,52 @@ const ProfileStudent = () => {
           <h1 className="font-bold text-center pb-2 border-b-2 border-gray-500">
             Supervisor
           </h1>
-          <div className="flex space-x-2 mt-2">
+          {data?.supervisor ? <div className="flex space-x-2 mt-2">
             <img
               className="w-16 h-16 rounded-[50%]"
               src={
                 selectedFile.img
                   ? selectedFile.img
-                  : data?.supervisor.avatar === defaultImg ||
+                  : data?.supervisor?.avatar === defaultImg ||
                     cloudinary === "cloudinary"
-                  ? data?.supervisor.avatar
-                  : `${constants.beHost}${data?.supervisor.avatar}` ||
+                  ? data?.supervisor?.avatar
+                  : `${constants.beHost}${data?.supervisor?.avatar}` ||
                     "../images/thumbnail.png"
               }
               alt="avatar"
             />
             <div>
-              <h1 className="text-xl">{`${data?.supervisor.title}. ${data?.supervisor.firstName} ${data?.supervisor.lastName}`}</h1>
-              <p className="text-gray-400 text-sm">{data?.supervisor.phone}</p>
-              <p className="text-gray-400 text-sm">{data?.supervisor.email}</p>
+              <h1 className="text-xl">{`${data?.supervisor?.title}. ${data?.supervisor?.firstName} ${data?.supervisor?.lastName}`}</h1>
+              <p className="text-gray-400 text-sm">{data?.supervisor?.phone}</p>
+              <p className="text-gray-400 text-sm">{data?.supervisor?.email}</p>
             </div>
-          </div>
+          </div>: "No Supervior Yet!"}
         </div>
 
         <div className="mt-3">
           <h1 className="font-bold text-center pb-2 border-b-2 border-gray-500">
             Coordinator
           </h1>
-          <div className="flex space-x-2 mt-2">
+          {data?.coordinator ? <div className="flex space-x-2 mt-2">
             <img
               className="w-16 h-16 rounded-[50%]"
               src={
                 selectedFile.img
                   ? selectedFile.img
-                  : data?.coordinator.avatar === defaultImg ||
+                  : data?.coordinator?.avatar === defaultImg ||
                     cloudinary === "cloudinary"
-                  ? data?.coordinator.avatar
-                  : `${constants.beHost}${data?.coordinator.avatar}` ||
+                  ? data?.coordinator?.avatar
+                  : `${constants.beHost}${data?.coordinator?.avatar}` ||
                     "../images/thumbnail.png"
               }
               alt="avatar"
             />
             <div>
-              <h1 className="text-xl">{`${data?.coordinator.title}. ${data?.coordinator.firstName} ${data?.coordinator.lastName}`}</h1>
-              <p className="text-gray-400 text-sm">{data?.coordinator.phone}</p>
-              <p className="text-gray-400 text-sm">{data?.coordinator.email}</p>
+              <h1 className="text-xl">{`${data?.coordinator?.title}. ${data?.coordinator?.firstName} ${data?.coordinator?.lastName}`}</h1>
+              <p className="text-gray-400 text-sm">{data?.coordinator?.phone}</p>
+              <p className="text-gray-400 text-sm">{data?.coordinator?.email}</p>
             </div>
-          </div>
+          </div> : "No Coordinator Yet!"}
         </div>
       </div>
     </div>

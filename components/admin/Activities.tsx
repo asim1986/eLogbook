@@ -204,7 +204,7 @@ const Activities = (args: ActivitiesType) => {
   const onDeleteHandler = (actId: string, diagram: string) => {
     if (diagram) {
       // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-      if (dev) {
+      if (prod) {
         delCloudFile({
           variables: {
             input: {
@@ -214,7 +214,7 @@ const Activities = (args: ActivitiesType) => {
         });
       }
       //DEVELOPMENT ENVIRONMENET >>>>>>>>>>>>>>>>>>>>>>>>>>
-      if (prod) {
+      if (dev) {
         deleteFile({
           variables: {
             deleteInput: {

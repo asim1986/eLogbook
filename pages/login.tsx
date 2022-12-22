@@ -47,7 +47,7 @@ const Login = () => {
         console.log("DATA ==> ", data.loginStudent);
         dispatch(setStudAuth(data.loginStudent));
         dispatch(setEligReset());
-        localStorage.setItem("logBookData", JSON.stringify(logBookData));
+        // localStorage.setItem("logBookData", JSON.stringify(logBookData));
       } else if (data?.loginSupervisor) {
         router.push("/activities");
         console.log("DATA ==> ", data.loginSupervisor);

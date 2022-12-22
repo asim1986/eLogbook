@@ -222,8 +222,8 @@ const ProfileOrganisation = () => {
         toast.error("Maximum file size is 100KB!", warnToastStyle);
         return;
       }
-
-      if (prod) {
+      // DEVELOPMENT ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      if (dev) {
         const formData = new FormData();
         const query = `mutation($updateInput: FileUpdateInput!) { updateFile(updateInput: $updateInput) { message imageUrl status } }`;
 
@@ -291,8 +291,8 @@ const ProfileOrganisation = () => {
             );
           });
       }
-      // Upcoming .....
-      if (dev) {
+      // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      if (prod) {
         // Delete and Update Image File from Cloudinary        
         delCloudFile({
           variables: {

@@ -247,7 +247,7 @@ const ProfileSupervisor = () => {
       }
       
       // DEVELOPMENT ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-      if (prod) {
+      if (dev) {
         const formData = new FormData();
         const query = `mutation($updateInput: FileUpdateInput!) { updateFile(updateInput: $updateInput) { message imageUrl status } }`;
 
@@ -316,7 +316,7 @@ const ProfileSupervisor = () => {
         });
       }
       // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-      if (dev) {
+      if (prod) {
         // Delete and Update Image File from Cloudinary
         if (cloudinary === "cloudinary") {
           delCloudFile({

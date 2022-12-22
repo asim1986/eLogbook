@@ -393,7 +393,7 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
       return;
     }
     // DEVELOPMENT ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    if (prod) {
+    if (dev) {
       const formData = new FormData();
       const query = `mutation($input: FileInput!) { uploadFile(input: $input) { imageUrl status message } }`;
 
@@ -463,7 +463,7 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
       });
     }
     // PRODUCTION ENVIRONMENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    else if (dev) {
+    else if (prod) {
       try {
         const { file } = selectedFile;
         const imgUrl = await uploadToCloudinary({file, type: "avatar"});

@@ -37,9 +37,9 @@ const Links = () => {
   });
 
   const logout = () => {
-    // Reset Apollo Cache
-    client.resetStore();
     localStorage.removeItem("logBookData");
+    // Reset Apollo Cache
+    client.resetStore();    
     dispatch(setRest());
     router.push("/login");
   };

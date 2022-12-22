@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useReducer, useMemo } from "react";
-import GlobalContext, { event } from "./GlobalContext";
-import dayjs from "dayjs";
-import { useLazyQuery } from "@apollo/client";
-import { GET_STUD_LOG } from "../graphql/query/student";
-import { client } from "../graphql/apolloClient";
 import { useAppDispatch, useAppSelector } from "../hooks/store.hook";
-import { useRouter } from "next/router";
-import { setRest } from "../store/slice/auth.slice";
+import { GET_STUD_LOG } from "../graphql/query/student";
+import GlobalContext, { event } from "./GlobalContext";
 import { StudLog } from "../interfaces/comp.interface";
+import { setRest } from "../store/slice/auth.slice";
+import { client } from "../graphql/apolloClient";
+import { useLazyQuery } from "@apollo/client";
+import { useRouter } from "next/router";
+import dayjs from "dayjs";
 
 const savedEventsReducer = (state: any, { type, payload }: any) => {
   switch (type) {
@@ -35,6 +35,7 @@ const initEvents = () => {
 
 const ContextWrapper = (props: any) => {
   const studentId = useAppSelector((state) => state.auth?.userStudData?.id);
+  const [logBookData, setLogBookData] = useState<StudLog[]>();
   const [smallCalendarMonth, setSmallCalendarMonth] = useState(null);
   const [monthIndex, setMonthIndex] = useState(dayjs().month());
   const [showEventModal, setShowEventModal] = useState(false);
@@ -88,8 +89,6 @@ const ContextWrapper = (props: any) => {
       },
     });
   }, []);
-
-  const [logBookData, setLogBookData] = useState<StudLog[]>(data?.student.logbooks);
 
   useEffect(() => {
     localStorage.setItem("logBookData", JSON.stringify(logBookData));
