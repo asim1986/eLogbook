@@ -1,21 +1,22 @@
-import CalendarHeader from "../../components/CalendarHeader";
-import GlobalContext from "../../context/GlobalContext";
 import { useAppDispatch, useAppSelector } from "../../hooks/store.hook";
+import CalendarHeader from "../../components/CalendarHeader";
+import { GET_STUD_LOG } from "../../graphql/query/student";
+import { StudLog } from "../../interfaces/comp.interface";
+import GlobalContext from "../../context/GlobalContext";
+import { setRest } from "../../store/slice/auth.slice";
+import React, { useContext, useEffect } from "react";
 import EventModal from "../../components/EventModal";
+import { client } from "../../graphql/apolloClient";
 import SidebarSM from "../../components/SideBarSM";
 import { Navbar } from "../../components/NavBar";
 import Sidebar from "../../components/Sidebar";
+import { useLazyQuery } from "@apollo/client";
 import Month from "../../components/Month";
-import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import { NextPage } from "next";
 import Head from "next/head";
 import Login from "../login";
-import { useLazyQuery } from "@apollo/client";
-import { client } from "../../graphql/apolloClient";
-import { setRest } from "../../store/slice/auth.slice";
-import { GET_STUD_LOG } from "../../graphql/query/student";
-import { StudLog } from "../../interfaces/comp.interface";
+
 
 const LogBook: NextPage = () => {
   const studentId = useAppSelector((state) => state.auth?.userStudData?.id);
