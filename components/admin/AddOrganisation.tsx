@@ -36,7 +36,7 @@ const AddOrganisation = ({ show }: { show: boolean }) => {
               className="cursor-pointer mt-3 ml-3 md:m-0 md:p-0 text-2xl md:text-3xl"
             />
             <h1>Add an Organisation Account</h1>
-            <OrganisationForm admin={true} btnTitle={"Add"} />
+            <OrganisationForm isAdmin={true} btnTitle={"Add"} />
           </div>
         </div>
       </CSSTransition>

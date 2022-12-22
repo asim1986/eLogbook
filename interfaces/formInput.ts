@@ -1,6 +1,6 @@
 export interface IFormInput {
   isAdmin: boolean;
-  isSupervisor: boolean;
+  isSupervisor?: boolean;
   btnTitle: string;
   data?: {
     __typename: string;

@@ -17,7 +17,7 @@ const Organisation = () => {
           <div className={styles.signupContainer}>
             <div className="p-3 sm:p-5 lg:p-6 w-full">
               <h1 className={styles.h1}>Create an Organisational Account</h1>
-              <OrganisationForm admin={false} btnTitle={"signup"} />
+              <OrganisationForm isAdmin={false} btnTitle={"signup"} />
             </div>
           </div>
           <div className={styles.spacer}></div>
