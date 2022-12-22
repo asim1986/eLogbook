@@ -62,8 +62,8 @@ const ViewBlogPost = ({ show }: { show: boolean }) => {
                 <img src="../images/image1.png" alt="blog post" />
               </div>
               <div className={styles.infoSectionBlog}>
-                {labels.map((lbl) => (
-                  <div>
+                {labels.map((lbl, idx) => (
+                  <div key={idx}>
                     <span className="font-bold text-start w-3/4">
                       {lbl.value}
                     </span>

@@ -52,39 +52,30 @@ const DeleteAccount = ({ user, style }: DeleteAccountType) => {
     router.push("/login");
   };
 
+  const studData = useAppSelector((state) => state.auth.userStudData);
+  const coordData = useAppSelector((state) => state.auth.userCoordData);
+  const supData = useAppSelector((state) => state.auth.userSupData);
+  const orgData = useAppSelector((state) => state.auth.userOrgData);
+
   switch (role) {
-    case "Student":
-      const emailStud = useAppSelector(
-        (state) => state.auth.userStudData.email
-      );
-      const emailStudID = useAppSelector((state) => state.auth.userStudData.id);
-      userEmail = emailStud;
-      userID = emailStudID;
+    case "Student":      
+      userEmail = studData.email;
+      userID = studData.id;
       mutationType = DELETE_STUD;
       break;
     case "Coordinator":
-      const emailCoord = useAppSelector(
-        (state) => state.auth.userCoordData.email
-      );
-      const emailCoordID = useAppSelector(
-        (state) => state.auth.userCoordData.id
-      );
-      userEmail = emailCoord;
-      userID = emailCoordID;
+      userEmail = coordData.email;
+      userID = coordData.id;
       mutationType = DELETE_CORD;
       break;
     case "Supervisor":
-      const emailSup = useAppSelector((state) => state.auth.userSupData.email);
-      const emailSupID = useAppSelector((state) => state.auth.userSupData.id);
-      userEmail = emailSup;
-      userID = emailSupID;
+      userEmail = supData.email;
+      userID = supData.id;
       mutationType = DELETE_SUP;
       break;
     case "Organisation":
-      const emailOrg = useAppSelector((state) => state.auth.userOrgData.email);
-      const emailID = useAppSelector((state) => state.auth.userOrgData.id);
-      userEmail = emailOrg;
-      userID = emailID;
+      userEmail = orgData.email;
+      userID = orgData.id;
       mutationType = DELETE_ORG;
       break;
   }

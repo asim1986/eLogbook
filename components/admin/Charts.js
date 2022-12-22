@@ -1,6 +1,6 @@
+import styles from "../../styles/Dashboard.module.scss";
 import { useEffect } from "react";
 import { Chart } from "chart.js";
-import styles from "../../styles/Dashboard.module.scss";
 
 export default function CardLineChart() {
   useEffect(() => {

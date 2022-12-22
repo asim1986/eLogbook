@@ -51,8 +51,8 @@ const Chat = (props: any) => {
               </span>
             </div>
 
-            {[0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map(() => (
-              <div className={styles.chatMain}>
+            {[0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map((_, idx) => (
+              <div key={idx} className={styles.chatMain}>
                 <span className={styles.chatUser}>
                   <div className="bg-red-500"></div>
                   <div>

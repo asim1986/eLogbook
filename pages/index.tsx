@@ -22,7 +22,7 @@ const Home = () => {
       <main>
         <section className={styles.hero}>
           <div className={styles.heroContent}>
-            <h1>What's E-LogBook?</h1>
+            <h1>{"What's E-LogBook?"}</h1>
             <p>
               eLogbook is an electronic logbook designed to minimize keyboard
               use by students. This is an application that replaces the use of
@@ -114,13 +114,13 @@ const Home = () => {
 
       <footer className={styles.footer}>
         <div className={styles.socialMedia}>
-          <a href="https://twitter.com/am_vicolas" target="_blank">
+          <a href="https://twitter.com/am_vicolas" target="_blank" rel="noreferrer">
             <AiFillTwitterCircle size="2rem" />
           </a>
-          <a href="https://github.com/Vicolas11" target="_blank">
+          <a href="https://github.com/Vicolas11" target="_blank" rel="noreferrer">
             <FaGithub size="1.7rem" />
           </a>
-          <a href="https://linkedin.com/in/vicolas-akoh/" target="_blank">
+          <a href="https://linkedin.com/in/vicolas-akoh/" target="_blank" rel="noreferrer">
             <TiSocialLinkedinCircular size="2.2rem" />
           </a>
         </div>

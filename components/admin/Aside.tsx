@@ -186,4 +186,6 @@ const Aside = forwardRef<HTMLDivElement, AsideType>(({ show }, ref) => {
   );
 });
 
+Aside.displayName = "Aside";
+
 export default Aside;

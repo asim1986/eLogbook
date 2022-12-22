@@ -33,22 +33,23 @@ const ChangePassword = ({ user, style }: ChangePasswordType) => {
   const [isLoading, setIsLoading] = useState(false);  
   let userId: string = "";
 
+  const studData = useAppSelector((state) => state.auth.userStudData);
+  const coordData = useAppSelector((state) => state.auth.userCoordData);
+  const supData = useAppSelector((state) => state.auth.userSupData);
+  const orgData = useAppSelector((state) => state.auth.userOrgData);
+
   switch (role) {
     case "Student":
-      const userIdStud = useAppSelector((state) => state.auth?.userStudData?.id);
-      userId = userIdStud;
+      userId = studData.id;
       break;
     case "Supervisor":
-      const userIdSup = useAppSelector((state) => state.auth?.userSupData?.id);
-      userId = userIdSup;
+      userId = supData.id;
       break;
     case "Coordinator":
-      const userIdCoord = useAppSelector((state) => state.auth?.userCoordData?.id);
-      userId = userIdCoord;
+      userId = coordData.id;
       break;
     case "Organisation":
-      const userIdOrg = useAppSelector((state) => state.auth?.userOrgData?.id);
-      userId = userIdOrg;
+      userId = orgData.id;
       break;
   }
 

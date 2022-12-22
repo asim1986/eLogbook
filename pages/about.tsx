@@ -1,8 +1,8 @@
-import Head from "next/head";
 import styles from "../styles/Login.module.scss";
-import Link from "next/link";
-import React, { useState } from "react";
 import { Navbar } from "../components/NavBar";
+import Head from "next/head";
+import React from "react";
+
 
 const About = () => {
   return (
