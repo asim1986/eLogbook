@@ -47,13 +47,13 @@ interface LabelType {
 }
 
 export interface ViewDetailType {
-  id: string;
+  id?: string;
   show: boolean;
   labels: LabelType[];
   img: boolean;
   title: string;
   isAdmin?: boolean;
-  onDelCallback: (id: string) => void;
+  onDelCallback?: (id: string) => void;
 }
 
 export interface EligiblebyDept {

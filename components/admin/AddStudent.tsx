@@ -33,7 +33,7 @@ const AddStudent = ({ show }: { show: boolean }) => {
               className="cursor-pointer mt-2 ml-3 md:m-0 md:p-0 text-2xl md:text-3xl"
             />
             <h1>Create a Student Account</h1>
-            <StudentForm admin={true} btnTitle={"Add"} />
+            <StudentForm isAdmin={true} btnTitle={"Add"} />
           </div>
         </div>
       </CSSTransition>
