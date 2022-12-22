@@ -2,7 +2,7 @@ import GlobalContext from "../../context/GlobalContext";
 import { CSSTransition } from "react-transition-group";
 import animate from "../../styles/animate.module.css";
 import styles from "../../styles/Signup.module.scss";
-import SuperviorForm from "../SupervisorForm";
+import SupervisorForm from "../SupervisorForm";
 import "react-phone-number-input/style.css";
 import { useContext, useRef } from "react";
 import BackBlurDrop from "../BackBlurDrop";
@@ -35,7 +35,7 @@ const AddCordinator = ({ show }: { show: boolean }) => {
               className="cursor-pointer mt-3 ml-3 md:m-0 md:p-0 text-2xl md:text-3xl"
             />
             <h1>Add a Coordinator Account</h1>
-            <SuperviorForm admin={true} btnTitle={"Add"} />
+            <SupervisorForm isAdmin={true} btnTitle={"Add"} isSupervisor={false} />
           </div>
         </div>
       </CSSTransition>

@@ -1,14 +1,11 @@
+import { errorToastStyle, successToastStyle, warnToastStyle } from "../utils/styles.utils";
 import { IFileInputType, IUploadFile } from "../interfaces/upload.interface";
-import {
-  errorToastStyle,
-  successToastStyle,
-  warnToastStyle,
-} from "../utils/styles.utils";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import { setCoordAuth, setSupAuth } from "../store/slice/auth.slice";
 import { REGISTER_COORD } from "../graphql/mutations/coordinator";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import { REGISTER_SUP } from "../graphql/mutations/supervisor";
+import { uploadToCloudinary } from "../utils/cloudUpload";
 import { allInstitutions } from "../utils/institutions";
 import { IFormInput } from "../interfaces/formInput";
 import { useAppDispatch } from "../hooks/store.hook";
@@ -19,6 +16,7 @@ import { toast, Toaster } from "react-hot-toast";
 import { useMutation } from "@apollo/client";
 import { customStyles } from "../utils/util";
 import "react-phone-number-input/style.css";
+import { depts } from "../utils/department";
 import { gender } from "../utils/gender";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -26,10 +24,9 @@ import Select from "react-select";
 import Loader from "./Loader";
 import Link from "next/link";
 import axios from "axios";
-import { uploadToCloudinary } from "../utils/cloudUpload";
-import { depts } from "../utils/department";
 
-const SuperviorForm = ({ isSupervisor, isAdmin, btnTitle }: IFormInput) => {
+
+const SupervisorForm = ({ isSupervisor, isAdmin, btnTitle }: IFormInput) => {
   const [textInput, setTextInput] = useState({
     name: { firstName: "", lastName: "", title: "" },
     staffId: "",
@@ -689,4 +686,4 @@ const SuperviorForm = ({ isSupervisor, isAdmin, btnTitle }: IFormInput) => {
   );
 };
 
-export default SuperviorForm;
+export default SupervisorForm;

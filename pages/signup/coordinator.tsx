@@ -1,4 +1,4 @@
-import SuperviorForm from "../../components/SupervisorForm";
+import SupervisorForm from "../../components/SupervisorForm";
 import styles from "../../styles/Signup.module.scss";
 import { Navbar } from "../../components/NavBar";
 import "react-phone-number-input/style.css";
@@ -16,7 +16,7 @@ const Coordinator = () => {
           <div className={styles.signupContainer}>
             <div className="p-3 sm:p-5 lg:p-6 w-full">
               <h1 className={styles.h1}>Create a Coordinator Account</h1>
-              <SuperviorForm isSupervisor={false} isAdmin={false} btnTitle={"signup"} />
+              <SupervisorForm isSupervisor={false} isAdmin={false} btnTitle={"signup"} />
             </div>
           </div>
         </section>
