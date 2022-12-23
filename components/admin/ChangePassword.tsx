@@ -28,9 +28,9 @@ const ChangePassword = ({ user, style }: ChangePasswordType) => {
       state.auth?.userStudData?.user ||
       state.auth?.userOrgData?.user
   );
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
-  const [isLoading, setIsLoading] = useState(false);  
+  const router = useRouter();
   let userId: string = "";
 
   const studData = useAppSelector((state) => state.auth.userStudData);
@@ -148,7 +148,7 @@ const ChangePassword = ({ user, style }: ChangePasswordType) => {
       <Toaster position="top-center" reverseOrder={false} />
       {loading && <Loader show={true} />}
       <ManageProfile
-        profile={user === "admin" ? "/admin/profile" : `/profile/${role.toLowerCase()}`}
+        profile={user === "admin" ? "/admin/profile" : `/profile/${role?.toLowerCase()}`}
         change={
           user === "admin"
             ? "/admin/change-password"

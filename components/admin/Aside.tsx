@@ -1,15 +1,12 @@
-import {
-  FaBlog,
-  FaBuilding,
-  FaChalkboardTeacher,
-  FaPowerOff,
-  FaUserGraduate,
-} from "react-icons/fa";
-import { BiCheckShield, BiHomeAlt } from "react-icons/bi";
+import { FaBlog, FaBuilding, FaChalkboardTeacher, FaPowerOff, FaUserGraduate } from "react-icons/fa";
 import { MdClose, MdSupervisedUserCircle } from "react-icons/md";
+import { BiCheckShield, BiHomeAlt } from "react-icons/bi";
 import styles from "../../styles/Dashboard.module.scss";
 import GlobalContext from "../../context/GlobalContext";
+import { useAppDispatch } from "../../hooks/store.hook";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { setRest } from "../../store/slice/auth.slice";
+import { client } from "../../graphql/apolloClient";
 import { forwardRef, useContext } from "react";
 import { RiBook2Line } from "react-icons/ri";
 import { CgProfile } from "react-icons/cg";
@@ -19,8 +16,16 @@ import Link from "next/link";
 type AsideType = { show: boolean; ref: string };
 
 const Aside = forwardRef<HTMLDivElement, AsideType>(({ show }, ref) => {
-  const router = useRouter();
   const { setShowSideBar } = useContext(GlobalContext);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  
+  const logout = () => {
+    // Reset Apollo Cache
+    client.resetStore();
+    dispatch(setRest());
+    router.push("/admin");
+  };
 
   return (
     <aside ref={ref} className={`${show ? "" : "block"}  ${styles.aside}`}>
@@ -60,11 +65,11 @@ const Aside = forwardRef<HTMLDivElement, AsideType>(({ show }, ref) => {
           setShowSideBar(false);
         }}
       >
-        <Link href="/admin">
+        <Link href="/admin/dashboard">
           <a
             className={[
               styles.sideBarBtn,
-              router.pathname === "/admin" ? styles.active : "",
+              router.pathname === "/admin/dashboard" ? styles.active : "",
             ].join(" ")}
           >
             <BiHomeAlt size={"1.55rem"} />
@@ -175,12 +180,10 @@ const Aside = forwardRef<HTMLDivElement, AsideType>(({ show }, ref) => {
             <span>Profile</span>
           </a>
         </Link>
-        <Link href="/" replace={true}>
-          <a className={styles.sideBarBtn}>
-            <FaPowerOff size={"1.5rem"} />
-            <span>Logout</span>
-          </a>
-        </Link>
+        <a className={styles.sideBarBtn} onClick={logout}>
+          <FaPowerOff size={"1.5rem"} />
+          <span>Logout</span>
+        </a>
       </div>
     </aside>
   );

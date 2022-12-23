@@ -1,4 +1,5 @@
 import { CSSTransition, SwitchTransition } from "react-transition-group";
+import { useAppSelector } from "../hooks/store.hook";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import animate from "../styles/animate.module.css";
 import styles from "../styles/Home.module.scss";
@@ -8,6 +9,7 @@ import Link from "next/link";
 import Links from "./Links";
 
 export const Navbar = () => {
+  const role = useAppSelector((state) => state.auth.userAdminData.user);
   const [active, setActive] = useState(false);
   const nodeRef = useRef<any>(null);
   const nodeRefBtn = useRef(null);
@@ -15,7 +17,7 @@ export const Navbar = () => {
   return (
     <>
       <nav className={styles.nav}>
-        <Link href="/">
+        <Link href={role === "Admin" ? '/admin/dashboard' : '/'}>
           <a className="inline-flex items-center mr-4 ml-5">
             <img
               src="../e-logbook logo.png"

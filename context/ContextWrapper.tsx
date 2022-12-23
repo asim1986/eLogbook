@@ -34,7 +34,7 @@ const initEvents = () => {
 };
 
 const ContextWrapper = (props: any) => {
-  const studentId = useAppSelector((state) => state.auth?.userStudData?.id);
+  const studentId = useAppSelector((state) => state.auth?.userStudData?.id) || '';
   const [logBookData, setLogBookData] = useState<StudLog[]>();
   const [smallCalendarMonth, setSmallCalendarMonth] = useState(null);
   const [monthIndex, setMonthIndex] = useState(dayjs().month());

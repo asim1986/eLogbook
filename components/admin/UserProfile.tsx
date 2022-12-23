@@ -1,15 +1,19 @@
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
+import { useAppSelector } from "../../hooks/store.hook";
 import styles from "../../styles/Profile.module.scss";
 import ManageProfile from "../ManageProfile";
 import { useState } from "react";
 
 const UserProfile = (props: any) => {
- 
+  const adminData = useAppSelector((state) => state.auth.userAdminData);
+  const { firstName, lastName, avatar, email } = adminData;
+
   const [textInput, setTextInput] = useState({
-    name: { firstName: "", lastName: "" },
-    email: "",
+    name: { firstName: `${firstName}`, lastName: `${lastName}` },
+    email: `${email}`,
     password: "",
   });
+
   const [showPassword, setShowPassword] = useState(false);
   const [selectedFile, setSelectedFile] = useState({
     file: null,
@@ -65,13 +69,13 @@ const UserProfile = (props: any) => {
 
   const onFileUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const mainFile = evt.target.files;
-    if(mainFile.length !== 0) {
+    if (mainFile.length !== 0) {
       setSelectedFile({
         file: mainFile[0],
         isUploaded: true,
         img: URL.createObjectURL(mainFile[0]),
       });
-    }    
+    }
   };
 
   const resetImage = () => {
@@ -95,13 +99,17 @@ const UserProfile = (props: any) => {
         <div className={styles.userImg}>
           <img
             src={
-              selectedFile.img ? selectedFile.img : "../images/thumbnail.png"
+              selectedFile.img
+                ? selectedFile.img
+                : avatar
+                ? avatar
+                : "../images/thumbnail.png"
             }
             alt="passport"
           />
           <div>
-            <h1>Vicolas Akoh</h1>
-            <h2>incrediblechamp1@gmail</h2>
+            <h1>{`${firstName} ${lastName}`}</h1>
+            <h2>{`${email}`}</h2>
             <div className="flex items-center justify-between my-3">
               <div
                 className={[
@@ -135,7 +143,6 @@ const UserProfile = (props: any) => {
         </div>
 
         <form className="mt-4">
-
           <div className="flex flex-col md:flex-row justify-between mb-3 w-full">
             <div className="w-full md:mr-1">
               <input
@@ -162,9 +169,10 @@ const UserProfile = (props: any) => {
           </div>
 
           <div className="flex flex-col md:flex-row justify-between mb-2 md:mb-3 w-full">
-            <div className="w-full mb-3 mr-2">
+            <div className="w-full mb-3">
               <input
                 required
+                readOnly
                 type="email"
                 name="email"
                 id="email"
@@ -173,28 +181,6 @@ const UserProfile = (props: any) => {
                 value={textInput.email}
                 onChange={onChangeHandlerEmail}
               />
-            </div>
-            <div className={styles.passwordInput}>
-              <input
-                required
-                type={showPassword ? "text" : "password"}
-                name="password"
-                id="password"
-                placeholder="Password"
-                className={styles.inputStyle}
-                value={textInput.password}
-                onChange={onChangeHandlerPassword}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-              >
-                {showPassword ? (
-                  <AiFillEyeInvisible size="1.5rem" />
-                ) : (
-                  <AiFillEye size="1.5rem" />
-                )}
-              </button>
             </div>
           </div>
 

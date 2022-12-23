@@ -22,7 +22,7 @@ import Loader from "../Loader";
 const DeleteAccount = ({ user, style }: DeleteAccountType) => {
   const { showDetail, setShowDetail } = useContext(GlobalContext);
   const [isLoading, setIsLoading] = useState(false);
-  let mutationType: DocumentNode | null = null;
+  let mutationType: DocumentNode | null = DELETE_SUP;
   const dispatch = useAppDispatch();
   const { dev, prod } = constants;
   const router = useRouter();
@@ -235,7 +235,7 @@ const DeleteAccount = ({ user, style }: DeleteAccountType) => {
           profile={
             user === "admin"
               ? "/admin/profile"
-              : `/profile/${role.toLowerCase()}`
+              : `/profile/${role?.toLowerCase()}`
           }
           change={
             user === "admin"

@@ -14,6 +14,14 @@
   background-size: cover;
 }
 
+.adminLoginHero {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100%;
+  background: #192331;
+}
+
 .loginContainer {
   margin: 0 auto;
   position: absolute;
@@ -23,6 +31,18 @@
   right: 0;
   width: 90%;
   @apply justify-center items-center bg-white rounded-lg shadow lg:flex md:mt-0 lg:max-w-screen-sm xl:p-0 dark:bg-gray-800;
+}
+
+.adminLoginContainer {
+  margin: 0 auto;
+  position: absolute;
+  place-items: center;
+  top: 100px;
+  left: 0;
+  right: 0;
+  width: 90%;
+  @apply shadow-2xl md:mt-0 lg:max-w-screen-sm xl:p-0 dark:bg-gray-800;
+  @apply justify-center items-center rounded-lg shadow lg:flex border-x-4 border-gray-500;
 }
 
 .h1 {
@@ -76,8 +96,8 @@
   position: absolute;
   right: 0;
   top: 0;
-  margin-top: .5rem;
-  margin-right: .5rem;
+  margin-top: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 .loginBtn {

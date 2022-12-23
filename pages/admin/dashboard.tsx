@@ -1,4 +1,4 @@
-import ListBlogPosts from "../../components/admin/ListBlogPosts";
+import Statistics from "../../components/admin/Statistics";
 import { useAppSelector } from "../../hooks/store.hook";
 import DashSideBar from "../../components/DashSideBar";
 import DashHeader from "../../components/DashHeader";
@@ -8,8 +8,7 @@ import Head from "next/head";
 import AdminLogin from ".";
 import React from "react";
 
-
-const Blog: NextPage = () => {
+const Dashboard: NextPage = () => {
   const role = useAppSelector((state) => state.auth?.userAdminData?.user);
   const isAuth = useAppSelector((state) => state.auth?.isAuth);
   const router = useRouter();
@@ -18,19 +17,19 @@ const Blog: NextPage = () => {
     router.replace("/admin");
     return <AdminLogin />;
   }
-  
+
   return (
     <>
       <Head>
-        <title>Chat</title>
+        <title>Dashboard</title>
       </Head>
       <main>
-        <DashHeader title="Blog" />
+        <DashHeader title="Dashboard" />
         <DashSideBar />
-        <ListBlogPosts />
+        <Statistics />
       </main>
     </>
   );
 };
 
-export default Blog;
+export default Dashboard;

@@ -24,6 +24,7 @@ const Links = () => {
 
   const role = useAppSelector(
     (state) =>
+      state.auth?.userAdminData?.user ||
       state.auth?.userStudData?.user ||
       state.auth?.userSupData?.user ||
       state.auth?.userCoordData?.user ||
@@ -39,13 +40,14 @@ const Links = () => {
   const logout = () => {
     localStorage.removeItem("logBookData");
     // Reset Apollo Cache
-    client.resetStore();    
+    client.resetStore();
     dispatch(setRest());
     router.push("/login");
   };
 
   const name: string = useAppSelector(
     (state) =>
+      state.auth?.userAdminData?.firstName ||
       state.auth?.userCoordData?.firstName ||
       state.auth?.userSupData?.firstName ||
       state.auth?.userStudData?.firstName ||
@@ -54,6 +56,7 @@ const Links = () => {
 
   const avatar: string = useAppSelector(
     (state) =>
+      state.auth?.userAdminData?.avatar ||
       state.auth?.userCoordData?.avatar ||
       state.auth?.userSupData?.avatar ||
       state.auth?.userStudData?.avatar ||
@@ -219,21 +222,23 @@ const Links = () => {
             </Link>
           )}
 
-          <Link href="/chats">
-            <a
-              className={[
-                styles.nav_li,
-                router.pathname === "/chats" ? styles.active : "",
-              ].join(" ")}
-            >
-              <div className="w-full flex items-center">
-                <RiChat3Fill />
-                <span className="pl-1">Chat</span>
-              </div>
-            </a>
-          </Link>
+          {role !== "Admin" && (
+            <Link href="/chats">
+              <a
+                className={[
+                  styles.nav_li,
+                  router.pathname === "/chats" ? styles.active : "",
+                ].join(" ")}
+              >
+                <div className="w-full flex items-center">
+                  <RiChat3Fill />
+                  <span className="pl-1">Chat</span>
+                </div>
+              </a>
+            </Link>
+          )}
 
-          {role !== "Student" && (
+          {role !== "Student" && role !== 'Admin' && (
             <Link href="/activities">
               <a
                 className={[
@@ -283,23 +288,25 @@ const Links = () => {
             </Link>
           )}
 
-          <Link href={`/profile/${role.toLowerCase()}`}>
-            <a
-              className={[
-                styles.nav_li,
-                router.pathname === `/profile/${role.toLowerCase()}` ||
-                router.pathname === "/profile/change-password" ||
-                router.pathname === "/profile/delete-account"
-                  ? styles.active
-                  : "",
-              ].join(" ")}
-            >
-              <div className="w-full flex items-center">
-                <RiUserSettingsLine />
-                <span className="pl-1">Profile</span>
-              </div>
-            </a>
-          </Link>
+          {role !== "Admin" && (
+            <Link href={`/profile/${role?.toLowerCase()}`}>
+              <a
+                className={[
+                  styles.nav_li,
+                  router.pathname === `/profile/${role?.toLowerCase()}` ||
+                  router.pathname === "/profile/change-password" ||
+                  router.pathname === "/profile/delete-account"
+                    ? styles.active
+                    : "",
+                ].join(" ")}
+              >
+                <div className="w-full flex items-center">
+                  <RiUserSettingsLine />
+                  <span className="pl-1">Profile</span>
+                </div>
+              </a>
+            </Link>
+          )}
 
           <a className={styles.nav_li}>
             <button
@@ -315,9 +322,9 @@ const Links = () => {
               <div className="w-full">
                 <img
                   src={
-                    avatar === defaultImg
-                      ? avatar
-                      : cloudinary === "cloudinary"
+                    avatar === defaultImg ||
+                    cloudinary === "cloudinary" ||
+                    role === "Admin"
                       ? avatar
                       : `${beHost}${avatar}` || "../images/thumbnail.png"
                   }

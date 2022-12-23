@@ -1,17 +1,28 @@
-import { IAuthOrganSlice, IAuthStudSlice, IAuthSupSlice } from "../../interfaces/slice.interface";
+import { IAuthAdminSlice, IAuthOrganSlice, IAuthStudSlice, IAuthSupSlice } from "../../interfaces/slice.interface";
 import { createSlice } from "@reduxjs/toolkit";
 
 type authType = {
   id: string;
   role: string;
   name: string;
+  token: string;
   isAuth: boolean;
+  refreshToken: string;
+  userAdminData: IAuthAdminSlice;
   userStudData: IAuthStudSlice;
   userOrgData: IAuthOrganSlice;
   userSupData: IAuthSupSlice;
   userCoordData: IAuthSupSlice;
-  token: string;
-  refreshToken: string;
+};
+
+const AuthAdminInit: IAuthAdminSlice = {
+  id: null,
+  firstName: null,
+  lastName: null,
+  email: null,
+  password: null,
+  avatar: null,
+  user: null,
 };
 
 const AuthStudInit: IAuthStudSlice = {
@@ -52,10 +63,10 @@ const AuthStudInit: IAuthStudSlice = {
     id: null,
     name: null,
     sector: null,
-    email: null,    
+    email: null,
     logo: null,
-    address: null
-  }
+    address: null,
+  },
 };
 
 const AuthSupInit: IAuthSupSlice = {
@@ -91,6 +102,7 @@ const initialState: authType = {
   id: null,
   role: null,
   name: null,
+  userAdminData: AuthAdminInit,
   userStudData: AuthStudInit,
   userOrgData: AuthOrgInit,
   userSupData: AuthSupInit,
@@ -119,6 +131,12 @@ const authSlice = createSlice({
         payload?.loginStudent?.student.lastName ||
         payload?.loginCoordinator?.coordinator?.lastName ||
         payload?.loginSupervisor?.supervisor?.lastName;
+      state.token = payload?.accessToken;
+      state.refreshToken = payload?.refreshToken;
+    },
+    setAdminAuth: (state, { payload }) => {
+      state.isAuth = true;
+      state.userAdminData = payload?.admin;
       state.token = payload?.accessToken;
       state.refreshToken = payload?.refreshToken;
     },
@@ -151,6 +169,7 @@ const authSlice = createSlice({
       state.id = null;
       state.role = null;
       state.name = null;
+      state.userAdminData = AuthAdminInit;
       state.userStudData = AuthStudInit;
       state.userOrgData = AuthOrgInit;
       state.userCoordData = AuthSupInit;
@@ -162,6 +181,7 @@ const authSlice = createSlice({
 });
 
 export const {
+  setAdminAuth,
   setStudAuth,
   setOrgAuth,
   setRest,

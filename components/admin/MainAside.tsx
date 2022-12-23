@@ -1,21 +1,26 @@
-import {
-  FaBlog,
-  FaBuilding,
-  FaChalkboardTeacher,
-  FaPowerOff,
-  FaUserGraduate,
-} from "react-icons/fa";
+import { FaBlog, FaBuilding, FaChalkboardTeacher, FaPowerOff, FaUserGraduate } from "react-icons/fa";
 import { BiCheckShield, BiHomeAlt } from "react-icons/bi";
-import { MdSupervisedUserCircle } from "react-icons/md";
 import styles from "../../styles/Dashboard.module.scss";
+import { useAppDispatch } from "../../hooks/store.hook";
+import { MdSupervisedUserCircle } from "react-icons/md";
+import { setRest } from "../../store/slice/auth.slice";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { client } from "../../graphql/apolloClient";
 import { RiBook2Line } from "react-icons/ri";
 import { CgProfile } from "react-icons/cg";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
 const MainAside = () => {
+  const dispatch = useAppDispatch();
   const router = useRouter();
+
+  const logout = () => {
+    // Reset Apollo Cache
+    client.resetStore();
+    dispatch(setRest());
+    router.push("/admin");
+  };
 
   return (
     <aside className="hidden lg:block lg:w-60 fixed z-20 w-8/12 md:w-5/12 h-screen bg-blue-800">
@@ -34,11 +39,11 @@ const MainAside = () => {
         </Link>
       </div>
       <div className={styles.sideBarBtnWrapper}>
-        <Link href="/admin">
+        <Link href="/admin/dashboard">
           <a
             className={[
               styles.sideBarBtn,
-              router.pathname === "/admin" ? styles.active : "",
+              router.pathname === "/admin/dashboard" ? styles.active : "",
             ].join(" ")}
           >
             <BiHomeAlt size={"1.55rem"} />
@@ -149,12 +154,10 @@ const MainAside = () => {
             <span>Profile</span>
           </a>
         </Link>
-        <Link href="/" replace={true}>
-          <a className={styles.sideBarBtn}>
-            <FaPowerOff size={"1.5rem"} />
-            <span>Logout</span>
-          </a>
-        </Link>
+        <a className={styles.sideBarBtn} onClick={logout}>
+          <FaPowerOff size={"1.5rem"} />
+          <span className="mr-2">Logout</span>
+        </a>
       </div>
     </aside>
   );

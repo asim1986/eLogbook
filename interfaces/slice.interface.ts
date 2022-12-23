@@ -1,3 +1,13 @@
+export interface IAuthAdminSlice {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  avatar: string;
+  user: string;
+}
+
 export interface IAuthStudSlice {
   id: string;
   firstName: string;
@@ -22,7 +32,7 @@ export interface IAuthStudSlice {
     email: string;
     phone: string;
     avatar: string;
-  }
+  };
   coordinator: {
     id: string;
     title: string;
@@ -31,15 +41,15 @@ export interface IAuthStudSlice {
     email: string;
     phone: string;
     avatar: string;
-  }
+  };
   organisation: {
     id: string;
     name: string;
     sector: string;
-    email: string;    
+    email: string;
     logo: string;
     address: string;
-  }
+  };
 }
 
 export interface IAuthSupSlice {
@@ -76,6 +86,6 @@ export interface IEligibleSlice {
   department: string;
   level: string;
   matricNo: string;
-  isEligible: boolean,
+  isEligible: boolean;
   __typename: "Eligible";
 }
