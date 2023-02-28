@@ -136,7 +136,7 @@ const AdminLogin: NextPage = () => {
                   <div className="ml-3 text-sm">
                     <label
                       htmlFor="remember"
-                      className="font-medium text-gray-900 dark:text-white"
+                      className="font-medium text-white"
                     >
                       Remember me
                     </label>

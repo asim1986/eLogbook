@@ -12,10 +12,10 @@ const Coordinator: NextPage = () => {
   const isAuth = useAppSelector((state) => state.auth?.isAuth);
   const router = useRouter();
 
-  if ((!isAuth && role !== "Admin") || !role) {
-    router.replace("/admin");
-    return <AdminLogin />;
-  }
+  // if ((!isAuth && role !== "Admin") || !role) {
+  //   router.replace("/admin");
+  //   return <AdminLogin />;
+  // }
 
   return (
     <>

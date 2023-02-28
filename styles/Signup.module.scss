@@ -73,8 +73,8 @@ $sideBarWidth: 15rem;
 
 .textAreaErr {
   @apply bg-gray-50 border border-red-300 outline-red-300 text-gray-900;
-  @apply block w-full p-2.5 dark:bg-gray-50 placeholder-red-400 rounded-lg;
-  @apply dark:border-red-600 dark:outline-red-600 dark:text-white sm:text-sm;
+  @apply block w-full p-2.5 bg-gray-50 placeholder-red-400 rounded-lg;
+  @apply border-red-600 outline-red-600 text-white sm:text-sm;
   background: #374151;
 }
 
@@ -179,7 +179,7 @@ $sideBarWidth: 15rem;
   right: 0;
   width: 90%;
   padding: 0;
-  @apply bg-white rounded-lg shadow lg:flex lg:max-w-screen-sm xl:p-0 dark:bg-gray-800;
+  @apply rounded-lg shadow lg:flex lg:max-w-screen-sm xl:p-0 bg-gray-800;
 }
 
 .signupContainer::after {
@@ -199,21 +199,21 @@ $sideBarWidth: 15rem;
   right: 0;
   width: 60%;
   padding: 0;
-  @apply bg-white rounded-lg shadow lg:flex md:mt-0 lg:max-w-screen-sm xl:p-0 dark:bg-gray-800;
+  @apply rounded-lg shadow lg:flex md:mt-0 lg:max-w-screen-sm xl:p-0 bg-gray-800;
 }
 
 .h1 {
-  @apply mb-1 text-2xl font-bold text-gray-900 lg:text-3xl dark:text-white text-center;
+  @apply mb-1 text-2xl font-bold lg:text-3xl text-white text-center;
 }
 
 .label {
-  @apply block mb-1 text-sm font-medium text-gray-900 dark:text-white;
+  @apply block mb-1 text-sm font-medium text-white;
 }
 
 .signupInput {
-  @apply bg-gray-50 border border-gray-300 outline-gray-300 text-gray-900;
-  @apply block w-full p-2.5 dark:bg-gray-700 placeholder-gray-400 rounded-lg;
-  @apply dark:border-gray-600 dark:outline-gray-600 dark:text-white sm:text-sm;
+  @apply border border-gray-600 outline-gray-600;
+  @apply block w-full p-2.5 bg-gray-700 placeholder-gray-400 rounded-lg;
+  @apply text-white sm:text-sm;
 }
 
 .signupInput:focus {
@@ -222,13 +222,13 @@ $sideBarWidth: 15rem;
 }
 
 .phoneInput {
-  @apply dark:bg-gray-700 text-gray-900 sm:text-sm rounded-lg pl-2;
-  @apply dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500;
+  @apply bg-gray-700 sm:text-sm rounded-lg pl-2;
+  @apply border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500;
 }
 
 .checkBox {
-  @apply w-4 h-4 bg-gray-50 rounded border-gray-300 focus:ring-blue-300 dark:focus:ring-blue-600;
-  @apply dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600;
+  @apply w-4 h-4 rounded focus:ring-blue-600;
+  @apply ring-offset-gray-800 bg-gray-700 border-gray-600;
 }
 
 .btnWrapper {
@@ -265,9 +265,9 @@ $sideBarWidth: 15rem;
 
 .select {
   [class$="-control"] {
-    @apply text-white bg-gray-50 border border-gray-300 sm:text-sm rounded-lg;
-    @apply focus:ring-gray-100 focus:border-gray-100 w-full p-0 dark:bg-gray-700 outline-none;
-    @apply dark:border-gray-600 placeholder-gray-400 text-white focus:ring-gray-100 focus:border-gray-500;
+    @apply border border-gray-600 sm:text-sm rounded-lg;
+    @apply focus:ring-gray-100 focus:border-gray-100 w-full p-0 bg-gray-700 outline-none;
+    @apply placeholder-gray-400 text-white focus:ring-gray-100 focus:border-gray-500;
   }
 }
 
@@ -291,7 +291,7 @@ $sideBarWidth: 15rem;
 }
 
 .forgetPassword {
-  @apply ml-auto text-sm text-blue-700 dark:text-blue-500 hover:underline;
+  @apply ml-auto text-sm text-blue-500 hover:underline;
 }
 
 .uploadAvatarBtn label {
@@ -371,11 +371,11 @@ $sideBarWidth: 15rem;
 }
 
 .terms {
-  @apply ml-1 text-blue-700 dark:text-blue-500 hover:underline;
+  @apply ml-1 text-blue-500 hover:underline;
 }
 
 .actionBtn {
-  @apply ml-1 text-blue-700 hover:underline dark:text-blue-500;
+  @apply ml-1 hover:underline text-blue-500;
 }
 
 @media (max-width: 912px) {

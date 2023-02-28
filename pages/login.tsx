@@ -222,7 +222,7 @@ const Login = () => {
                   <div className="ml-3 text-sm">
                     <label
                       htmlFor="remember"
-                      className="font-medium text-gray-900 dark:text-white"
+                      className="font-medium text-white"
                     >
                       Remember me
                     </label>
@@ -239,10 +239,10 @@ const Login = () => {
                   </button>
                 </div>
 
-                <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <div className="text-sm font-medium text-gray-400">
                   Not registered?
                   <Link href="/signup">
-                    <a className="ml-1 text-blue-700 hover:underline dark:text-blue-500">
+                    <a className="ml-1 hover:underline text-blue-500">
                       Create an account.
                     </a>
                   </Link>

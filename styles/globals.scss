@@ -30,10 +30,9 @@ $primaryFont: Roboto;
 }
 
 input[type="tel"] {
-  @apply bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg;
-  @apply focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700;
-  @apply dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500;
-  @apply dark:focus:border-blue-500;
+  @apply bg-gray-700 border border-gray-600 sm:text-sm rounded-lg;
+  @apply focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5;
+  @apply placeholder-gray-400 text-white;
 }
 
 input[type="tel"]:active,
@@ -43,10 +42,9 @@ input[type="tel"]:focus {
 }
 
 select[class="PhoneInputCountrySelect"] {
-  @apply bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg;
-  @apply focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700;
-  @apply dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500;
-  @apply dark:focus:border-blue-500;
+  @apply bg-gray-700 border border-gray-600 sm:text-sm rounded-lg;
+  @apply focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5;
+  @apply placeholder-gray-400 text-white;
 }
 
 div[class="css-1s2u09g-control"] {
@@ -57,6 +55,8 @@ html,
 body {
   padding: 0;
   margin: 0;
+  color:#eaeaea;
+  background: $primaryColor1;
   font-family: $primaryFont;
 }
 
@@ -78,12 +78,12 @@ a {
   box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-  body {
-    color: #eaeaea;
-    background: $primaryColor1;
-  }
-}
+// @media (prefers-color-scheme: dark) {
+//   html {
+//     color-scheme: dark;
+//   }
+//   body {
+//     color: #eaeaea;
+//     background: $primaryColor1;
+//   }
+// }

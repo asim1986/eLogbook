@@ -9,7 +9,7 @@ import Link from "next/link";
 import Links from "./Links";
 
 export const Navbar = () => {
-  const role = useAppSelector((state) => state.auth.userAdminData.user);
+  const role = useAppSelector((state) => state.auth?.userAdminData?.user);
   const [active, setActive] = useState(false);
   const nodeRef = useRef<any>(null);
   const nodeRefBtn = useRef(null);

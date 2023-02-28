@@ -384,7 +384,7 @@ const OrganisationForm = ({ isAdmin, btnTitle }: IFormInput) => {
               <div className="ml-3 text-sm">
                 <label
                   htmlFor="terms"
-                  className="font-medium text-gray-900 dark:text-white"
+                  className="font-medium dark:text-white"
                 >
                   I accept the
                   <a className={styles.terms} href="/terms-and-conditions/">

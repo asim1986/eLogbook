@@ -204,8 +204,8 @@ const ListEligible = ({ isAdmin = true }: { isAdmin?: boolean }) => {
               No Eligible Student added yet!
             </h1>
           ) : (
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <table className="w-full text-sm text-left text-gray-400">
+              <thead className="text-xs text-gray-400 uppercase bg-gray-700">
                 <tr>
                   {labels.map((lbl, i) => (
                     <th key={i.toString()} scope="col" className="py-3 px-6">
@@ -235,7 +235,7 @@ const ListEligible = ({ isAdmin = true }: { isAdmin?: boolean }) => {
                   <tr key={i.toString()} className={styles.dashTableTR}>
                     <th
                       scope="row"
-                      className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      className="py-4 px-6 font-medium whitespace-nowrap text-white"
                     >
                       {item.matric}
                     </th>

@@ -304,8 +304,8 @@ const Activities = (args: ActivitiesType) => {
               No Activities Yet!
             </h1>
           ) : (
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <table className="w-full text-sm text-left text-gray-400">
+              <thead className="text-xs text-gray-400 uppercase bg-gray-700">
                 <tr>
                   {labels.map((lbl, idx) => (
                     <th key={`${idx}`} scope="col" className="py-3 px-6">
@@ -335,7 +335,7 @@ const Activities = (args: ActivitiesType) => {
                   <tr className={styles.dashTableTR} key={item.id}>
                     <th
                       scope="row"
-                      className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      className="py-4 px-6 font-medium whitespace-nowrap text-white"
                     >
                       {item.title}
                     </th>

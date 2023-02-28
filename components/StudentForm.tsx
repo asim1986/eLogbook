@@ -728,11 +728,11 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
               <div className="ml-3 text-sm">
                 <label
                   htmlFor="terms"
-                  className="font-medium text-gray-900 dark:text-white"
+                  className="font-medium text-white"
                 >
                   I accept the
                   <a
-                    className="ml-1 text-blue-700 dark:text-blue-500 hover:underline"
+                    className="ml-1 text-blue-500 hover:underline"
                     href="/terms-and-conditions/"
                   >
                     Terms and Conditions
@@ -765,10 +765,10 @@ const StudentForm = ({ isAdmin, btnTitle }: IFormInput): JSX.Element => {
           </button>
         </div>
         {!isAdmin && (
-          <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+          <div className="text-sm font-medium text-gray-400">
             Already have an account?
             <Link href="/login">
-              <a className="ml-1 text-blue-700 hover:underline dark:text-blue-500">
+              <a className="ml-1 text-blue-500 hover:underline">
                 Login here.
               </a>
             </Link>

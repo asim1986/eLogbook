@@ -30,7 +30,7 @@
   left: 0;
   right: 0;
   width: 90%;
-  @apply justify-center items-center bg-white rounded-lg shadow lg:flex md:mt-0 lg:max-w-screen-sm xl:p-0 dark:bg-gray-800;
+  @apply justify-center items-center rounded-lg shadow lg:flex md:mt-0 lg:max-w-screen-sm xl:p-0 bg-gray-800;
 }
 
 .adminLoginContainer {
@@ -41,22 +41,22 @@
   left: 0;
   right: 0;
   width: 90%;
-  @apply shadow-2xl md:mt-0 lg:max-w-screen-sm xl:p-0 dark:bg-gray-800;
+  @apply shadow-2xl md:mt-0 lg:max-w-screen-sm xl:p-0 bg-gray-800;
   @apply justify-center items-center rounded-lg shadow lg:flex border-x-4 border-gray-500;
 }
 
 .h1 {
-  @apply mb-3 text-2xl font-bold text-gray-900 lg:text-3xl dark:text-white text-center;
+  @apply mb-3 text-2xl font-bold lg:text-3xl text-center;
 }
 
 .label {
-  @apply block mb-2 text-sm text-center font-medium text-gray-900 dark:text-white;
+  @apply block mb-2 text-sm text-center font-medium text-white;
 }
 
 .loginInput {
   @apply bg-gray-50 border border-gray-300 outline-gray-300 text-gray-900;
-  @apply block w-full p-2.5 dark:bg-gray-700 placeholder-gray-400 rounded-lg;
-  @apply dark:border-gray-600 dark:outline-gray-600 dark:text-white sm:text-sm;
+  @apply block w-full p-2.5 bg-gray-700 placeholder-gray-400 rounded-lg;
+  @apply border-gray-600 outline-gray-600 text-white sm:text-sm;
 }
 
 .loginInput:focus {
@@ -66,8 +66,8 @@
 
 .loginInputErr {
   @apply bg-red-50 border border-red-300 outline-red-300 text-gray-900;
-  @apply block w-full p-2.5 dark:bg-red-50 placeholder-red-400 rounded-lg;
-  @apply dark:border-red-600 dark:outline-red-600 dark:text-white sm:text-sm;
+  @apply block w-full p-2.5 bg-red-50 placeholder-red-400 rounded-lg;
+  @apply border-red-600 outline-red-600 text-white sm:text-sm;
   background: #374151;
 }
 
@@ -78,7 +78,7 @@
 }
 
 .checkBox {
-  @apply w-4 h-4 bg-gray-50 rounded border-gray-300 focus:ring-blue-300 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600;
+  @apply w-4 h-4 rounded focus:ring-blue-600 ring-offset-gray-800 bg-gray-700 border-gray-600;
 }
 
 .btnWrapper {
@@ -107,7 +107,7 @@
 }
 
 .forgetPassword {
-  @apply ml-auto text-sm text-blue-700 dark:text-blue-500 hover:underline;
+  @apply ml-auto text-sm text-blue-700 hover:underline;
 }
 
 @media (max-width: 912px) {
